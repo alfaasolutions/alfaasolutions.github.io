@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>HotelPOS - Smart Restaurant & Hotel POS System</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#0f1117;--bg2:#161822;--bg3:#1c1f2e;--card:#1a1d2e;--border:#2a2d3e;
+  --text:#e8e9ed;--text2:#8b8fa3;--text3:#555870;
+  --primary:#6366f1;--primary-light:#818cf8;--primary-bg:rgba(99,102,241,0.12);
+  --green:#22c55e;--green-bg:rgba(34,197,94,0.12);
+  --red:#ef4444;--red-bg:rgba(239,68,68,0.12);
+  --orange:#f97316;--orange-bg:rgba(249,115,22,0.12);
+  --blue:#3b82f6;--blue-bg:rgba(59,130,246,0.12);
+  --yellow:#eab308;--yellow-bg:rgba(234,179,8,0.12);
+  --pink:#ec4899;--pink-bg:rgba(236,72,153,0.12);
+  --sidebar-w:240px;--radius:14px;--radius-sm:10px;
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);display:flex;height:100vh;overflow:hidden;}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar-w);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;z-index:10;}
+.sidebar-brand{padding:24px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);}
+.brand-icon{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--primary),var(--pink));display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#fff;}
+.brand-name{font-size:17px;font-weight:800;letter-spacing:-0.3px;}
+.brand-name span{color:var(--primary-light);}
+.sidebar-nav{flex:1;padding:16px 12px;overflow-y:auto;}
+.nav-section{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:1.5px;padding:16px 12px 8px;text-transform:uppercase;}
+.nav-item{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:var(--radius-sm);cursor:pointer;font-size:13.5px;font-weight:500;color:var(--text2);transition:all .15s;margin-bottom:2px;}
+.nav-item:hover{background:rgba(255,255,255,0.04);color:var(--text);}
+.nav-item.active{background:var(--primary-bg);color:var(--primary-light);font-weight:600;}
+.nav-item svg{width:18px;height:18px;flex-shrink:0;}
+.sidebar-footer{padding:16px;border-top:1px solid var(--border);}
+.user-pill{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--radius-sm);background:rgba(255,255,255,0.03);}
+.user-avatar{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--green),var(--blue));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;}
+.user-info{font-size:12px;}
+.user-info div:first-child{font-weight:600;color:var(--text);}
+.user-info div:last-child{color:var(--text3);font-size:11px;}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 28px;border-bottom:1px solid var(--border);background:var(--bg2);flex-shrink:0;}
+.topbar h2{font-size:20px;font-weight:800;letter-spacing:-0.3px;}
+.topbar-actions{display:flex;align-items:center;gap:12px;}
+.topbar-btn{padding:8px 16px;border-radius:var(--radius-sm);border:1px solid var(--border);background:transparent;color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;font-family:inherit;}
+.topbar-btn:hover{border-color:var(--primary);color:var(--primary-light);}
+.topbar-btn.primary{background:var(--primary);border-color:var(--primary);color:#fff;}
+.topbar-btn.primary:hover{background:var(--primary-light);}
+.content{flex:1;overflow-y:auto;padding:24px 28px;}
+
+/* PAGE VISIBILITY */
+.page{display:none;}
+.page.active{display:block;}
+.page-pos.active{display:flex;}
+
+/* STATS GRID */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;transition:all .2s;}
+.stat-card:hover{border-color:rgba(255,255,255,0.1);transform:translateY(-2px);}
+.stat-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:14px;}
+.stat-value{font-size:28px;font-weight:800;letter-spacing:-1px;}
+.stat-label{font-size:12px;color:var(--text2);margin-top:4px;}
+.stat-change{font-size:11px;font-weight:600;margin-top:8px;display:inline-flex;align-items:center;gap:3px;padding:3px 8px;border-radius:20px;}
+.stat-up{color:var(--green);background:var(--green-bg);}
+.stat-down{color:var(--red);background:var(--red-bg);}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.card-header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--border);}
+.card-header h3{font-size:15px;font-weight:700;}
+.card-body{padding:20px;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:24px;}
+
+/* CHART PLACEHOLDER */
+.chart-area{height:200px;background:linear-gradient(180deg,rgba(99,102,241,0.08) 0%,transparent 100%);border-radius:var(--radius-sm);position:relative;overflow:hidden;display:flex;align-items:flex-end;padding:0 8px;gap:4px;}
+.chart-bar{flex:1;border-radius:6px 6px 0 0;background:linear-gradient(180deg,var(--primary),rgba(99,102,241,0.3));transition:height .5s;min-height:8px;position:relative;}
+.chart-bar:hover{background:linear-gradient(180deg,var(--primary-light),rgba(99,102,241,0.5));}
+.chart-labels{display:flex;padding:8px 8px 0;gap:4px;}
+.chart-labels span{flex:1;text-align:center;font-size:10px;color:var(--text3);}
+
+/* TABLE */
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;}
+th{text-align:left;padding:12px 16px;font-size:11px;font-weight:700;color:var(--text3);letter-spacing:0.5px;text-transform:uppercase;border-bottom:1px solid var(--border);}
+td{padding:12px 16px;font-size:13px;border-bottom:1px solid rgba(255,255,255,0.03);}
+tr:hover td{background:rgba(255,255,255,0.02);}
+.badge{display:inline-block;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;}
+.badge-green{color:var(--green);background:var(--green-bg);}
+.badge-red{color:var(--red);background:var(--red-bg);}
+.badge-orange{color:var(--orange);background:var(--orange-bg);}
+.badge-blue{color:var(--blue);background:var(--blue-bg);}
+
+/* TOP ITEMS */
+.top-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.03);}
+.top-item:last-child{border:none;}
+.top-item-info{display:flex;align-items:center;gap:12px;}
+.top-item-rank{width:24px;height:24px;border-radius:8px;background:var(--primary-bg);color:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;}
+.top-item-name{font-size:13px;font-weight:600;}
+.top-item-cat{font-size:11px;color:var(--text3);}
+.top-item-count{font-size:14px;font-weight:700;color:var(--primary-light);}
+
+/* ====== POS SCREEN ====== */
+.page-pos{height:100%;overflow:hidden;gap:0;}
+.pos-left{flex:1;display:flex;flex-direction:column;overflow:hidden;border-right:1px solid var(--border);}
+.pos-header{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.pos-search{flex:1;padding:10px 16px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:13px;font-family:inherit;outline:none;transition:border .15s;}
+.pos-search:focus{border-color:var(--primary);}
+.pos-search::placeholder{color:var(--text3);}
+
+.pos-categories{display:flex;gap:8px;padding:14px 20px;border-bottom:1px solid var(--border);flex-shrink:0;overflow-x:auto;}
+.pos-cat{padding:8px 18px;border-radius:30px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .15s;font-family:inherit;}
+.pos-cat:hover{border-color:rgba(255,255,255,0.15);color:var(--text);}
+.pos-cat.active{background:var(--primary);border-color:var(--primary);color:#fff;}
+
+.pos-products{flex:1;overflow-y:auto;padding:16px 20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;align-content:start;}
+.pos-product{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;cursor:pointer;transition:all .15s;text-align:center;}
+.pos-product:hover{border-color:var(--primary);transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,0.2);}
+.pos-product.in-cart{border-color:var(--primary);background:var(--primary-bg);}
+.pos-product-img{width:56px;height:56px;border-radius:12px;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:28px;}
+.pos-product-name{font-size:12.5px;font-weight:600;margin-bottom:4px;line-height:1.3;}
+.pos-product-price{font-size:14px;font-weight:800;color:var(--primary-light);}
+
+/* CART */
+.pos-right{width:380px;display:flex;flex-direction:column;background:var(--bg2);flex-shrink:0;}
+.cart-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.cart-header h3{font-size:15px;font-weight:700;}
+.cart-count{background:var(--primary);color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;}
+.cart-items{flex:1;overflow-y:auto;padding:8px 16px;}
+.cart-item{display:flex;align-items:center;gap:12px;padding:12px 8px;border-bottom:1px solid rgba(255,255,255,0.04);}
+.cart-item-info{flex:1;min-width:0;}
+.cart-item-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cart-item-price{font-size:11px;color:var(--text3);margin-top:2px;}
+.cart-qty{display:flex;align-items:center;gap:6px;}
+.cart-qty button{width:28px;height:28px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .1s;font-family:inherit;}
+.cart-qty button:hover{border-color:var(--primary);color:var(--primary-light);}
+.cart-qty span{font-size:14px;font-weight:700;min-width:20px;text-align:center;}
+.cart-item-total{font-size:14px;font-weight:700;min-width:65px;text-align:right;}
+.cart-item-remove{width:24px;height:24px;border-radius:6px;border:none;background:var(--red-bg);color:var(--red);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .1s;}
+.cart-item-remove:hover{background:var(--red);color:#fff;}
+
+.cart-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--text3);font-size:13px;gap:8px;}
+.cart-empty-icon{font-size:48px;opacity:0.3;}
+
+.cart-footer{padding:16px 20px;border-top:1px solid var(--border);flex-shrink:0;}
+.cart-totals{margin-bottom:16px;}
+.cart-row{display:flex;justify-content:space-between;padding:6px 0;font-size:13px;color:var(--text2);}
+.cart-row.total{font-size:18px;font-weight:800;color:var(--text);padding:10px 0 0;border-top:1px solid var(--border);margin-top:6px;}
+.cart-row .discount{color:var(--green);}
+.cart-actions{display:flex;gap:8px;}
+.cart-btn{flex:1;padding:12px;border-radius:var(--radius-sm);border:1px solid var(--border);background:transparent;color:var(--text2);font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;font-family:inherit;}
+.cart-btn:hover{border-color:rgba(255,255,255,0.15);color:var(--text);}
+.cart-btn.print{background:var(--green);border-color:var(--green);color:#fff;font-size:13px;}
+.cart-btn.print:hover{background:#16a34a;}
+
+.quick-qty{display:flex;gap:6px;padding:12px 20px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.quick-qty button{padding:6px 14px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:12px;font-weight:700;cursor:pointer;transition:all .1s;font-family:inherit;}
+.quick-qty button:hover{border-color:var(--primary);color:var(--primary-light);background:var(--primary-bg);}
+.quick-qty button.active{background:var(--primary);border-color:var(--primary);color:#fff;}
+
+/* BILL MODAL */
+.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:100;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.modal-overlay.show{display:flex;}
+.bill-modal{background:#fff;border-radius:var(--radius);width:340px;max-height:90vh;overflow-y:auto;}
+.bill-receipt{padding:24px 20px;color:#111;font-size:12px;line-height:1.5;}
+.bill-receipt .hotel-name{text-align:center;font-size:16px;font-weight:800;margin-bottom:2px;}
+.bill-receipt .hotel-addr{text-align:center;font-size:11px;color:#666;margin-bottom:2px;}
+.bill-receipt .hotel-phone{text-align:center;font-size:11px;color:#666;margin-bottom:12px;}
+.bill-receipt .divider{border:none;border-top:1px dashed #ccc;margin:10px 0;}
+.bill-receipt .bill-info{display:flex;justify-content:space-between;font-size:11px;color:#555;}
+.bill-receipt table{width:100%;margin:10px 0;}
+.bill-receipt th{text-align:left;font-size:11px;font-weight:700;border-bottom:1px solid #ddd;padding:4px 0;color:#333;text-transform:none;letter-spacing:0;}
+.bill-receipt td{padding:4px 0;font-size:12px;border-bottom:none;color:#333;}
+.bill-receipt td:last-child{text-align:right;}
+.bill-receipt .total-row{font-weight:800;font-size:14px;border-top:1px dashed #ccc;padding-top:6px;}
+.bill-receipt .footer-msg{text-align:center;font-size:11px;color:#888;margin-top:12px;}
+.bill-receipt .copy-label{text-align:center;font-size:10px;font-weight:700;color:#aaa;letter-spacing:2px;margin-bottom:8px;}
+.bill-close{display:block;width:100%;padding:12px;border:none;background:var(--bg);color:var(--text);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;border-radius:0 0 var(--radius) var(--radius);}
+.bill-close:hover{background:var(--bg2);}
+
+/* ITEMS MANAGEMENT */
+.items-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;}
+.item-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;transition:all .2s;}
+.item-card:hover{border-color:rgba(255,255,255,0.1);}
+.item-card-top{display:flex;align-items:center;gap:14px;margin-bottom:14px;}
+.item-card-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;}
+.item-card-name{font-size:14px;font-weight:700;}
+.item-card-cat{font-size:11px;color:var(--text3);}
+.item-card-bottom{display:flex;align-items:center;justify-content:space-between;}
+.item-card-price{font-size:16px;font-weight:800;color:var(--primary-light);}
+
+/* CATEGORY PILLS */
+.cat-grid{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px;}
+.cat-pill{display:flex;align-items:center;gap:10px;padding:12px 18px;border-radius:var(--radius);border:1px solid var(--border);background:var(--card);transition:all .2s;cursor:pointer;}
+.cat-pill:hover{border-color:rgba(255,255,255,0.1);}
+.cat-dot{width:10px;height:10px;border-radius:50%;}
+.cat-name{font-size:13px;font-weight:600;}
+.cat-count{font-size:11px;color:var(--text3);margin-left:auto;}
+
+/* EXPENSE */
+.expense-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:24px;}
+.expense-card{padding:16px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--card);}
+.expense-card-label{font-size:11px;color:var(--text3);margin-bottom:6px;}
+.expense-card-value{font-size:20px;font-weight:800;}
+
+/* SETTINGS */
+.settings-group{margin-bottom:24px;}
+.settings-group h4{font-size:14px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:8px;background:var(--card);}
+.setting-label{font-size:13px;font-weight:500;}
+.setting-label span{display:block;font-size:11px;color:var(--text3);margin-top:2px;}
+.setting-value{font-size:13px;font-weight:600;color:var(--primary-light);text-align:right;}
+.toggle{width:42px;height:24px;border-radius:12px;background:var(--border);position:relative;cursor:pointer;transition:background .2s;}
+.toggle.on{background:var(--green);}
+.toggle::after{content:'';width:18px;height:18px;border-radius:50%;background:#fff;position:absolute;top:3px;left:3px;transition:left .2s;}
+.toggle.on::after{left:21px;}
+
+/* HELD BILLS */
+.held-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;}
+.held-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;transition:all .2s;cursor:pointer;}
+.held-card:hover{border-color:var(--primary);transform:translateY(-2px);}
+.held-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.held-card-id{font-size:14px;font-weight:700;}
+.held-card-time{font-size:11px;color:var(--text3);}
+.held-card-items{font-size:12px;color:var(--text2);margin-bottom:12px;}
+.held-card-total{font-size:18px;font-weight:800;color:var(--primary-light);}
+
+/* whitelabel */
+.whitelabel{position:fixed;bottom:8px;right:12px;font-size:10px;color:rgba(255,255,255,0.15);letter-spacing:1px;z-index:999;}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-icon">H</div>
+    <div class="brand-name">Hotel<span>POS</span></div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-section">Main</div>
+    <div class="nav-item active" onclick="showPage('dashboard',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Dashboard
+    </div>
+    <div class="nav-item" onclick="showPage('pos',this)" style="background:linear-gradient(135deg,rgba(34,197,94,0.08),rgba(34,197,94,0.02));border:1px solid rgba(34,197,94,0.15);margin:8px 0;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+      <span style="font-weight:700;color:var(--green);">POS Terminal</span>
+    </div>
+    <div class="nav-item" onclick="showPage('held',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      Hold Bills
+    </div>
+    <div class="nav-item" onclick="showPage('history',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+      Sales History
+    </div>
+    <div class="nav-section">Management</div>
+    <div class="nav-item" onclick="showPage('items',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      Items
+    </div>
+    <div class="nav-item" onclick="showPage('categories',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"/></svg>
+      Categories
+    </div>
+    <div class="nav-section">Reports</div>
+    <div class="nav-item" onclick="showPage('reports',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+      Reports
+    </div>
+    <div class="nav-item" onclick="showPage('expenses',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      Expenses
+    </div>
+    <div class="nav-section">System</div>
+    <div class="nav-item" onclick="showPage('users',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Users
+    </div>
+    <div class="nav-item" onclick="showPage('settings',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      Settings
+    </div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-pill">
+      <div class="user-avatar">A</div>
+      <div class="user-info"><div>Admin</div><div>Full Access</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+
+<!-- ===== DASHBOARD ===== -->
+<div class="page active" id="page-dashboard">
+<div class="topbar"><h2>Dashboard</h2><div class="topbar-actions"><div class="topbar-btn">Today: Jun 22, 2026</div></div></div>
+<div class="content">
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon" style="background:var(--green-bg);color:var(--green);">&#128176;</div>
+      <div class="stat-value">Rs. 47,850</div>
+      <div class="stat-label">Today's Sales</div>
+      <div class="stat-change stat-up">&#9650; 12.5% vs yesterday</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="background:var(--blue-bg);color:var(--blue);">&#128196;</div>
+      <div class="stat-value">64</div>
+      <div class="stat-label">Total Bills</div>
+      <div class="stat-change stat-up">&#9650; 8 more</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="background:var(--orange-bg);color:var(--orange);">&#128200;</div>
+      <div class="stat-value">Rs. 748</div>
+      <div class="stat-label">Average Bill</div>
+      <div class="stat-change stat-down">&#9660; 2.1%</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="background:var(--pink-bg);color:var(--pink);">&#127860;</div>
+      <div class="stat-value">312</div>
+      <div class="stat-label">Items Sold</div>
+      <div class="stat-change stat-up">&#9650; 15.3%</div>
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><h3>Sales This Week</h3><div class="topbar-btn" style="font-size:11px;">Weekly</div></div>
+      <div class="card-body">
+        <div class="chart-area">
+          <div class="chart-bar" style="height:60%"></div>
+          <div class="chart-bar" style="height:75%"></div>
+          <div class="chart-bar" style="height:45%"></div>
+          <div class="chart-bar" style="height:85%"></div>
+          <div class="chart-bar" style="height:70%"></div>
+          <div class="chart-bar" style="height:55%"></div>
+          <div class="chart-bar" style="height:90%"></div>
+        </div>
+        <div class="chart-labels"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h3>Top Selling Items</h3><div class="topbar-btn" style="font-size:11px;">Today</div></div>
+      <div class="card-body">
+        <div class="top-item"><div class="top-item-info"><div class="top-item-rank">1</div><div><div class="top-item-name">Chicken Kottu</div><div class="top-item-cat">Kottu</div></div></div><div class="top-item-count">85</div></div>
+        <div class="top-item"><div class="top-item-info"><div class="top-item-rank">2</div><div><div class="top-item-name">Plain Tea</div><div class="top-item-cat">Drinks</div></div></div><div class="top-item-count">110</div></div>
+        <div class="top-item"><div class="top-item-info"><div class="top-item-rank">3</div><div><div class="top-item-name">Rice & Curry</div><div class="top-item-cat">Rice & Curry</div></div></div><div class="top-item-count">60</div></div>
+        <div class="top-item"><div class="top-item-info"><div class="top-item-rank">4</div><div><div class="top-item-name">Fish Bun</div><div class="top-item-cat">Short Eats</div></div></div><div class="top-item-count">48</div></div>
+        <div class="top-item"><div class="top-item-info"><div class="top-item-rank">5</div><div><div class="top-item-name">Iced Coffee</div><div class="top-item-cat">Drinks</div></div></div><div class="top-item-count">42</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header"><h3>Recent Bills</h3><div class="topbar-btn" style="font-size:11px;">View All</div></div>
+    <div class="card-body"><div class="table-wrap">
+      <table>
+        <thead><tr><th>Bill #</th><th>Time</th><th>Items</th><th>Amount</th><th>Cashier</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600;color:var(--primary-light);">#0064</td><td>02:45 PM</td><td>5 items</td><td style="font-weight:700;">Rs. 1,250</td><td>Cashier A</td><td><span class="badge badge-green">Paid</span></td></tr>
+          <tr><td style="font-weight:600;color:var(--primary-light);">#0063</td><td>02:30 PM</td><td>3 items</td><td style="font-weight:700;">Rs. 850</td><td>Cashier B</td><td><span class="badge badge-green">Paid</span></td></tr>
+          <tr><td style="font-weight:600;color:var(--primary-light);">#0062</td><td>02:15 PM</td><td>8 items</td><td style="font-weight:700;">Rs. 2,400</td><td>Cashier A</td><td><span class="badge badge-green">Paid</span></td></tr>
+          <tr><td style="font-weight:600;color:var(--primary-light);">#0061</td><td>01:50 PM</td><td>2 items</td><td style="font-weight:700;">Rs. 380</td><td>Cashier A</td><td><span class="badge badge-orange">Hold</span></td></tr>
+          <tr><td style="font-weight:600;color:var(--primary-light);">#0060</td><td>01:30 PM</td><td>4 items</td><td style="font-weight:700;">Rs. 960</td><td>Cashier B</td><td><span class="badge badge-green">Paid</span></td></tr>
+        </tbody>
+      </table>
+    </div></div>
+  </div>
+</div>
+</div>
+
+<!-- ===== POS SCREEN ===== -->
+<div class="page page-pos" id="page-pos">
+  <div class="pos-left">
+    <div class="pos-header">
+      <input class="pos-search" placeholder="&#128269; Search items..." oninput="filterProducts(this.value)">
+    </div>
+    <div class="pos-categories">
+      <button class="pos-cat active" onclick="filterCat('all',this)">All</button>
+      <button class="pos-cat" onclick="filterCat('breakfast',this)">&#127859; Breakfast</button>
+      <button class="pos-cat" onclick="filterCat('rice',this)">&#127834; Rice & Curry</button>
+      <button class="pos-cat" onclick="filterCat('kottu',this)">&#129379; Kottu</button>
+      <button class="pos-cat" onclick="filterCat('shorteats',this)">&#127838; Short Eats</button>
+      <button class="pos-cat" onclick="filterCat('drinks',this)">&#9749; Drinks</button>
+      <button class="pos-cat" onclick="filterCat('desserts',this)">&#127846; Desserts</button>
+    </div>
+    <div class="quick-qty">
+      <span style="font-size:11px;color:var(--text3);padding:6px 0;font-weight:600;">Quick Add:</span>
+      <button class="active" onclick="setQty(1,this)">+1</button>
+      <button onclick="setQty(2,this)">+2</button>
+      <button onclick="setQty(5,this)">+5</button>
+      <button onclick="setQty(10,this)">+10</button>
+    </div>
+    <div class="pos-products" id="posProducts"></div>
+  </div>
+  <div class="pos-right">
+    <div class="cart-header">
+      <h3>&#128722; Current Order</h3>
+      <span class="cart-count" id="cartCount">0</span>
+    </div>
+    <div class="cart-items" id="cartItems">
+      <div class="cart-empty"><div class="cart-empty-icon">&#128722;</div>No items yet<br><span style="font-size:11px;">Tap products to add</span></div>
+    </div>
+    <div class="cart-footer">
+      <div class="cart-totals">
+        <div class="cart-row"><span>Subtotal</span><span id="cartSubtotal">Rs. 0.00</span></div>
+        <div class="cart-row"><span>VAT (0%)</span><span>Rs. 0.00</span></div>
+        <div class="cart-row"><span>Discount</span><span class="discount" id="cartDiscount">- Rs. 0.00</span></div>
+        <div class="cart-row total"><span>Grand Total</span><span id="cartTotal">Rs. 0.00</span></div>
+      </div>
+      <div class="cart-actions">
+        <button class="cart-btn" onclick="holdBill()">&#128338; Hold</button>
+        <button class="cart-btn" onclick="clearCart()">&#128465; Clear</button>
+        <button class="cart-btn print" onclick="printBill()">&#128424; Print Bill</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== HOLD BILLS ===== -->
+<div class="page" id="page-held">
+<div class="topbar"><h2>Hold Bills</h2><div class="topbar-actions"><span style="font-size:13px;color:var(--text2);">3 bills on hold</span></div></div>
+<div class="content">
+  <div class="held-grid">
+    <div class="held-card">
+      <div class="held-card-top"><div class="held-card-id">#HOLD-001</div><div class="held-card-time">12:30 PM</div></div>
+      <div class="held-card-items">3 items - Chicken Kottu, Plain Tea x2</div>
+      <div class="held-card-total">Rs. 1,050</div>
+    </div>
+    <div class="held-card">
+      <div class="held-card-top"><div class="held-card-id">#HOLD-002</div><div class="held-card-time">01:15 PM</div></div>
+      <div class="held-card-items">5 items - Rice & Curry x2, Iced Coffee x3</div>
+      <div class="held-card-total">Rs. 2,350</div>
+    </div>
+    <div class="held-card">
+      <div class="held-card-top"><div class="held-card-id">#HOLD-003</div><div class="held-card-time">02:00 PM</div></div>
+      <div class="held-card-items">2 items - Egg Hopper x2</div>
+      <div class="held-card-total">Rs. 320</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ===== SALES HISTORY ===== -->
+<div class="page" id="page-history">
+<div class="topbar"><h2>Sales History</h2><div class="topbar-actions"><div class="topbar-btn">&#128197; Jun 1 - Jun 22</div><div class="topbar-btn">Export</div></div></div>
+<div class="content">
+  <div class="card">
+    <div class="card-body"><div class="table-wrap">
+      <table>
+        <thead><tr><th>Bill #</th><th>Date</th><th>Time</th><th>Items</th><th>Total</th><th>Cashier</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600;color:var(--primary-light);">#0064</td><td>Jun 22</td><td>02:45 PM</td><td>5</td><td style="font-weight:700;">Rs. 1,250</td><td>Cashier A</td><td><span class="badge badge-green">Paid</span></td></tr>
+          <tr><td style="font-weight:600;color:var(--primary-light);">#0063</td><td>Jun 22</td><td>02:30 PM</td><td>3</td><td style="font-weight:700;">Rs. 850</td><td>Cashier B</td><td><span class="badge badge-green">Paid</span></td></tr>
+          <tr><td style="font-weight:600;color:var(--primary-light);">#0062</td><td>Jun 22</td><td>02:15 PM</td><td>8</td><td style="font-weight:700;">Rs. 2,400</td><td>Cashier A</td><td><span class="badge badge-green">Paid</span></td></tr>
+          <tr><td style="font-weight:600;color:var(--primary-light);">#0061</td><td>Jun 22</td><td>01:50 PM</td><td>2</td><td style="font-weight:700;">Rs. 380</td><td>Cashier A</td><td><span class="badge badge-orange">Hold</span></td></tr>
+          <tr><td style="font-weight:600;color:var(--primary-light);">#0060</td><td>Jun 22</td><td>01:30 PM</td><td>4</td><td style="font-weight:700;">Rs. 960</td><td>Cashier B</td><td><span class="badge badge-green">Paid</span></td></tr>
+          <tr><td style="font-weight:600;color:var(--primary-light);">#0059</td><td>Jun 21</td><td>08:15 PM</td><td>6</td><td style="font-weight:700;">Rs. 1,780</td><td>Cashier A</td><td><span class="badge badge-green">Paid</span></td></tr>
+          <tr><td style="font-weight:600;color:var(--primary-light);">#0058</td><td>Jun 21</td><td>07:40 PM</td><td>3</td><td style="font-weight:700;">Rs. 650</td><td>Cashier B</td><td><span class="badge badge-red">Cancelled</span></td></tr>
+          <tr><td style="font-weight:600;color:var(--primary-light);">#0057</td><td>Jun 21</td><td>06:30 PM</td><td>10</td><td style="font-weight:700;">Rs. 3,200</td><td>Cashier A</td><td><span class="badge badge-green">Paid</span></td></tr>
+        </tbody>
+      </table>
+    </div></div>
+  </div>
+</div>
+</div>
+
+<!-- ===== ITEMS ===== -->
+<div class="page" id="page-items">
+<div class="topbar"><h2>Item Management</h2><div class="topbar-actions"><div class="topbar-btn primary">+ Add Item</div></div></div>
+<div class="content">
+  <div class="items-grid" id="itemsGrid"></div>
+</div>
+</div>
+
+<!-- ===== CATEGORIES ===== -->
+<div class="page" id="page-categories">
+<div class="topbar"><h2>Category Management</h2><div class="topbar-actions"><div class="topbar-btn primary">+ Add Category</div></div></div>
+<div class="content">
+  <div class="cat-grid">
+    <div class="cat-pill"><div class="cat-dot" style="background:#f97316;"></div><div class="cat-name">Breakfast</div><div class="cat-count">8 items</div></div>
+    <div class="cat-pill"><div class="cat-dot" style="background:#22c55e;"></div><div class="cat-name">Rice & Curry</div><div class="cat-count">6 items</div></div>
+    <div class="cat-pill"><div class="cat-dot" style="background:#ef4444;"></div><div class="cat-name">Kottu</div><div class="cat-count">5 items</div></div>
+    <div class="cat-pill"><div class="cat-dot" style="background:#eab308;"></div><div class="cat-name">Short Eats</div><div class="cat-count">10 items</div></div>
+    <div class="cat-pill"><div class="cat-dot" style="background:#3b82f6;"></div><div class="cat-name">Drinks</div><div class="cat-count">12 items</div></div>
+    <div class="cat-pill"><div class="cat-dot" style="background:#ec4899;"></div><div class="cat-name">Desserts</div><div class="cat-count">7 items</div></div>
+  </div>
+</div>
+</div>
+
+<!-- ===== REPORTS ===== -->
+<div class="page" id="page-reports">
+<div class="topbar"><h2>Reports</h2><div class="topbar-actions"><div class="topbar-btn">&#128197; This Month</div><div class="topbar-btn">&#128424; Export PDF</div></div></div>
+<div class="content">
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-icon" style="background:var(--green-bg);color:var(--green);">&#128176;</div><div class="stat-value">Rs. 847,200</div><div class="stat-label">Monthly Sales</div></div>
+    <div class="stat-card"><div class="stat-icon" style="background:var(--blue-bg);color:var(--blue);">&#128196;</div><div class="stat-value">1,132</div><div class="stat-label">Total Bills</div></div>
+    <div class="stat-card"><div class="stat-icon" style="background:var(--orange-bg);color:var(--orange);">&#128200;</div><div class="stat-value">Rs. 748</div><div class="stat-label">Avg Bill Value</div></div>
+    <div class="stat-card"><div class="stat-icon" style="background:var(--red-bg);color:var(--red);">&#128181;</div><div class="stat-value">Rs. 312,500</div><div class="stat-label">Monthly Expenses</div></div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><h3>Item-wise Sales</h3></div>
+      <div class="card-body">
+        <div class="top-item"><div class="top-item-info"><div class="top-item-rank">1</div><div><div class="top-item-name">Chicken Kottu</div></div></div><div class="top-item-count">1,420</div></div>
+        <div class="top-item"><div class="top-item-info"><div class="top-item-rank">2</div><div><div class="top-item-name">Plain Tea</div></div></div><div class="top-item-count">2,340</div></div>
+        <div class="top-item"><div class="top-item-info"><div class="top-item-rank">3</div><div><div class="top-item-name">Rice & Curry</div></div></div><div class="top-item-count">980</div></div>
+        <div class="top-item"><div class="top-item-info"><div class="top-item-rank">4</div><div><div class="top-item-name">Fish Bun</div></div></div><div class="top-item-count">870</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h3>User-wise Sales</h3></div>
+      <div class="card-body">
+        <div class="top-item"><div class="top-item-info"><div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--blue));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;">A</div><div><div class="top-item-name">Cashier A</div><div class="top-item-cat">632 bills</div></div></div><div class="top-item-count">Rs. 472,800</div></div>
+        <div class="top-item"><div class="top-item-info"><div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--green),var(--blue));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;">B</div><div><div class="top-item-name">Cashier B</div><div class="top-item-cat">500 bills</div></div></div><div class="top-item-count">Rs. 374,400</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ===== EXPENSES ===== -->
+<div class="page" id="page-expenses">
+<div class="topbar"><h2>Expenses</h2><div class="topbar-actions"><div class="topbar-btn primary">+ Add Expense</div></div></div>
+<div class="content">
+  <div class="expense-cards">
+    <div class="expense-card"><div class="expense-card-label">Today's Expenses</div><div class="expense-card-value" style="color:var(--red);">Rs. 12,500</div></div>
+    <div class="expense-card"><div class="expense-card-label">Monthly Expenses</div><div class="expense-card-value" style="color:var(--orange);">Rs. 312,500</div></div>
+    <div class="expense-card"><div class="expense-card-label">Monthly Revenue</div><div class="expense-card-value" style="color:var(--green);">Rs. 847,200</div></div>
+    <div class="expense-card"><div class="expense-card-label">Net Profit</div><div class="expense-card-value" style="color:var(--primary-light);">Rs. 534,700</div></div>
+  </div>
+  <div class="card">
+    <div class="card-header"><h3>Recent Expenses</h3></div>
+    <div class="card-body"><div class="table-wrap">
+      <table>
+        <thead><tr><th>Description</th><th>Category</th><th>Amount</th><th>Date</th></tr></thead>
+        <tbody>
+          <tr><td>Electricity Bill</td><td><span class="badge badge-blue">Utilities</span></td><td style="font-weight:700;color:var(--red);">Rs. 8,500</td><td>Jun 22</td></tr>
+          <tr><td>Gas Cylinders x3</td><td><span class="badge badge-orange">Kitchen</span></td><td style="font-weight:700;color:var(--red);">Rs. 4,500</td><td>Jun 21</td></tr>
+          <tr><td>Staff Salaries</td><td><span class="badge badge-green">Salaries</span></td><td style="font-weight:700;color:var(--red);">Rs. 180,000</td><td>Jun 20</td></tr>
+          <tr><td>Kitchen Maintenance</td><td><span class="badge badge-orange">Maintenance</span></td><td style="font-weight:700;color:var(--red);">Rs. 12,000</td><td>Jun 18</td></tr>
+          <tr><td>Water Bill</td><td><span class="badge badge-blue">Utilities</span></td><td style="font-weight:700;color:var(--red);">Rs. 3,200</td><td>Jun 15</td></tr>
+        </tbody>
+      </table>
+    </div></div>
+  </div>
+</div>
+</div>
+
+<!-- ===== USERS ===== -->
+<div class="page" id="page-users">
+<div class="topbar"><h2>User Management</h2><div class="topbar-actions"><div class="topbar-btn primary">+ Add User</div></div></div>
+<div class="content">
+  <div class="card">
+    <div class="card-body"><div class="table-wrap">
+      <table>
+        <thead><tr><th>User</th><th>Role</th><th>Permissions</th><th>Bills Today</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td><div style="display:flex;align-items:center;gap:10px;"><div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--pink));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;">A</div><div><div style="font-weight:600;">Admin</div><div style="font-size:11px;color:var(--text3);">admin@hotel.com</div></div></div></td><td><span class="badge badge-blue">Admin</span></td><td style="font-size:12px;color:var(--text2);">Full Access</td><td>28</td><td><span class="badge badge-green">Online</span></td></tr>
+          <tr><td><div style="display:flex;align-items:center;gap:10px;"><div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--green),var(--blue));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;">A</div><div><div style="font-weight:600;">Cashier A</div><div style="font-size:11px;color:var(--text3);">cashiera@hotel.com</div></div></div></td><td><span class="badge badge-green">Cashier</span></td><td style="font-size:12px;color:var(--text2);">Bills, Print, History</td><td>22</td><td><span class="badge badge-green">Online</span></td></tr>
+          <tr><td><div style="display:flex;align-items:center;gap:10px;"><div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--orange),var(--yellow));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;">B</div><div><div style="font-weight:600;">Cashier B</div><div style="font-size:11px;color:var(--text3);">cashierb@hotel.com</div></div></div></td><td><span class="badge badge-green">Cashier</span></td><td style="font-size:12px;color:var(--text2);">Bills, Print, History</td><td>14</td><td><span class="badge badge-orange">Away</span></td></tr>
+        </tbody>
+      </table>
+    </div></div>
+  </div>
+</div>
+</div>
+
+<!-- ===== SETTINGS ===== -->
+<div class="page" id="page-settings">
+<div class="topbar"><h2>Settings</h2><div class="topbar-actions"><div class="topbar-btn primary">Save Changes</div></div></div>
+<div class="content">
+  <div class="settings-group">
+    <h4>&#127978; Hotel Information</h4>
+    <div class="setting-row"><div class="setting-label">Hotel Name<span>Displayed on receipts</span></div><div class="setting-value">Lakeside Grand Hotel</div></div>
+    <div class="setting-row"><div class="setting-label">Address<span>Receipt address line</span></div><div class="setting-value">No. 45, Galle Road, Colombo 03</div></div>
+    <div class="setting-row"><div class="setting-label">Telephone<span>Contact number</span></div><div class="setting-value">+94 11 234 5678</div></div>
+    <div class="setting-row"><div class="setting-label">Receipt Footer<span>Bottom message</span></div><div class="setting-value">Thank you! Visit again!</div></div>
+  </div>
+  <div class="settings-group">
+    <h4>&#128176; Tax Settings</h4>
+    <div class="setting-row"><div class="setting-label">VAT<span>Value Added Tax percentage</span></div><div class="setting-value">0%</div></div>
+    <div class="setting-row"><div class="setting-label">Service Charge<span>Applied to all bills</span></div><div class="setting-value">0%</div></div>
+  </div>
+  <div class="settings-group">
+    <h4>&#128424; Printer Settings</h4>
+    <div class="setting-row"><div class="setting-label">Paper Size<span>Thermal printer paper width</span></div><div class="setting-value">80mm</div></div>
+    <div class="setting-row"><div class="setting-label">Auto-Print Two Copies<span>Customer + Kitchen copy</span></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+    <div class="setting-row"><div class="setting-label">Customer Copy First<span>Print customer copy before kitchen</span></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+  </div>
+</div>
+</div>
+
+</div><!-- end .main -->
+
+<!-- BILL MODAL -->
+<div class="modal-overlay" id="billModal">
+  <div class="bill-modal">
+    <div class="bill-receipt" id="billReceipt"></div>
+    <button class="bill-close" onclick="closeBill()">&#10005; Close Preview</button>
+  </div>
+</div>
+
+<div class="whitelabel">whitelabel@alfaasolutions</div>
+
+<script>
+const PRODUCTS = [
+  {id:1,name:'Egg Hopper',cat:'breakfast',price:80,emoji:'&#127859;'},
+  {id:2,name:'String Hoppers',cat:'breakfast',price:120,emoji:'&#127834;'},
+  {id:3,name:'Milk Rice',cat:'breakfast',price:150,emoji:'&#127858;'},
+  {id:4,name:'Roti & Curry',cat:'breakfast',price:180,emoji:'&#129380;'},
+  {id:5,name:'Pol Roti',cat:'breakfast',price:60,emoji:'&#129380;'},
+  {id:6,name:'Omelette',cat:'breakfast',price:100,emoji:'&#127859;'},
+  {id:7,name:'Rice & Curry',cat:'rice',price:350,emoji:'&#127834;'},
+  {id:8,name:'Fried Rice',cat:'rice',price:450,emoji:'&#127834;'},
+  {id:9,name:'Biryani',cat:'rice',price:550,emoji:'&#127834;'},
+  {id:10,name:'Nasi Goreng',cat:'rice',price:480,emoji:'&#127834;'},
+  {id:11,name:'Chicken Kottu',cat:'kottu',price:500,emoji:'&#129379;'},
+  {id:12,name:'Cheese Kottu',cat:'kottu',price:600,emoji:'&#129379;'},
+  {id:13,name:'Egg Kottu',cat:'kottu',price:400,emoji:'&#129379;'},
+  {id:14,name:'Veg Kottu',cat:'kottu',price:350,emoji:'&#129379;'},
+  {id:15,name:'Dolphin Kottu',cat:'kottu',price:650,emoji:'&#129379;'},
+  {id:16,name:'Fish Bun',cat:'shorteats',price:60,emoji:'&#127838;'},
+  {id:17,name:'Veggie Patty',cat:'shorteats',price:50,emoji:'&#129385;'},
+  {id:18,name:'Cutlet',cat:'shorteats',price:70,emoji:'&#127830;'},
+  {id:19,name:'Samosa',cat:'shorteats',price:40,emoji:'&#129385;'},
+  {id:20,name:'Rolls',cat:'shorteats',price:80,emoji:'&#127838;'},
+  {id:21,name:'Wade',cat:'shorteats',price:30,emoji:'&#127839;'},
+  {id:22,name:'Plain Tea',cat:'drinks',price:50,emoji:'&#9749;'},
+  {id:23,name:'Milk Tea',cat:'drinks',price:80,emoji:'&#9749;'},
+  {id:24,name:'Iced Coffee',cat:'drinks',price:200,emoji:'&#129380;'},
+  {id:25,name:'Fresh Juice',cat:'drinks',price:250,emoji:'&#129380;'},
+  {id:26,name:'Faluda',cat:'drinks',price:300,emoji:'&#127864;'},
+  {id:27,name:'Lime Juice',cat:'drinks',price:120,emoji:'&#127819;'},
+  {id:28,name:'Watalappan',cat:'desserts',price:180,emoji:'&#127846;'},
+  {id:29,name:'Ice Cream',cat:'desserts',price:200,emoji:'&#127846;'},
+  {id:30,name:'Fruit Salad',cat:'desserts',price:250,emoji:'&#127815;'},
+];
+
+let cart = [];
+let quickQty = 1;
+let billNumber = 64;
+
+function renderProducts(filter='all', search='') {
+  const grid = document.getElementById('posProducts');
+  let items = PRODUCTS;
+  if(filter!=='all') items = items.filter(p=>p.cat===filter);
+  if(search) items = items.filter(p=>p.name.toLowerCase().includes(search.toLowerCase()));
+  grid.innerHTML = items.map(p=>{
+    const inCart = cart.find(c=>c.id===p.id);
+    return `<div class="pos-product ${inCart?'in-cart':''}" onclick="addToCart(${p.id})">
+      <div class="pos-product-img">${p.emoji}</div>
+      <div class="pos-product-name">${p.name}</div>
+      <div class="pos-product-price">Rs. ${p.price}</div>
+      ${inCart?`<div style="font-size:10px;color:var(--primary-light);margin-top:4px;font-weight:700;">x${inCart.qty} in cart</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+function renderCart() {
+  const el = document.getElementById('cartItems');
+  document.getElementById('cartCount').textContent = cart.reduce((s,i)=>s+i.qty,0);
+  if(!cart.length){
+    el.innerHTML='<div class="cart-empty"><div class="cart-empty-icon">&#128722;</div>No items yet<br><span style="font-size:11px;">Tap products to add</span></div>';
+    document.getElementById('cartSubtotal').textContent='Rs. 0.00';
+    document.getElementById('cartTotal').textContent='Rs. 0.00';
+    document.getElementById('cartDiscount').textContent='- Rs. 0.00';
+    return;
+  }
+  el.innerHTML = cart.map((item,i)=>`
+    <div class="cart-item">
+      <div class="cart-item-info">
+        <div class="cart-item-name">${item.name}</div>
+        <div class="cart-item-price">Rs. ${item.price} each</div>
+      </div>
+      <div class="cart-qty">
+        <button onclick="changeQty(${i},-1)">-</button>
+        <span>${item.qty}</span>
+        <button onclick="changeQty(${i},1)">+</button>
+      </div>
+      <div class="cart-item-total">Rs. ${(item.price*item.qty).toLocaleString()}</div>
+      <button class="cart-item-remove" onclick="removeItem(${i})">&#10005;</button>
+    </div>
+  `).join('');
+  const sub = cart.reduce((s,i)=>s+i.price*i.qty,0);
+  document.getElementById('cartSubtotal').textContent=`Rs. ${sub.toLocaleString()}`;
+  document.getElementById('cartTotal').textContent=`Rs. ${sub.toLocaleString()}`;
+}
+
+function addToCart(id) {
+  const prod = PRODUCTS.find(p=>p.id===id);
+  const existing = cart.find(c=>c.id===id);
+  if(existing) existing.qty += quickQty;
+  else cart.push({...prod, qty:quickQty});
+  renderCart(); renderProducts(currentCat, currentSearch);
+}
+
+function changeQty(idx,d) {
+  cart[idx].qty += d;
+  if(cart[idx].qty<=0) cart.splice(idx,1);
+  renderCart(); renderProducts(currentCat, currentSearch);
+}
+
+function removeItem(idx) {
+  cart.splice(idx,1);
+  renderCart(); renderProducts(currentCat, currentSearch);
+}
+
+function clearCart() { cart=[]; renderCart(); renderProducts(currentCat, currentSearch); }
+
+function holdBill() {
+  if(!cart.length) return;
+  clearCart();
+}
+
+let currentCat='all', currentSearch='';
+function filterCat(cat,el) {
+  currentCat=cat;
+  document.querySelectorAll('.pos-cat').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  renderProducts(cat, currentSearch);
+}
+function filterProducts(val) { currentSearch=val; renderProducts(currentCat, val); }
+function setQty(q,el) {
+  quickQty=q;
+  document.querySelectorAll('.quick-qty button:not(:first-child)').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function printBill() {
+  if(!cart.length) return;
+  billNumber++;
+  const sub = cart.reduce((s,i)=>s+i.price*i.qty,0);
+  const now = new Date();
+  const time = now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+  const date = 'Jun 22, 2026';
+  const itemRows = cart.map(i=>`<tr><td>${i.name}</td><td style="text-align:center;">${i.qty}</td><td style="text-align:right;">Rs. ${i.price}</td><td style="text-align:right;">Rs. ${(i.price*i.qty).toLocaleString()}</td></tr>`).join('');
+
+  document.getElementById('billReceipt').innerHTML = `
+    <div class="copy-label">--- CUSTOMER COPY ---</div>
+    <div class="hotel-name">Lakeside Grand Hotel</div>
+    <div class="hotel-addr">No. 45, Galle Road, Colombo 03</div>
+    <div class="hotel-phone">Tel: +94 11 234 5678</div>
+    <hr class="divider">
+    <div class="bill-info"><span>Bill #${String(billNumber).padStart(4,'0')}</span><span>${date}</span></div>
+    <div class="bill-info"><span>Cashier: Admin</span><span>${time}</span></div>
+    <hr class="divider">
+    <table>
+      <thead><tr><th>Item</th><th style="text-align:center;">Qty</th><th style="text-align:right;">Price</th><th style="text-align:right;">Total</th></tr></thead>
+      <tbody>${itemRows}</tbody>
+    </table>
+    <hr class="divider">
+    <div style="display:flex;justify-content:space-between;"><span>Subtotal</span><span>Rs. ${sub.toLocaleString()}</span></div>
+    <div style="display:flex;justify-content:space-between;color:#888;"><span>VAT (0%)</span><span>Rs. 0.00</span></div>
+    <div style="display:flex;justify-content:space-between;color:#888;"><span>Discount</span><span>Rs. 0.00</span></div>
+    <hr class="divider">
+    <div class="total-row" style="display:flex;justify-content:space-between;"><span>GRAND TOTAL</span><span>Rs. ${sub.toLocaleString()}</span></div>
+    <div class="footer-msg">Thank you! Visit again!</div>
+    <hr class="divider"><hr class="divider">
+    <div class="copy-label" style="margin-top:16px;">--- KITCHEN COPY ---</div>
+    <div style="text-align:center;font-weight:700;font-size:14px;margin-bottom:8px;">KITCHEN ORDER</div>
+    <div class="bill-info"><span>Bill #${String(billNumber).padStart(4,'0')}</span><span>${time}</span></div>
+    <hr class="divider">
+    <table>
+      <thead><tr><th>Item</th><th style="text-align:center;">Qty</th></tr></thead>
+      <tbody>${cart.map(i=>`<tr><td style="font-weight:600;">${i.name}</td><td style="text-align:center;font-weight:700;">${i.qty}</td></tr>`).join('')}</tbody>
+    </table>
+    <hr class="divider">
+    <div class="footer-msg">Prepare with care!</div>
+  `;
+  document.getElementById('billModal').classList.add('show');
+}
+
+function closeBill() {
+  document.getElementById('billModal').classList.remove('show');
+  clearCart();
+}
+
+function showPage(page,el) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  if(el) el.classList.add('active');
+  if(page==='pos') renderProducts();
+}
+
+function renderItemsGrid() {
+  const grid = document.getElementById('itemsGrid');
+  const colors = {breakfast:'var(--orange-bg)',rice:'var(--green-bg)',kottu:'var(--red-bg)',shorteats:'var(--yellow-bg)',drinks:'var(--blue-bg)',desserts:'var(--pink-bg)'};
+  grid.innerHTML = PRODUCTS.map(p=>`
+    <div class="item-card">
+      <div class="item-card-top">
+        <div class="item-card-icon" style="background:${colors[p.cat]||'var(--primary-bg)'};">${p.emoji}</div>
+        <div><div class="item-card-name">${p.name}</div><div class="item-card-cat">${p.cat.charAt(0).toUpperCase()+p.cat.slice(1)}</div></div>
+      </div>
+      <div class="item-card-bottom">
+        <div class="item-card-price">Rs. ${p.price}</div>
+        <span class="badge badge-green">Active</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+renderProducts();
+renderItemsGrid();
+</script>
+</body>
+</html>
