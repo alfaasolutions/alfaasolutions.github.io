@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alfaa Solutions - Creative Software Design</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800;900&display=swap');
+
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family:'Inter',sans-serif;
+  background:#050510;
+  color:#fff; min-height:100vh;
+  overflow-x:hidden;
+}
+
+.bg-glow {
+  position:fixed; top:0; left:0; right:0; bottom:0; pointer-events:none; z-index:0;
+}
+.bg-glow::before {
+  content:''; position:absolute; top:-20%; left:-10%; width:50%; height:60%;
+  background:radial-gradient(circle, rgba(99,102,241,0.08), transparent 60%);
+  border-radius:50%;
+}
+.bg-glow::after {
+  content:''; position:absolute; bottom:-20%; right:-10%; width:50%; height:60%;
+  background:radial-gradient(circle, rgba(236,72,153,0.06), transparent 60%);
+  border-radius:50%;
+}
+
+.container { max-width:1200px; margin:0 auto; padding:0 24px; position:relative; z-index:1; }
+
+nav {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:28px 0; border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.logo {
+  font-size:20px; font-weight:800; letter-spacing:-0.5px;
+}
+.logo span { color:#818cf8; }
+nav a { color:rgba(255,255,255,0.5); text-decoration:none; font-size:14px; font-weight:500; transition:color 0.2s; }
+nav a:hover { color:#fff; }
+
+.hero {
+  text-align:center; padding:100px 0 80px;
+}
+.hero-badge {
+  display:inline-block; padding:8px 20px; border-radius:30px;
+  background:rgba(99,102,241,0.1); color:#818cf8; font-size:12px; font-weight:700;
+  letter-spacing:2px; border:1px solid rgba(99,102,241,0.15);
+}
+.hero h1 {
+  font-family:'Playfair Display',serif; font-size:clamp(36px,6vw,64px); font-weight:900;
+  margin-top:28px; line-height:1.15; letter-spacing:-1px;
+}
+.hero h1 .accent { color:#818cf8; }
+.hero h1 .accent2 { color:#ec4899; }
+.hero p {
+  color:rgba(255,255,255,0.4); font-size:18px; margin-top:20px;
+  max-width:550px; margin-left:auto; margin-right:auto; line-height:1.6;
+}
+
+.section-title {
+  font-family:'Playfair Display',serif; font-size:36px; font-weight:900;
+  margin-bottom:12px;
+}
+.section-sub {
+  color:rgba(255,255,255,0.4); font-size:15px; margin-bottom:48px;
+}
+
+.products { padding:40px 0 80px; }
+
+.product-grid {
+  display:grid; grid-template-columns:repeat(auto-fit, minmax(340px, 1fr));
+  gap:28px;
+}
+
+.product-card {
+  background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06);
+  border-radius:20px; overflow:hidden; transition:all 0.3s;
+  cursor:pointer; text-decoration:none; color:#fff; display:block;
+}
+.product-card:hover {
+  border-color:rgba(255,255,255,0.12);
+  transform:translateY(-6px);
+  box-shadow:0 30px 60px rgba(0,0,0,0.3);
+}
+.card-preview {
+  height:220px; position:relative; overflow:hidden;
+  display:flex; align-items:center; justify-content:center;
+}
+.card-icon {
+  font-size:64px; opacity:0.9;
+}
+.card-tag {
+  position:absolute; top:16px; right:16px;
+  padding:4px 12px; border-radius:20px; font-size:11px; font-weight:700;
+  letter-spacing:1px;
+}
+.card-body { padding:24px 28px 28px; }
+.card-body h3 { font-size:20px; font-weight:800; margin-bottom:6px; }
+.card-body p { font-size:14px; color:rgba(255,255,255,0.4); line-height:1.5; }
+.card-features {
+  display:flex; gap:8px; flex-wrap:wrap; margin-top:14px;
+}
+.card-features span {
+  padding:4px 10px; border-radius:8px; font-size:11px; font-weight:600;
+  background:rgba(255,255,255,0.05); color:rgba(255,255,255,0.5);
+}
+
+.card-gym .card-preview { background:linear-gradient(135deg, #1a0a2e 0%, #16213e 100%); }
+.card-gym .card-tag { background:rgba(168,85,247,0.2); color:#c084fc; }
+.card-gym:hover { border-color:rgba(168,85,247,0.3); }
+
+.card-auto .card-preview { background:linear-gradient(135deg, #0a1628 0%, #0d1f3c 100%); }
+.card-auto .card-tag { background:rgba(59,130,246,0.2); color:#60a5fa; }
+.card-auto:hover { border-color:rgba(59,130,246,0.3); }
+
+.card-apps .card-preview { background:linear-gradient(135deg, #1a0f0a 0%, #2a1a0e 100%); }
+.card-apps .card-tag { background:rgba(251,146,60,0.2); color:#fb923c; }
+.card-apps:hover { border-color:rgba(251,146,60,0.3); }
+
+.stats {
+  display:flex; justify-content:center; gap:60px; padding:60px 0;
+  border-top:1px solid rgba(255,255,255,0.06);
+  border-bottom:1px solid rgba(255,255,255,0.06);
+  margin:20px 0 60px;
+}
+.stat { text-align:center; }
+.stat-num {
+  font-family:'Playfair Display',serif; font-size:42px; font-weight:900;
+  background:linear-gradient(135deg, #818cf8, #ec4899);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+}
+.stat-label { font-size:13px; color:rgba(255,255,255,0.35); margin-top:4px; font-weight:500; }
+
+footer {
+  text-align:center; padding:40px 0 50px;
+  border-top:1px solid rgba(255,255,255,0.06);
+}
+footer .brand { font-size:12px; color:rgba(255,255,255,0.2); letter-spacing:1px; }
+
+@media (max-width:700px) {
+  .product-grid { grid-template-columns:1fr; }
+  .stats { gap:30px; flex-wrap:wrap; }
+  .stat-num { font-size:32px; }
+  nav { flex-direction:column; gap:12px; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+
+<div class="container">
+  <nav>
+    <div class="logo">alfaa<span>solutions</span></div>
+  </nav>
+
+  <div class="hero">
+    <div class="hero-badge">CREATIVE SOFTWARE DESIGN</div>
+    <h1>We Build <span class="accent">Digital Products</span><br>That <span class="accent2">Stand Out</span></h1>
+    <p>From enterprise management systems to mobile apps, we design and develop software that looks premium and works flawlessly.</p>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-num">5+</div>
+      <div class="stat-label">Products Built</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">20+</div>
+      <div class="stat-label">Screens Designed</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">100%</div>
+      <div class="stat-label">Custom Code</div>
+    </div>
+  </div>
+
+  <div class="products">
+    <div class="section-title">Our Products</div>
+    <div class="section-sub">Interactive demos you can explore right now</div>
+
+    <div class="product-grid">
+
+      <a href="gympro/" class="product-card card-gym">
+        <div class="card-preview">
+          <div class="card-icon">&#127947;</div>
+          <div class="card-tag">DESKTOP</div>
+        </div>
+        <div class="card-body">
+          <h3>GymPro</h3>
+          <p>Complete gym management system with memberships, billing, trainers, inventory, and detailed analytics.</p>
+          <div class="card-features">
+            <span>Dashboard</span><span>Members</span><span>Billing</span><span>Reports</span><span>Inventory</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="autoserv/" class="product-card card-auto">
+        <div class="card-preview">
+          <div class="card-icon">&#128663;</div>
+          <div class="card-tag">DESKTOP</div>
+        </div>
+        <div class="card-body">
+          <h3>AutoServ</h3>
+          <p>Vehicle service management platform for workshops, featuring job tracking, parts inventory, and customer management.</p>
+          <div class="card-features">
+            <span>Jobs</span><span>Customers</span><span>Parts</span><span>Invoicing</span><span>Reports</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="apps/" class="product-card card-apps">
+        <div class="card-preview">
+          <div class="card-icon">&#128241;</div>
+          <div class="card-tag">MOBILE</div>
+        </div>
+        <div class="card-body">
+          <h3>Mobile App Collection</h3>
+          <p>Three beautifully crafted mobile app designs: food delivery, salon booking, and hotel reservations.</p>
+          <div class="card-features">
+            <span>FoodDash</span><span>GlowUp</span><span>StayEase</span>
+          </div>
+        </div>
+      </a>
+
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="brand">whitelabel@alfaasolutions</div>
+</footer>
+
+</body>
+</html>

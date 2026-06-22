@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>GymPro - Gym Management System</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; color: #1a1a2e; }
+
+/* Sidebar */
+.sidebar {
+  position: fixed; left: 0; top: 0; bottom: 0; width: 250px;
+  background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+  color: #fff; z-index: 100; overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 24px 20px; display: flex; align-items: center; gap: 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.sidebar-brand .logo {
+  width: 42px; height: 42px; background: linear-gradient(135deg, #e94560, #ff6b6b);
+  border-radius: 12px; display: flex; align-items: center; justify-content: center;
+  font-size: 20px; font-weight: 800;
+}
+.sidebar-brand h2 { font-size: 20px; font-weight: 700; }
+.sidebar-brand span { font-size: 11px; color: #8892b0; display: block; margin-top: 2px; }
+
+.nav-section { padding: 16px 0; }
+.nav-section-title {
+  padding: 0 20px; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px;
+  color: #5a6688; margin-bottom: 8px; font-weight: 600;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 12px; padding: 11px 20px;
+  color: #8892b0; cursor: pointer; transition: all 0.2s; font-size: 14px;
+  text-decoration: none; border-left: 3px solid transparent;
+}
+.nav-item:hover { background: rgba(255,255,255,0.05); color: #ccd6f6; }
+.nav-item.active {
+  background: rgba(233,69,96,0.1); color: #e94560;
+  border-left-color: #e94560;
+}
+.nav-item i { width: 20px; text-align: center; font-size: 15px; }
+
+/* Main Content */
+.main { margin-left: 250px; min-height: 100vh; }
+
+/* Topbar */
+.topbar {
+  background: #fff; padding: 16px 32px; display: flex; align-items: center;
+  justify-content: space-between; border-bottom: 1px solid #e8ecf1;
+  position: sticky; top: 0; z-index: 50;
+}
+.topbar-left h1 { font-size: 22px; font-weight: 700; color: #1a1a2e; }
+.topbar-left p { font-size: 13px; color: #8892b0; margin-top: 2px; }
+.topbar-right { display: flex; align-items: center; gap: 16px; }
+.search-box {
+  display: flex; align-items: center; gap: 8px; background: #f0f2f5;
+  border-radius: 10px; padding: 10px 16px; min-width: 280px;
+}
+.search-box input {
+  border: none; background: none; outline: none; font-size: 14px; color: #1a1a2e; width: 100%;
+}
+.search-box i { color: #8892b0; }
+.topbar-icon {
+  width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center;
+  justify-content: center; background: #f0f2f5; cursor: pointer; position: relative;
+  color: #5a6688; font-size: 16px;
+}
+.topbar-icon .badge {
+  position: absolute; top: 4px; right: 4px; width: 8px; height: 8px;
+  background: #e94560; border-radius: 50%;
+}
+.user-avatar {
+  width: 40px; height: 40px; border-radius: 10px;
+  background: linear-gradient(135deg, #e94560, #ff6b6b);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-weight: 700; font-size: 15px; cursor: pointer;
+}
+
+/* Content Area */
+.content { padding: 28px 32px; }
+
+/* Stat Cards */
+.stats-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 28px;
+}
+.stat-card {
+  background: #fff; border-radius: 16px; padding: 22px 24px;
+  display: flex; align-items: center; gap: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.stat-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+.stat-icon {
+  width: 52px; height: 52px; border-radius: 14px; display: flex;
+  align-items: center; justify-content: center; font-size: 22px;
+}
+.stat-icon.blue { background: #e8f4fd; color: #2196f3; }
+.stat-icon.green { background: #e8f5e9; color: #4caf50; }
+.stat-icon.orange { background: #fff3e0; color: #ff9800; }
+.stat-icon.red { background: #fce4ec; color: #e94560; }
+.stat-icon.purple { background: #f3e5f5; color: #9c27b0; }
+.stat-icon.teal { background: #e0f2f1; color: #009688; }
+.stat-info h3 { font-size: 26px; font-weight: 800; color: #1a1a2e; }
+.stat-info p { font-size: 13px; color: #8892b0; margin-top: 2px; }
+.stat-info .trend { font-size: 12px; color: #4caf50; font-weight: 600; }
+.stat-info .trend.down { color: #e94560; }
+
+/* Cards */
+.card {
+  background: #fff; border-radius: 16px; padding: 24px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04); margin-bottom: 24px;
+}
+.card-header {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;
+}
+.card-header h3 { font-size: 17px; font-weight: 700; }
+.card-header .btn-group { display: flex; gap: 8px; }
+
+/* Buttons */
+.btn {
+  padding: 9px 18px; border-radius: 10px; border: none; cursor: pointer;
+  font-size: 13px; font-weight: 600; display: inline-flex; align-items: center;
+  gap: 6px; transition: all 0.2s;
+}
+.btn-primary {
+  background: linear-gradient(135deg, #e94560, #ff6b6b); color: #fff;
+}
+.btn-primary:hover { box-shadow: 0 4px 12px rgba(233,69,96,0.35); transform: translateY(-1px); }
+.btn-outline {
+  background: #fff; border: 1.5px solid #e0e0e0; color: #5a6688;
+}
+.btn-outline:hover { border-color: #e94560; color: #e94560; }
+.btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 8px; }
+.btn-success { background: #4caf50; color: #fff; }
+.btn-warning { background: #ff9800; color: #fff; }
+
+/* Tables */
+.table-container { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+th {
+  padding: 12px 16px; text-align: left; font-size: 12px; text-transform: uppercase;
+  letter-spacing: 0.5px; color: #8892b0; font-weight: 600;
+  border-bottom: 2px solid #f0f2f5; background: #fafbfc;
+}
+td {
+  padding: 14px 16px; border-bottom: 1px solid #f0f2f5; font-size: 14px; color: #333;
+}
+tr:hover td { background: #fafbfc; }
+
+/* Badges */
+.badge-status {
+  padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;
+}
+.badge-active { background: #e8f5e9; color: #2e7d32; }
+.badge-expired { background: #fce4ec; color: #c62828; }
+.badge-suspended { background: #fff3e0; color: #e65100; }
+.badge-paid { background: #e8f5e9; color: #2e7d32; }
+.badge-pending { background: #fff3e0; color: #e65100; }
+
+/* Avatar */
+.member-avatar {
+  width: 38px; height: 38px; border-radius: 10px; object-fit: cover;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  display: inline-flex; align-items: center; justify-content: center;
+  color: #fff; font-weight: 700; font-size: 14px;
+}
+.member-info { display: flex; align-items: center; gap: 12px; }
+.member-info .name { font-weight: 600; color: #1a1a2e; }
+.member-info .email { font-size: 12px; color: #8892b0; }
+
+/* Charts placeholder */
+.chart-area {
+  height: 220px; border-radius: 12px; display: flex; align-items: flex-end;
+  justify-content: space-around; padding: 20px; gap: 8px;
+}
+.chart-bar {
+  border-radius: 8px 8px 0 0; width: 100%; min-width: 20px;
+  transition: height 0.3s;
+}
+.chart-label { text-align: center; font-size: 11px; color: #8892b0; margin-top: 6px; }
+.chart-col { display: flex; flex-direction: column; align-items: center; flex: 1; }
+
+/* Grid layouts */
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+
+/* Member Profile */
+.profile-header {
+  display: flex; align-items: center; gap: 24px; margin-bottom: 24px;
+  padding-bottom: 24px; border-bottom: 1px solid #f0f2f5;
+}
+.profile-avatar {
+  width: 90px; height: 90px; border-radius: 20px;
+  background: linear-gradient(135deg, #e94560, #ff6b6b);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 36px; color: #fff; font-weight: 800;
+}
+.profile-details h2 { font-size: 24px; font-weight: 700; }
+.profile-details .member-id { color: #8892b0; font-size: 14px; }
+.profile-meta { display: flex; gap: 24px; margin-top: 8px; }
+.profile-meta span { font-size: 13px; color: #5a6688; display: flex; align-items: center; gap: 6px; }
+
+/* Info Grid */
+.info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.info-item label { font-size: 12px; color: #8892b0; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+.info-item p { font-size: 14px; color: #1a1a2e; font-weight: 500; margin-top: 4px; }
+
+/* Form styles */
+.form-group { margin-bottom: 18px; }
+.form-group label {
+  display: block; font-size: 13px; font-weight: 600; color: #5a6688;
+  margin-bottom: 6px;
+}
+.form-control {
+  width: 100%; padding: 10px 14px; border: 1.5px solid #e0e0e0;
+  border-radius: 10px; font-size: 14px; color: #1a1a2e;
+  transition: border-color 0.2s; outline: none;
+}
+.form-control:focus { border-color: #e94560; }
+select.form-control { appearance: auto; }
+.form-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+
+/* QR Code area */
+.qr-placeholder {
+  width: 160px; height: 160px; background: #fff; border: 2px solid #e0e0e0;
+  border-radius: 16px; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; margin: 0 auto;
+}
+.qr-grid {
+  width: 120px; height: 120px; display: grid; grid-template-columns: repeat(11,1fr);
+  grid-template-rows: repeat(11,1fr); gap: 1px;
+}
+.qr-cell { border-radius: 1px; }
+.qr-cell.dark { background: #1a1a2e; }
+.qr-cell.light { background: #fff; }
+
+/* Receipt */
+.receipt {
+  max-width: 360px; margin: 0 auto; background: #fff; border: 1px dashed #ccc;
+  padding: 28px; border-radius: 8px; font-family: 'Courier New', monospace;
+}
+.receipt-header { text-align: center; margin-bottom: 16px; }
+.receipt-header h3 { font-size: 18px; }
+.receipt-line {
+  display: flex; justify-content: space-between; padding: 4px 0;
+  font-size: 13px; color: #333;
+}
+.receipt-divider { border-top: 1px dashed #ccc; margin: 10px 0; }
+.receipt-total { font-weight: 700; font-size: 16px; }
+
+/* Donut Chart */
+.donut-container { display: flex; align-items: center; justify-content: center; gap: 32px; padding: 20px; }
+.donut {
+  width: 160px; height: 160px; border-radius: 50%;
+  background: conic-gradient(#e94560 0% 52%, #4caf50 52% 78%, #ff9800 78% 90%, #2196f3 90% 100%);
+  position: relative;
+}
+.donut::after {
+  content: ''; position: absolute; top: 30px; left: 30px; right: 30px; bottom: 30px;
+  background: #fff; border-radius: 50%;
+}
+.donut-legend { display: flex; flex-direction: column; gap: 10px; }
+.legend-item { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.legend-color { width: 12px; height: 12px; border-radius: 4px; }
+
+/* Inventory Cards */
+.product-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.product-card {
+  background: #fff; border-radius: 14px; padding: 16px;
+  border: 1.5px solid #f0f2f5; transition: all 0.2s;
+}
+.product-card:hover { border-color: #e94560; box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+.product-img {
+  height: 100px; background: #f0f2f5; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 36px; margin-bottom: 12px;
+}
+.product-card h4 { font-size: 14px; font-weight: 700; }
+.product-card .price { color: #e94560; font-weight: 700; font-size: 16px; margin-top: 4px; }
+.product-card .stock { font-size: 12px; color: #8892b0; margin-top: 4px; }
+.stock-low { color: #e94560 !important; font-weight: 600; }
+
+/* Tabs */
+.tabs { display: flex; gap: 4px; margin-bottom: 20px; background: #f0f2f5; border-radius: 12px; padding: 4px; }
+.tab {
+  padding: 10px 20px; border-radius: 10px; font-size: 13px; font-weight: 600;
+  cursor: pointer; color: #5a6688; transition: all 0.2s;
+}
+.tab.active { background: #fff; color: #e94560; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+
+/* Attendance scan */
+.scan-area {
+  display: flex; align-items: center; justify-content: center; gap: 40px;
+  padding: 40px;
+}
+.scanner-box {
+  width: 260px; height: 260px; border: 3px solid #e94560; border-radius: 24px;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; background: #fafbfc;
+}
+.scanner-box::before {
+  content: ''; position: absolute; top: 20px; left: 20px; right: 20px; bottom: 20px;
+  border: 2px dashed rgba(233,69,96,0.3); border-radius: 16px;
+}
+.scanner-box i { font-size: 64px; color: #e94560; opacity: 0.3; }
+.scan-result {
+  background: #e8f5e9; border-radius: 16px; padding: 24px; min-width: 300px;
+}
+.scan-result h4 { color: #2e7d32; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.scan-result .detail { display: flex; justify-content: space-between; padding: 6px 0; font-size: 14px; }
+
+/* Action dots */
+.action-dots {
+  width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center;
+  justify-content: center; cursor: pointer; color: #8892b0; background: #f0f2f5;
+}
+
+/* Page specific */
+.page { display: none; }
+.page.active { display: block; }
+
+/* Filter bar */
+.filter-bar {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.filter-chip {
+  padding: 7px 16px; border-radius: 20px; font-size: 13px; font-weight: 500;
+  background: #f0f2f5; color: #5a6688; cursor: pointer; border: 1.5px solid transparent;
+}
+.filter-chip.active { background: #fce4ec; color: #e94560; border-color: #e94560; }
+
+/* Timeline */
+.timeline-item {
+  display: flex; gap: 16px; padding: 12px 0;
+  border-bottom: 1px solid #f0f2f5;
+}
+.timeline-dot {
+  width: 10px; height: 10px; border-radius: 50%; margin-top: 5px; flex-shrink: 0;
+}
+.timeline-content p { font-size: 14px; }
+.timeline-content .time { font-size: 12px; color: #8892b0; }
+
+/* Trainer cards */
+.trainer-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.trainer-card {
+  background: #fff; border-radius: 16px; padding: 24px; text-align: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04); border: 1.5px solid #f0f2f5;
+}
+.trainer-avatar {
+  width: 72px; height: 72px; border-radius: 50%;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 28px; font-weight: 700; margin: 0 auto 12px;
+}
+.trainer-card h4 { font-size: 16px; font-weight: 700; }
+.trainer-card .spec { font-size: 13px; color: #e94560; font-weight: 600; margin-top: 4px; }
+.trainer-stats { display: flex; justify-content: center; gap: 24px; margin-top: 16px; }
+.trainer-stat { text-align: center; }
+.trainer-stat .num { font-size: 20px; font-weight: 800; color: #1a1a2e; }
+.trainer-stat .label { font-size: 11px; color: #8892b0; }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <div class="sidebar-brand">
+    <div class="logo">G</div>
+    <div>
+      <h2>GymPro</h2>
+      <span>Management System</span>
+    </div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-title">Main</div>
+    <a class="nav-item active" onclick="showPage('dashboard')">
+      <i class="fas fa-th-large"></i> Dashboard
+    </a>
+    <a class="nav-item" onclick="showPage('members')">
+      <i class="fas fa-users"></i> Members
+    </a>
+    <a class="nav-item" onclick="showPage('memberships')">
+      <i class="fas fa-id-card"></i> Membership Plans
+    </a>
+    <a class="nav-item" onclick="showPage('attendance')">
+      <i class="fas fa-qrcode"></i> Attendance
+    </a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-title">Finance</div>
+    <a class="nav-item" onclick="showPage('billing')">
+      <i class="fas fa-file-invoice-dollar"></i> Billing & Receipts
+    </a>
+    <a class="nav-item" onclick="showPage('inventory')">
+      <i class="fas fa-box-open"></i> Inventory Shop
+    </a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-title">Management</div>
+    <a class="nav-item" onclick="showPage('trainers')">
+      <i class="fas fa-dumbbell"></i> Trainers
+    </a>
+    <a class="nav-item" onclick="showPage('reports')">
+      <i class="fas fa-chart-bar"></i> Reports
+    </a>
+    <a class="nav-item" onclick="showPage('settings')">
+      <i class="fas fa-cog"></i> Settings
+    </a>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div class="main">
+
+  <!-- ============ DASHBOARD ============ -->
+  <div class="page active" id="page-dashboard">
+    <div class="topbar">
+      <div class="topbar-left">
+        <h1>Dashboard</h1>
+        <p>Welcome back, Admin! Here's your gym overview.</p>
+      </div>
+      <div class="topbar-right">
+        <div class="search-box">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="Search members, trainers, invoices...">
+        </div>
+        <div class="topbar-icon"><i class="fas fa-bell"></i><div class="badge"></div></div>
+        <div class="user-avatar">A</div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon blue"><i class="fas fa-users"></i></div>
+          <div class="stat-info">
+            <h3>1,247</h3>
+            <p>Total Members</p>
+            <span class="trend"><i class="fas fa-arrow-up"></i> +12% this month</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green"><i class="fas fa-user-check"></i></div>
+          <div class="stat-info">
+            <h3>1,089</h3>
+            <p>Active Members</p>
+            <span class="trend"><i class="fas fa-arrow-up"></i> +8% this month</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon orange"><i class="fas fa-calendar-check"></i></div>
+          <div class="stat-info">
+            <h3>156</h3>
+            <p>Today's Attendance</p>
+            <span class="trend down"><i class="fas fa-arrow-down"></i> -3% vs yesterday</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon red"><i class="fas fa-dollar-sign"></i></div>
+          <div class="stat-info">
+            <h3>$28,450</h3>
+            <p>Monthly Revenue</p>
+            <span class="trend"><i class="fas fa-arrow-up"></i> +15% this month</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="fas fa-chart-line" style="color:#e94560;margin-right:8px"></i>Revenue Overview</h3>
+            <div class="btn-group">
+              <span class="filter-chip active">Monthly</span>
+              <span class="filter-chip">Weekly</span>
+            </div>
+          </div>
+          <div class="chart-area">
+            <div class="chart-col"><div class="chart-bar" style="height:60%;background:linear-gradient(180deg,#e94560,#ff6b6b)"></div><div class="chart-label">Jan</div></div>
+            <div class="chart-col"><div class="chart-bar" style="height:75%;background:linear-gradient(180deg,#e94560,#ff6b6b)"></div><div class="chart-label">Feb</div></div>
+            <div class="chart-col"><div class="chart-bar" style="height:55%;background:linear-gradient(180deg,#e94560,#ff6b6b)"></div><div class="chart-label">Mar</div></div>
+            <div class="chart-col"><div class="chart-bar" style="height:85%;background:linear-gradient(180deg,#e94560,#ff6b6b)"></div><div class="chart-label">Apr</div></div>
+            <div class="chart-col"><div class="chart-bar" style="height:70%;background:linear-gradient(180deg,#e94560,#ff6b6b)"></div><div class="chart-label">May</div></div>
+            <div class="chart-col"><div class="chart-bar" style="height:90%;background:linear-gradient(180deg,#e94560,#ff6b6b)"></div><div class="chart-label">Jun</div></div>
+            <div class="chart-col"><div class="chart-bar" style="height:65%;background:linear-gradient(180deg,#e94560,#ff6b6b)"></div><div class="chart-label">Jul</div></div>
+            <div class="chart-col"><div class="chart-bar" style="height:80%;background:linear-gradient(180deg,#e94560,#ff6b6b)"></div><div class="chart-label">Aug</div></div>
+            <div class="chart-col"><div class="chart-bar" style="height:95%;background:linear-gradient(180deg,#e94560,#ff6b6b)"></div><div class="chart-label">Sep</div></div>
+            <div class="chart-col"><div class="chart-bar" style="height:72%;background:linear-gradient(180deg,#e94560,#ff6b6b)"></div><div class="chart-label">Oct</div></div>
+            <div class="chart-col"><div class="chart-bar" style="height:88%;background:linear-gradient(180deg,#e94560,#ff6b6b)"></div><div class="chart-label">Nov</div></div>
+            <div class="chart-col"><div class="chart-bar" style="height:100%;background:linear-gradient(180deg,#e94560,#ff6b6b)"></div><div class="chart-label">Dec</div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="fas fa-chart-pie" style="color:#e94560;margin-right:8px"></i>Membership Distribution</h3>
+          </div>
+          <div class="donut-container">
+            <div class="donut"></div>
+            <div class="donut-legend">
+              <div class="legend-item"><div class="legend-color" style="background:#e94560"></div> Monthly - 52%</div>
+              <div class="legend-item"><div class="legend-color" style="background:#4caf50"></div> Quarterly - 26%</div>
+              <div class="legend-item"><div class="legend-color" style="background:#ff9800"></div> Annual - 12%</div>
+              <div class="legend-item"><div class="legend-color" style="background:#2196f3"></div> Daily Pass - 10%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="fas fa-clock" style="color:#e94560;margin-right:8px"></i>Recent Activity</h3>
+            <button class="btn btn-outline btn-sm">View All</button>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background:#4caf50"></div>
+            <div class="timeline-content">
+              <p><strong>John Smith</strong> checked in via QR scan</p>
+              <span class="time">2 minutes ago</span>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background:#2196f3"></div>
+            <div class="timeline-content">
+              <p><strong>Sarah Johnson</strong> renewed Monthly Membership</p>
+              <span class="time">15 minutes ago</span>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background:#ff9800"></div>
+            <div class="timeline-content">
+              <p><strong>Mike Davis</strong> purchased Whey Protein from shop</p>
+              <span class="time">32 minutes ago</span>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background:#e94560"></div>
+            <div class="timeline-content">
+              <p><strong>Emily Chen</strong> membership expired</p>
+              <span class="time">1 hour ago</span>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background:#9c27b0"></div>
+            <div class="timeline-content">
+              <p>New member <strong>Alex Rodriguez</strong> registered</p>
+              <span class="time">2 hours ago</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="fas fa-exclamation-triangle" style="color:#ff9800;margin-right:8px"></i>Alerts & Notifications</h3>
+          </div>
+          <div style="padding:12px;background:#fff3e0;border-radius:10px;margin-bottom:10px;display:flex;align-items:center;gap:12px">
+            <i class="fas fa-clock" style="color:#ff9800;font-size:18px"></i>
+            <div><strong style="font-size:14px">23 Memberships Expiring Soon</strong><br><span style="font-size:12px;color:#8892b0">Within next 7 days</span></div>
+          </div>
+          <div style="padding:12px;background:#fce4ec;border-radius:10px;margin-bottom:10px;display:flex;align-items:center;gap:12px">
+            <i class="fas fa-box" style="color:#e94560;font-size:18px"></i>
+            <div><strong style="font-size:14px">5 Products Low on Stock</strong><br><span style="font-size:12px;color:#8892b0">Below minimum quantity</span></div>
+          </div>
+          <div style="padding:12px;background:#e8f5e9;border-radius:10px;margin-bottom:10px;display:flex;align-items:center;gap:12px">
+            <i class="fas fa-dollar-sign" style="color:#4caf50;font-size:18px"></i>
+            <div><strong style="font-size:14px">$3,200 Outstanding Balances</strong><br><span style="font-size:12px;color:#8892b0">From 8 members</span></div>
+          </div>
+          <div style="padding:12px;background:#e8f4fd;border-radius:10px;display:flex;align-items:center;gap:12px">
+            <i class="fas fa-user-plus" style="color:#2196f3;font-size:18px"></i>
+            <div><strong style="font-size:14px">12 New Registrations Today</strong><br><span style="font-size:12px;color:#8892b0">Best day this week</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ MEMBERS ============ -->
+  <div class="page" id="page-members">
+    <div class="topbar">
+      <div class="topbar-left">
+        <h1>Members Management</h1>
+        <p>Manage all gym members and their profiles</p>
+      </div>
+      <div class="topbar-right">
+        <div class="search-box"><i class="fas fa-search"></i><input placeholder="Search by name, ID, phone..."></div>
+        <div class="topbar-icon"><i class="fas fa-bell"></i><div class="badge"></div></div>
+        <div class="user-avatar">A</div>
+      </div>
+    </div>
+    <div class="content">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="filter-bar" style="margin-bottom:0">
+              <span class="filter-chip active">All (1,247)</span>
+              <span class="filter-chip">Active (1,089)</span>
+              <span class="filter-chip">Expired (128)</span>
+              <span class="filter-chip">Suspended (30)</span>
+            </div>
+          </div>
+          <button class="btn btn-primary"><i class="fas fa-plus"></i> Add Member</button>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Member</th>
+                <th>Member ID</th>
+                <th>Phone</th>
+                <th>Plan</th>
+                <th>Expiry Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><div class="member-info"><div class="member-avatar">JS</div><div><div class="name">John Smith</div><div class="email">john.smith@email.com</div></div></div></td>
+                <td><strong>GYM-001</strong></td>
+                <td>+1 555-0101</td>
+                <td>Monthly</td>
+                <td>Jul 15, 2026</td>
+                <td><span class="badge-status badge-active">Active</span></td>
+                <td><div class="action-dots"><i class="fas fa-ellipsis-h"></i></div></td>
+              </tr>
+              <tr>
+                <td><div class="member-info"><div class="member-avatar" style="background:linear-gradient(135deg,#e94560,#ff6b6b)">SJ</div><div><div class="name">Sarah Johnson</div><div class="email">sarah.j@email.com</div></div></div></td>
+                <td><strong>GYM-002</strong></td>
+                <td>+1 555-0102</td>
+                <td>Quarterly</td>
+                <td>Sep 30, 2026</td>
+                <td><span class="badge-status badge-active">Active</span></td>
+                <td><div class="action-dots"><i class="fas fa-ellipsis-h"></i></div></td>
+              </tr>
+              <tr>
+                <td><div class="member-info"><div class="member-avatar" style="background:linear-gradient(135deg,#4caf50,#66bb6a)">MD</div><div><div class="name">Mike Davis</div><div class="email">mike.d@email.com</div></div></div></td>
+                <td><strong>GYM-003</strong></td>
+                <td>+1 555-0103</td>
+                <td>Annual</td>
+                <td>Dec 31, 2026</td>
+                <td><span class="badge-status badge-active">Active</span></td>
+                <td><div class="action-dots"><i class="fas fa-ellipsis-h"></i></div></td>
+              </tr>
+              <tr>
+                <td><div class="member-info"><div class="member-avatar" style="background:linear-gradient(135deg,#ff9800,#ffb74d)">EC</div><div><div class="name">Emily Chen</div><div class="email">emily.c@email.com</div></div></div></td>
+                <td><strong>GYM-004</strong></td>
+                <td>+1 555-0104</td>
+                <td>Monthly</td>
+                <td>Jun 10, 2026</td>
+                <td><span class="badge-status badge-expired">Expired</span></td>
+                <td><div class="action-dots"><i class="fas fa-ellipsis-h"></i></div></td>
+              </tr>
+              <tr>
+                <td><div class="member-info"><div class="member-avatar" style="background:linear-gradient(135deg,#2196f3,#64b5f6)">AR</div><div><div class="name">Alex Rodriguez</div><div class="email">alex.r@email.com</div></div></div></td>
+                <td><strong>GYM-005</strong></td>
+                <td>+1 555-0105</td>
+                <td>Monthly</td>
+                <td>Jul 20, 2026</td>
+                <td><span class="badge-status badge-active">Active</span></td>
+                <td><div class="action-dots"><i class="fas fa-ellipsis-h"></i></div></td>
+              </tr>
+              <tr>
+                <td><div class="member-info"><div class="member-avatar" style="background:linear-gradient(135deg,#9c27b0,#ba68c8)">LW</div><div><div class="name">Lisa Wang</div><div class="email">lisa.w@email.com</div></div></div></td>
+                <td><strong>GYM-006</strong></td>
+                <td>+1 555-0106</td>
+                <td>Daily Pass</td>
+                <td>Jun 15, 2026</td>
+                <td><span class="badge-status badge-suspended">Suspended</span></td>
+                <td><div class="action-dots"><i class="fas fa-ellipsis-h"></i></div></td>
+              </tr>
+              <tr>
+                <td><div class="member-info"><div class="member-avatar" style="background:linear-gradient(135deg,#009688,#4db6ac)">RB</div><div><div class="name">Robert Brown</div><div class="email">robert.b@email.com</div></div></div></td>
+                <td><strong>GYM-007</strong></td>
+                <td>+1 555-0107</td>
+                <td>Quarterly</td>
+                <td>Aug 15, 2026</td>
+                <td><span class="badge-status badge-active">Active</span></td>
+                <td><div class="action-dots"><i class="fas fa-ellipsis-h"></i></div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding-top:16px;border-top:1px solid #f0f2f5">
+          <span style="font-size:13px;color:#8892b0">Showing 1-7 of 1,247 members</span>
+          <div style="display:flex;gap:4px">
+            <button class="btn btn-outline btn-sm" disabled>&laquo; Prev</button>
+            <button class="btn btn-sm" style="background:#e94560;color:#fff">1</button>
+            <button class="btn btn-outline btn-sm">2</button>
+            <button class="btn btn-outline btn-sm">3</button>
+            <button class="btn btn-outline btn-sm">...</button>
+            <button class="btn btn-outline btn-sm">179</button>
+            <button class="btn btn-outline btn-sm">Next &raquo;</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ MEMBERSHIP PLANS ============ -->
+  <div class="page" id="page-memberships">
+    <div class="topbar">
+      <div class="topbar-left"><h1>Membership Plans</h1><p>Manage gym membership packages and pricing</p></div>
+      <div class="topbar-right">
+        <div class="search-box"><i class="fas fa-search"></i><input placeholder="Search plans..."></div>
+        <div class="topbar-icon"><i class="fas fa-bell"></i><div class="badge"></div></div>
+        <div class="user-avatar">A</div>
+      </div>
+    </div>
+    <div class="content">
+      <div class="card">
+        <div class="card-header">
+          <h3>Available Plans</h3>
+          <button class="btn btn-primary"><i class="fas fa-plus"></i> Create Plan</button>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px">
+          <div style="border:2px solid #f0f2f5;border-radius:16px;padding:24px;text-align:center;transition:all 0.2s">
+            <div style="width:56px;height:56px;border-radius:50%;background:#e8f4fd;display:flex;align-items:center;justify-content:center;margin:0 auto 12px"><i class="fas fa-sun" style="font-size:24px;color:#2196f3"></i></div>
+            <h4 style="font-size:16px;font-weight:700">Daily Pass</h4>
+            <div style="font-size:32px;font-weight:800;color:#e94560;margin:12px 0">$10</div>
+            <div style="font-size:13px;color:#8892b0;margin-bottom:16px">1 Day Access</div>
+            <div style="font-size:13px;color:#5a6688;text-align:left;padding:0 8px">
+              <div style="padding:6px 0;border-bottom:1px solid #f0f2f5"><i class="fas fa-check" style="color:#4caf50;margin-right:8px"></i>Full gym access</div>
+              <div style="padding:6px 0;border-bottom:1px solid #f0f2f5"><i class="fas fa-check" style="color:#4caf50;margin-right:8px"></i>Locker room access</div>
+              <div style="padding:6px 0"><i class="fas fa-check" style="color:#4caf50;margin-right:8px"></i>Basic equipment</div>
+            </div>
+            <div style="margin-top:16px;font-size:12px;color:#8892b0"><strong>125</strong> active subscribers</div>
+          </div>
+          <div style="border:2px solid #e94560;border-radius:16px;padding:24px;text-align:center;position:relative;box-shadow:0 4px 20px rgba(233,69,96,0.15)">
+            <div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:#e94560;color:#fff;padding:4px 16px;border-radius:20px;font-size:11px;font-weight:700">POPULAR</div>
+            <div style="width:56px;height:56px;border-radius:50%;background:#fce4ec;display:flex;align-items:center;justify-content:center;margin:0 auto 12px"><i class="fas fa-fire" style="font-size:24px;color:#e94560"></i></div>
+            <h4 style="font-size:16px;font-weight:700">Monthly</h4>
+            <div style="font-size:32px;font-weight:800;color:#e94560;margin:12px 0">$50</div>
+            <div style="font-size:13px;color:#8892b0;margin-bottom:16px">30 Days Access</div>
+            <div style="font-size:13px;color:#5a6688;text-align:left;padding:0 8px">
+              <div style="padding:6px 0;border-bottom:1px solid #f0f2f5"><i class="fas fa-check" style="color:#4caf50;margin-right:8px"></i>Full gym access</div>
+              <div style="padding:6px 0;border-bottom:1px solid #f0f2f5"><i class="fas fa-check" style="color:#4caf50;margin-right:8px"></i>Group classes</div>
+              <div style="padding:6px 0;border-bottom:1px solid #f0f2f5"><i class="fas fa-check" style="color:#4caf50;margin-right:8px"></i>Personal locker</div>
+              <div style="padding:6px 0"><i class="fas fa-check" style="color:#4caf50;margin-right:8px"></i>Trainer consultation</div>
+            </div>
+            <div style="margin-top:16px;font-size:12px;color:#8892b0"><strong>648</strong> active subscribers</div>
+          </div>
+          <div style="border:2px solid #f0f2f5;border-radius:16px;padding:24px;text-align:center">
+            <div style="width:56px;height:56px;border-radius:50%;background:#fff3e0;display:flex;align-items:center;justify-content:center;margin:0 auto 12px"><i class="fas fa-gem" style="font-size:24px;color:#ff9800"></i></div>
+            <h4 style="font-size:16px;font-weight:700">Quarterly</h4>
+            <div style="font-size:32px;font-weight:800;color:#e94560;margin:12px 0">$130</div>
+            <div style="font-size:13px;color:#8892b0;margin-bottom:16px">90 Days Access</div>
+            <div style="font-size:13px;color:#5a6688;text-align:left;padding:0 8px">
+              <div style="padding:6px 0;border-bottom:1px solid #f0f2f5"><i class="fas fa-check" style="color:#4caf50;margin-right:8px"></i>All Monthly perks</div>
+              <div style="padding:6px 0;border-bottom:1px solid #f0f2f5"><i class="fas fa-check" style="color:#4caf50;margin-right:8px"></i>1 PT session/month</div>
+              <div style="padding:6px 0"><i class="fas fa-check" style="color:#4caf50;margin-right:8px"></i>10% shop discount</div>
+            </div>
+            <div style="margin-top:16px;font-size:12px;color:#8892b0"><strong>324</strong> active subscribers</div>
+          </div>
+          <div style="border:2px solid #f0f2f5;border-radius:16px;padding:24px;text-align:center">
+            <div style="width:56px;height:56px;border-radius:50%;background:#f3e5f5;display:flex;align-items:center;justify-content:center;margin:0 auto 12px"><i class="fas fa-crown" style="font-size:24px;color:#9c27b0"></i></div>
+            <h4 style="font-size:16px;font-weight:700">Annual</h4>
+            <div style="font-size:32px;font-weight:800;color:#e94560;margin:12px 0">$450</div>
+            <div style="font-size:13px;color:#8892b0;margin-bottom:16px">365 Days Access</div>
+            <div style="font-size:13px;color:#5a6688;text-align:left;padding:0 8px">
+              <div style="padding:6px 0;border-bottom:1px solid #f0f2f5"><i class="fas fa-check" style="color:#4caf50;margin-right:8px"></i>All Quarterly perks</div>
+              <div style="padding:6px 0;border-bottom:1px solid #f0f2f5"><i class="fas fa-check" style="color:#4caf50;margin-right:8px"></i>4 PT sessions/month</div>
+              <div style="padding:6px 0;border-bottom:1px solid #f0f2f5"><i class="fas fa-check" style="color:#4caf50;margin-right:8px"></i>20% shop discount</div>
+              <div style="padding:6px 0"><i class="fas fa-check" style="color:#4caf50;margin-right:8px"></i>Priority booking</div>
+            </div>
+            <div style="margin-top:16px;font-size:12px;color:#8892b0"><strong>150</strong> active subscribers</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3><i class="fas fa-exclamation-circle" style="color:#ff9800;margin-right:8px"></i>Expiring Soon (Next 7 Days)</h3>
+          <button class="btn btn-outline btn-sm"><i class="fas fa-bell"></i> Send Reminders</button>
+        </div>
+        <table>
+          <thead><tr><th>Member</th><th>Plan</th><th>Expiry Date</th><th>Days Left</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td><div class="member-info"><div class="member-avatar">TK</div><div><div class="name">Tom King</div></div></div></td><td>Monthly</td><td>Jun 17, 2026</td><td><span style="color:#e94560;font-weight:700">2 days</span></td><td><button class="btn btn-primary btn-sm">Renew</button></td></tr>
+            <tr><td><div class="member-info"><div class="member-avatar" style="background:linear-gradient(135deg,#ff9800,#ffb74d)">AP</div><div><div class="name">Anna Park</div></div></div></td><td>Monthly</td><td>Jun 18, 2026</td><td><span style="color:#ff9800;font-weight:700">3 days</span></td><td><button class="btn btn-primary btn-sm">Renew</button></td></tr>
+            <tr><td><div class="member-info"><div class="member-avatar" style="background:linear-gradient(135deg,#4caf50,#66bb6a)">DL</div><div><div class="name">David Lee</div></div></div></td><td>Quarterly</td><td>Jun 20, 2026</td><td><span style="color:#ff9800;font-weight:700">5 days</span></td><td><button class="btn btn-primary btn-sm">Renew</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ ATTENDANCE ============ -->
+  <div class="page" id="page-attendance">
+    <div class="topbar">
+      <div class="topbar-left"><h1>Attendance Management</h1><p>QR code based attendance tracking</p></div>
+      <div class="topbar-right">
+        <div class="search-box"><i class="fas fa-search"></i><input placeholder="Search member..."></div>
+        <div class="topbar-icon"><i class="fas fa-bell"></i><div class="badge"></div></div>
+        <div class="user-avatar">A</div>
+      </div>
+    </div>
+    <div class="content">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon green"><i class="fas fa-sign-in-alt"></i></div>
+          <div class="stat-info"><h3>156</h3><p>Today's Check-ins</p></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon blue"><i class="fas fa-calendar-week"></i></div>
+          <div class="stat-info"><h3>892</h3><p>This Week</p></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon orange"><i class="fas fa-calendar-alt"></i></div>
+          <div class="stat-info"><h3>3,456</h3><p>This Month</p></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon purple"><i class="fas fa-percentage"></i></div>
+          <div class="stat-info"><h3>87%</h3><p>Active Rate</p></div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header"><h3><i class="fas fa-qrcode" style="color:#e94560;margin-right:8px"></i>QR Code Scanner</h3></div>
+          <div class="scan-area">
+            <div class="scanner-box"><i class="fas fa-qrcode"></i></div>
+            <div class="scan-result">
+              <h4><i class="fas fa-check-circle"></i> Check-in Successful!</h4>
+              <div class="detail"><span>Member:</span><strong>John Smith</strong></div>
+              <div class="detail"><span>ID:</span><strong>GYM-001</strong></div>
+              <div class="detail"><span>Plan:</span><strong>Monthly (Active)</strong></div>
+              <div class="detail"><span>Time:</span><strong>10:32 AM</strong></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h3><i class="fas fa-id-badge" style="color:#e94560;margin-right:8px"></i>Member QR Code</h3></div>
+          <div style="text-align:center;padding:20px">
+            <div class="qr-placeholder" style="margin-bottom:16px">
+              <svg width="120" height="120" viewBox="0 0 120 120">
+                <rect x="0" y="0" width="120" height="120" fill="white"/>
+                <rect x="5" y="5" width="30" height="30" fill="#1a1a2e" rx="3"/>
+                <rect x="10" y="10" width="20" height="20" fill="white" rx="2"/>
+                <rect x="14" y="14" width="12" height="12" fill="#1a1a2e" rx="1"/>
+                <rect x="85" y="5" width="30" height="30" fill="#1a1a2e" rx="3"/>
+                <rect x="90" y="10" width="20" height="20" fill="white" rx="2"/>
+                <rect x="94" y="14" width="12" height="12" fill="#1a1a2e" rx="1"/>
+                <rect x="5" y="85" width="30" height="30" fill="#1a1a2e" rx="3"/>
+                <rect x="10" y="90" width="20" height="20" fill="white" rx="2"/>
+                <rect x="14" y="94" width="12" height="12" fill="#1a1a2e" rx="1"/>
+                <rect x="40" y="5" width="8" height="8" fill="#1a1a2e"/><rect x="52" y="5" width="8" height="8" fill="#1a1a2e"/><rect x="64" y="5" width="8" height="8" fill="#1a1a2e"/>
+                <rect x="40" y="17" width="8" height="8" fill="#1a1a2e"/><rect x="56" y="17" width="8" height="8" fill="#1a1a2e"/>
+                <rect x="40" y="29" width="8" height="8" fill="#1a1a2e"/><rect x="52" y="29" width="8" height="8" fill="#1a1a2e"/><rect x="68" y="29" width="8" height="8" fill="#1a1a2e"/>
+                <rect x="5" y="40" width="8" height="8" fill="#1a1a2e"/><rect x="17" y="40" width="8" height="8" fill="#1a1a2e"/><rect x="33" y="40" width="8" height="8" fill="#1a1a2e"/>
+                <rect x="49" y="40" width="8" height="8" fill="#1a1a2e"/><rect x="65" y="40" width="8" height="8" fill="#1a1a2e"/><rect x="81" y="40" width="8" height="8" fill="#1a1a2e"/>
+                <rect x="5" y="52" width="8" height="8" fill="#1a1a2e"/><rect x="21" y="52" width="8" height="8" fill="#1a1a2e"/><rect x="37" y="52" width="8" height="8" fill="#1a1a2e"/>
+                <rect x="57" y="52" width="8" height="8" fill="#1a1a2e"/><rect x="73" y="52" width="8" height="8" fill="#1a1a2e"/><rect x="93" y="52" width="8" height="8" fill="#1a1a2e"/>
+                <rect x="5" y="64" width="8" height="8" fill="#1a1a2e"/><rect x="17" y="64" width="8" height="8" fill="#1a1a2e"/><rect x="45" y="64" width="8" height="8" fill="#1a1a2e"/>
+                <rect x="61" y="64" width="8" height="8" fill="#1a1a2e"/><rect x="81" y="64" width="8" height="8" fill="#1a1a2e"/><rect x="97" y="64" width="8" height="8" fill="#1a1a2e"/>
+                <rect x="5" y="76" width="8" height="8" fill="#1a1a2e"/><rect x="29" y="76" width="8" height="8" fill="#1a1a2e"/><rect x="53" y="76" width="8" height="8" fill="#1a1a2e"/>
+                <rect x="69" y="76" width="8" height="8" fill="#1a1a2e"/><rect x="85" y="76" width="8" height="8" fill="#1a1a2e"/><rect x="105" y="76" width="8" height="8" fill="#1a1a2e"/>
+                <rect x="41" y="89" width="8" height="8" fill="#1a1a2e"/><rect x="57" y="89" width="8" height="8" fill="#1a1a2e"/><rect x="73" y="89" width="8" height="8" fill="#1a1a2e"/>
+                <rect x="89" y="89" width="8" height="8" fill="#1a1a2e"/><rect x="105" y="89" width="8" height="8" fill="#1a1a2e"/>
+                <rect x="45" y="101" width="8" height="8" fill="#1a1a2e"/><rect x="65" y="101" width="8" height="8" fill="#1a1a2e"/><rect x="85" y="101" width="8" height="8" fill="#1a1a2e"/>
+                <rect x="101" y="101" width="8" height="8" fill="#1a1a2e"/>
+              </svg>
+            </div>
+            <h4 style="font-size:16px;font-weight:700">John Smith</h4>
+            <p style="font-size:13px;color:#8892b0">GYM-001 | Monthly Plan</p>
+            <button class="btn btn-primary" style="margin-top:12px"><i class="fas fa-print"></i> Print QR Card</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3><i class="fas fa-list" style="color:#e94560;margin-right:8px"></i>Today's Attendance Log</h3>
+          <div class="btn-group">
+            <button class="btn btn-outline btn-sm"><i class="fas fa-download"></i> Export</button>
+          </div>
+        </div>
+        <table>
+          <thead><tr><th>Member</th><th>Member ID</th><th>Check-in Time</th><th>Plan</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td><div class="member-info"><div class="member-avatar">JS</div><div><div class="name">John Smith</div></div></div></td><td>GYM-001</td><td>10:32 AM</td><td>Monthly</td><td><span class="badge-status badge-active">Verified</span></td></tr>
+            <tr><td><div class="member-info"><div class="member-avatar" style="background:linear-gradient(135deg,#e94560,#ff6b6b)">SJ</div><div><div class="name">Sarah Johnson</div></div></div></td><td>GYM-002</td><td>09:15 AM</td><td>Quarterly</td><td><span class="badge-status badge-active">Verified</span></td></tr>
+            <tr><td><div class="member-info"><div class="member-avatar" style="background:linear-gradient(135deg,#4caf50,#66bb6a)">MD</div><div><div class="name">Mike Davis</div></div></div></td><td>GYM-003</td><td>08:45 AM</td><td>Annual</td><td><span class="badge-status badge-active">Verified</span></td></tr>
+            <tr><td><div class="member-info"><div class="member-avatar" style="background:linear-gradient(135deg,#2196f3,#64b5f6)">AR</div><div><div class="name">Alex Rodriguez</div></div></div></td><td>GYM-005</td><td>07:30 AM</td><td>Monthly</td><td><span class="badge-status badge-active">Verified</span></td></tr>
+            <tr><td><div class="member-info"><div class="member-avatar" style="background:linear-gradient(135deg,#ff9800,#ffb74d)">EC</div><div><div class="name">Emily Chen</div></div></div></td><td>GYM-004</td><td>11:00 AM</td><td>Monthly</td><td><span class="badge-status badge-expired">Denied - Expired</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ BILLING ============ -->
+  <div class="page" id="page-billing">
+    <div class="topbar">
+      <div class="topbar-left"><h1>Billing & Receipts</h1><p>Manage payments, invoices and receipts</p></div>
+      <div class="topbar-right">
+        <div class="search-box"><i class="fas fa-search"></i><input placeholder="Search invoices..."></div>
+        <div class="topbar-icon"><i class="fas fa-bell"></i><div class="badge"></div></div>
+        <div class="user-avatar">A</div>
+      </div>
+    </div>
+    <div class="content">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon green"><i class="fas fa-dollar-sign"></i></div>
+          <div class="stat-info"><h3>$4,850</h3><p>Today's Sales</p></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon blue"><i class="fas fa-file-invoice"></i></div>
+          <div class="stat-info"><h3>47</h3><p>Invoices Today</p></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon orange"><i class="fas fa-clock"></i></div>
+          <div class="stat-info"><h3>$3,200</h3><p>Outstanding</p></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon red"><i class="fas fa-receipt"></i></div>
+          <div class="stat-info"><h3>$28,450</h3><p>Monthly Revenue</p></div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="fas fa-file-invoice-dollar" style="color:#e94560;margin-right:8px"></i>Recent Invoices</h3>
+            <button class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> New Invoice</button>
+          </div>
+          <table>
+            <thead><tr><th>Invoice #</th><th>Member</th><th>Type</th><th>Amount</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td><strong>INV-0047</strong></td><td>John Smith</td><td>Membership - Monthly</td><td>$50.00</td><td><span class="badge-status badge-paid">Paid</span></td></tr>
+              <tr><td><strong>INV-0046</strong></td><td>Sarah Johnson</td><td>Membership - Quarterly</td><td>$130.00</td><td><span class="badge-status badge-paid">Paid</span></td></tr>
+              <tr><td><strong>INV-0045</strong></td><td>Mike Davis</td><td>Shop - Supplements</td><td>$45.00</td><td><span class="badge-status badge-paid">Paid</span></td></tr>
+              <tr><td><strong>INV-0044</strong></td><td>Alex Rodriguez</td><td>Membership - Monthly</td><td>$50.00</td><td><span class="badge-status badge-pending">Pending</span></td></tr>
+              <tr><td><strong>INV-0043</strong></td><td>Robert Brown</td><td>Membership - Quarterly</td><td>$130.00</td><td><span class="badge-status badge-pending">Pending</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h3><i class="fas fa-receipt" style="color:#e94560;margin-right:8px"></i>Receipt Preview</h3></div>
+          <div class="receipt">
+            <div class="receipt-header">
+              <h3>GymPro Fitness</h3>
+              <p style="font-size:12px;color:#8892b0">123 Fitness Avenue, Suite 100</p>
+              <p style="font-size:12px;color:#8892b0">Tel: (555) 123-4567</p>
+            </div>
+            <div class="receipt-divider"></div>
+            <div class="receipt-line"><span>Invoice:</span><span>INV-0047</span></div>
+            <div class="receipt-line"><span>Date:</span><span>Jun 15, 2026</span></div>
+            <div class="receipt-line"><span>Member:</span><span>John Smith</span></div>
+            <div class="receipt-line"><span>ID:</span><span>GYM-001</span></div>
+            <div class="receipt-divider"></div>
+            <div class="receipt-line"><span>Monthly Membership</span><span>$50.00</span></div>
+            <div class="receipt-divider"></div>
+            <div class="receipt-line receipt-total"><span>TOTAL</span><span>$50.00</span></div>
+            <div class="receipt-line"><span>Payment:</span><span>Cash</span></div>
+            <div class="receipt-divider"></div>
+            <p style="text-align:center;font-size:11px;color:#8892b0;margin-top:8px">Thank you for your membership!</p>
+          </div>
+          <div style="text-align:center;margin-top:16px">
+            <button class="btn btn-primary btn-sm"><i class="fas fa-print"></i> Print Receipt</button>
+            <button class="btn btn-outline btn-sm"><i class="fas fa-download"></i> Download PDF</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ TRAINERS ============ -->
+  <div class="page" id="page-trainers">
+    <div class="topbar">
+      <div class="topbar-left"><h1>Trainers Management</h1><p>Manage gym trainers and member assignments</p></div>
+      <div class="topbar-right">
+        <div class="search-box"><i class="fas fa-search"></i><input placeholder="Search trainers..."></div>
+        <div class="topbar-icon"><i class="fas fa-bell"></i><div class="badge"></div></div>
+        <div class="user-avatar">A</div>
+      </div>
+    </div>
+    <div class="content">
+      <div class="card">
+        <div class="card-header">
+          <h3>Our Trainers</h3>
+          <button class="btn btn-primary"><i class="fas fa-plus"></i> Add Trainer</button>
+        </div>
+        <div class="trainer-grid">
+          <div class="trainer-card">
+            <div class="trainer-avatar">MJ</div>
+            <h4>Marcus Johnson</h4>
+            <div class="spec">Strength & Conditioning</div>
+            <p style="font-size:13px;color:#8892b0;margin-top:4px">+1 555-0201</p>
+            <span class="badge-status badge-active" style="margin-top:8px;display:inline-block">Active</span>
+            <div class="trainer-stats">
+              <div class="trainer-stat"><div class="num">24</div><div class="label">Members</div></div>
+              <div class="trainer-stat"><div class="num">22</div><div class="label">Active</div></div>
+              <div class="trainer-stat"><div class="num">4.9</div><div class="label">Rating</div></div>
+            </div>
+          </div>
+          <div class="trainer-card">
+            <div class="trainer-avatar" style="background:linear-gradient(135deg,#e94560,#ff6b6b)">LP</div>
+            <h4>Lisa Park</h4>
+            <div class="spec">Yoga & Flexibility</div>
+            <p style="font-size:13px;color:#8892b0;margin-top:4px">+1 555-0202</p>
+            <span class="badge-status badge-active" style="margin-top:8px;display:inline-block">Active</span>
+            <div class="trainer-stats">
+              <div class="trainer-stat"><div class="num">18</div><div class="label">Members</div></div>
+              <div class="trainer-stat"><div class="num">16</div><div class="label">Active</div></div>
+              <div class="trainer-stat"><div class="num">4.8</div><div class="label">Rating</div></div>
+            </div>
+          </div>
+          <div class="trainer-card">
+            <div class="trainer-avatar" style="background:linear-gradient(135deg,#4caf50,#66bb6a)">DA</div>
+            <h4>David Anderson</h4>
+            <div class="spec">Cardio & HIIT</div>
+            <p style="font-size:13px;color:#8892b0;margin-top:4px">+1 555-0203</p>
+            <span class="badge-status badge-active" style="margin-top:8px;display:inline-block">Active</span>
+            <div class="trainer-stats">
+              <div class="trainer-stat"><div class="num">30</div><div class="label">Members</div></div>
+              <div class="trainer-stat"><div class="num">28</div><div class="label">Active</div></div>
+              <div class="trainer-stat"><div class="num">4.7</div><div class="label">Rating</div></div>
+            </div>
+          </div>
+          <div class="trainer-card">
+            <div class="trainer-avatar" style="background:linear-gradient(135deg,#ff9800,#ffb74d)">RH</div>
+            <h4>Rachel Hughes</h4>
+            <div class="spec">CrossFit</div>
+            <p style="font-size:13px;color:#8892b0;margin-top:4px">+1 555-0204</p>
+            <span class="badge-status badge-active" style="margin-top:8px;display:inline-block">Active</span>
+            <div class="trainer-stats">
+              <div class="trainer-stat"><div class="num">15</div><div class="label">Members</div></div>
+              <div class="trainer-stat"><div class="num">14</div><div class="label">Active</div></div>
+              <div class="trainer-stat"><div class="num">4.9</div><div class="label">Rating</div></div>
+            </div>
+          </div>
+          <div class="trainer-card">
+            <div class="trainer-avatar" style="background:linear-gradient(135deg,#2196f3,#64b5f6)">JW</div>
+            <h4>James Wilson</h4>
+            <div class="spec">Bodybuilding</div>
+            <p style="font-size:13px;color:#8892b0;margin-top:4px">+1 555-0205</p>
+            <span class="badge-status badge-suspended" style="margin-top:8px;display:inline-block">Inactive</span>
+            <div class="trainer-stats">
+              <div class="trainer-stat"><div class="num">0</div><div class="label">Members</div></div>
+              <div class="trainer-stat"><div class="num">0</div><div class="label">Active</div></div>
+              <div class="trainer-stat"><div class="num">4.6</div><div class="label">Rating</div></div>
+            </div>
+          </div>
+          <div class="trainer-card">
+            <div class="trainer-avatar" style="background:linear-gradient(135deg,#9c27b0,#ba68c8)">ST</div>
+            <h4>Sophie Torres</h4>
+            <div class="spec">Pilates & Rehab</div>
+            <p style="font-size:13px;color:#8892b0;margin-top:4px">+1 555-0206</p>
+            <span class="badge-status badge-active" style="margin-top:8px;display:inline-block">Active</span>
+            <div class="trainer-stats">
+              <div class="trainer-stat"><div class="num">20</div><div class="label">Members</div></div>
+              <div class="trainer-stat"><div class="num">19</div><div class="label">Active</div></div>
+              <div class="trainer-stat"><div class="num">5.0</div><div class="label">Rating</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ INVENTORY SHOP ============ -->
+  <div class="page" id="page-inventory">
+    <div class="topbar">
+      <div class="topbar-left"><h1>Inventory Shop</h1><p>Manage gym products and sales</p></div>
+      <div class="topbar-right">
+        <div class="search-box"><i class="fas fa-search"></i><input placeholder="Search products..."></div>
+        <div class="topbar-icon"><i class="fas fa-bell"></i><div class="badge"></div></div>
+        <div class="user-avatar">A</div>
+      </div>
+    </div>
+    <div class="content">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon blue"><i class="fas fa-boxes"></i></div>
+          <div class="stat-info"><h3>86</h3><p>Total Products</p></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green"><i class="fas fa-shopping-cart"></i></div>
+          <div class="stat-info"><h3>$1,250</h3><p>Today's Sales</p></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon orange"><i class="fas fa-exclamation-triangle"></i></div>
+          <div class="stat-info"><h3>5</h3><p>Low Stock Items</p></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon purple"><i class="fas fa-tags"></i></div>
+          <div class="stat-info"><h3>4</h3><p>Categories</p></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="filter-bar" style="margin-bottom:0">
+              <span class="filter-chip active">All Products</span>
+              <span class="filter-chip">Supplements</span>
+              <span class="filter-chip">Drinks</span>
+              <span class="filter-chip">Accessories</span>
+            </div>
+          </div>
+          <button class="btn btn-primary"><i class="fas fa-plus"></i> Add Product</button>
+        </div>
+        <div class="product-grid">
+          <div class="product-card">
+            <div class="product-img" style="background:#e8f5e9;font-size:40px">🥤</div>
+            <h4>Whey Protein 2kg</h4>
+            <div style="font-size:12px;color:#8892b0">SKU: SUP-001</div>
+            <div class="price">$45.00</div>
+            <div class="stock">Stock: 24 units</div>
+          </div>
+          <div class="product-card">
+            <div class="product-img" style="background:#e8f4fd;font-size:40px">💧</div>
+            <h4>Energy Drink Pack</h4>
+            <div style="font-size:12px;color:#8892b0">SKU: DRK-001</div>
+            <div class="price">$12.00</div>
+            <div class="stock">Stock: 48 units</div>
+          </div>
+          <div class="product-card">
+            <div class="product-img" style="background:#f3e5f5;font-size:40px">🧤</div>
+            <h4>Training Gloves</h4>
+            <div style="font-size:12px;color:#8892b0">SKU: ACC-001</div>
+            <div class="price">$25.00</div>
+            <div class="stock stock-low">Stock: 3 units (Low!)</div>
+          </div>
+          <div class="product-card">
+            <div class="product-img" style="background:#fff3e0;font-size:40px">👕</div>
+            <h4>GymPro T-Shirt</h4>
+            <div style="font-size:12px;color:#8892b0">SKU: APP-001</div>
+            <div class="price">$30.00</div>
+            <div class="stock">Stock: 35 units</div>
+          </div>
+          <div class="product-card">
+            <div class="product-img" style="background:#e0f2f1;font-size:40px">🏋️</div>
+            <h4>Resistance Bands Set</h4>
+            <div style="font-size:12px;color:#8892b0">SKU: ACC-002</div>
+            <div class="price">$18.00</div>
+            <div class="stock stock-low">Stock: 2 units (Low!)</div>
+          </div>
+          <div class="product-card">
+            <div class="product-img" style="background:#fce4ec;font-size:40px">🧴</div>
+            <h4>BCAA Supplement</h4>
+            <div style="font-size:12px;color:#8892b0">SKU: SUP-002</div>
+            <div class="price">$35.00</div>
+            <div class="stock">Stock: 18 units</div>
+          </div>
+          <div class="product-card">
+            <div class="product-img" style="background:#e8f4fd;font-size:40px">🎧</div>
+            <h4>Wireless Earbuds</h4>
+            <div style="font-size:12px;color:#8892b0">SKU: ACC-003</div>
+            <div class="price">$55.00</div>
+            <div class="stock">Stock: 12 units</div>
+          </div>
+          <div class="product-card">
+            <div class="product-img" style="background:#e8f5e9;font-size:40px">🥛</div>
+            <h4>Protein Bar (12pk)</h4>
+            <div style="font-size:12px;color:#8892b0">SKU: SUP-003</div>
+            <div class="price">$28.00</div>
+            <div class="stock stock-low">Stock: 4 units (Low!)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ REPORTS ============ -->
+  <div class="page" id="page-reports">
+    <div class="topbar">
+      <div class="topbar-left"><h1>Reports & Analytics</h1><p>Comprehensive operational and financial insights</p></div>
+      <div class="topbar-right">
+        <div class="search-box"><i class="fas fa-search"></i><input placeholder="Search reports..."></div>
+        <div class="topbar-icon"><i class="fas fa-bell"></i><div class="badge"></div></div>
+        <div class="user-avatar">A</div>
+      </div>
+    </div>
+    <div class="content">
+      <div class="tabs">
+        <div class="tab active">Member Report</div>
+        <div class="tab">Attendance</div>
+        <div class="tab">Revenue</div>
+        <div class="tab">Inventory</div>
+        <div class="tab">Trainer</div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon blue"><i class="fas fa-users"></i></div>
+          <div class="stat-info"><h3>1,247</h3><p>Total Members</p></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green"><i class="fas fa-user-check"></i></div>
+          <div class="stat-info"><h3>1,089</h3><p>Active (87.3%)</p></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon red"><i class="fas fa-user-times"></i></div>
+          <div class="stat-info"><h3>128</h3><p>Expired (10.3%)</p></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon orange"><i class="fas fa-user-slash"></i></div>
+          <div class="stat-info"><h3>30</h3><p>Suspended (2.4%)</p></div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="fas fa-chart-bar" style="color:#e94560;margin-right:8px"></i>Monthly Registrations</h3>
+            <div class="btn-group">
+              <button class="btn btn-outline btn-sm"><i class="fas fa-file-pdf"></i> PDF</button>
+              <button class="btn btn-outline btn-sm"><i class="fas fa-file-excel"></i> Excel</button>
+            </div>
+          </div>
+          <div class="chart-area">
+            <div class="chart-col"><div class="chart-bar" style="height:40%;background:linear-gradient(180deg,#2196f3,#64b5f6)"></div><div class="chart-label">Jan</div></div>
+            <div class="chart-col"><div class="chart-bar" style="height:55%;background:linear-gradient(180deg,#2196f3,#64b5f6)"></div><div class="chart-label">Feb</div></div>
+            <div class="chart-col"><div class="chart-bar" style="height:45%;background:linear-gradient(180deg,#2196f3,#64b5f6)"></div><div class="chart-label">Mar</div></div>
+            <div class="chart-col"><div class="chart-bar" style="height:70%;background:linear-gradient(180deg,#2196f3,#64b5f6)"></div><div class="chart-label">Apr</div></div>
+            <div class="chart-col"><div class="chart-bar" style="height:85%;background:linear-gradient(180deg,#2196f3,#64b5f6)"></div><div class="chart-label">May</div></div>
+            <div class="chart-col"><div class="chart-bar" style="height:100%;background:linear-gradient(180deg,#e94560,#ff6b6b)"></div><div class="chart-label">Jun</div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="fas fa-dollar-sign" style="color:#e94560;margin-right:8px"></i>Revenue Summary</h3>
+          </div>
+          <div style="padding:10px">
+            <div style="display:flex;justify-content:space-between;padding:14px;background:#f0f2f5;border-radius:10px;margin-bottom:8px">
+              <span style="font-weight:600">Daily Revenue</span>
+              <span style="font-weight:800;color:#4caf50">$4,850</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:14px;background:#f0f2f5;border-radius:10px;margin-bottom:8px">
+              <span style="font-weight:600">Weekly Revenue</span>
+              <span style="font-weight:800;color:#4caf50">$18,200</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:14px;background:#f0f2f5;border-radius:10px;margin-bottom:8px">
+              <span style="font-weight:600">Monthly Revenue</span>
+              <span style="font-weight:800;color:#4caf50">$28,450</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:14px;background:#e8f5e9;border-radius:10px">
+              <span style="font-weight:700">Annual Revenue (YTD)</span>
+              <span style="font-weight:800;color:#2e7d32;font-size:18px">$156,800</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3><i class="fas fa-table" style="color:#e94560;margin-right:8px"></i>Detailed Member Report</h3>
+          <div class="btn-group">
+            <button class="btn btn-outline btn-sm"><i class="fas fa-filter"></i> Filter</button>
+            <button class="btn btn-primary btn-sm"><i class="fas fa-download"></i> Export</button>
+          </div>
+        </div>
+        <table>
+          <thead><tr><th>Member</th><th>Plan</th><th>Joined</th><th>Attendance (Month)</th><th>Payments</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td><strong>John Smith</strong></td><td>Monthly</td><td>Jan 15, 2026</td><td>22 days</td><td>$300.00</td><td><span class="badge-status badge-active">Active</span></td></tr>
+            <tr><td><strong>Sarah Johnson</strong></td><td>Quarterly</td><td>Mar 01, 2026</td><td>18 days</td><td>$260.00</td><td><span class="badge-status badge-active">Active</span></td></tr>
+            <tr><td><strong>Mike Davis</strong></td><td>Annual</td><td>Dec 01, 2025</td><td>25 days</td><td>$450.00</td><td><span class="badge-status badge-active">Active</span></td></tr>
+            <tr><td><strong>Emily Chen</strong></td><td>Monthly</td><td>Feb 10, 2026</td><td>0 days</td><td>$200.00</td><td><span class="badge-status badge-expired">Expired</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SETTINGS ============ -->
+  <div class="page" id="page-settings">
+    <div class="topbar">
+      <div class="topbar-left"><h1>Settings & Roles</h1><p>System configuration and user management</p></div>
+      <div class="topbar-right">
+        <div class="search-box"><i class="fas fa-search"></i><input placeholder="Search settings..."></div>
+        <div class="topbar-icon"><i class="fas fa-bell"></i><div class="badge"></div></div>
+        <div class="user-avatar">A</div>
+      </div>
+    </div>
+    <div class="content">
+      <div class="tabs">
+        <div class="tab active">User Accounts</div>
+        <div class="tab">Roles & Permissions</div>
+        <div class="tab">Audit Logs</div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3><i class="fas fa-users-cog" style="color:#e94560;margin-right:8px"></i>User Accounts</h3>
+          <button class="btn btn-primary"><i class="fas fa-plus"></i> Add User</button>
+        </div>
+        <table>
+          <thead><tr><th>User</th><th>Username</th><th>Email</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><div class="member-info"><div class="member-avatar">AD</div><div><div class="name">Admin User</div></div></div></td>
+              <td>admin</td><td>admin@gym.com</td>
+              <td><span style="background:#fce4ec;color:#e94560;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600">Administrator</span></td>
+              <td><span class="badge-status badge-active">Active</span></td>
+              <td><div class="action-dots"><i class="fas fa-ellipsis-h"></i></div></td>
+            </tr>
+            <tr>
+              <td><div class="member-info"><div class="member-avatar" style="background:linear-gradient(135deg,#4caf50,#66bb6a)">JD</div><div><div class="name">Jane Doe</div></div></div></td>
+              <td>jane.doe</td><td>jane@gym.com</td>
+              <td><span style="background:#e8f4fd;color:#2196f3;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600">Receptionist</span></td>
+              <td><span class="badge-status badge-active">Active</span></td>
+              <td><div class="action-dots"><i class="fas fa-ellipsis-h"></i></div></td>
+            </tr>
+            <tr>
+              <td><div class="member-info"><div class="member-avatar" style="background:linear-gradient(135deg,#ff9800,#ffb74d)">BM</div><div><div class="name">Bob Manager</div></div></div></td>
+              <td>bob.mgr</td><td>bob@gym.com</td>
+              <td><span style="background:#fff3e0;color:#e65100;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600">Manager</span></td>
+              <td><span class="badge-status badge-active">Active</span></td>
+              <td><div class="action-dots"><i class="fas fa-ellipsis-h"></i></div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><h3><i class="fas fa-shield-alt" style="color:#e94560;margin-right:8px"></i>Roles & Permissions</h3></div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+          <div style="border:2px solid #fce4ec;border-radius:14px;padding:20px">
+            <h4 style="color:#e94560;font-size:15px;margin-bottom:12px"><i class="fas fa-crown" style="margin-right:6px"></i>Administrator</h4>
+            <div style="font-size:13px;color:#5a6688;line-height:1.8">
+              <div><i class="fas fa-check" style="color:#4caf50;margin-right:6px;width:14px"></i>Members Management</div>
+              <div><i class="fas fa-check" style="color:#4caf50;margin-right:6px;width:14px"></i>Attendance Tracking</div>
+              <div><i class="fas fa-check" style="color:#4caf50;margin-right:6px;width:14px"></i>Billing & Receipts</div>
+              <div><i class="fas fa-check" style="color:#4caf50;margin-right:6px;width:14px"></i>Trainers Management</div>
+              <div><i class="fas fa-check" style="color:#4caf50;margin-right:6px;width:14px"></i>Inventory Shop</div>
+              <div><i class="fas fa-check" style="color:#4caf50;margin-right:6px;width:14px"></i>Reports & Analytics</div>
+              <div><i class="fas fa-check" style="color:#4caf50;margin-right:6px;width:14px"></i>System Settings</div>
+            </div>
+          </div>
+          <div style="border:2px solid #e8f4fd;border-radius:14px;padding:20px">
+            <h4 style="color:#2196f3;font-size:15px;margin-bottom:12px"><i class="fas fa-headset" style="margin-right:6px"></i>Receptionist</h4>
+            <div style="font-size:13px;color:#5a6688;line-height:1.8">
+              <div><i class="fas fa-check" style="color:#4caf50;margin-right:6px;width:14px"></i>Members Management</div>
+              <div><i class="fas fa-check" style="color:#4caf50;margin-right:6px;width:14px"></i>Attendance Tracking</div>
+              <div><i class="fas fa-check" style="color:#4caf50;margin-right:6px;width:14px"></i>Billing & Receipts</div>
+              <div><i class="fas fa-times" style="color:#ccc;margin-right:6px;width:14px"></i>Trainers Management</div>
+              <div><i class="fas fa-times" style="color:#ccc;margin-right:6px;width:14px"></i>Inventory Shop</div>
+              <div><i class="fas fa-times" style="color:#ccc;margin-right:6px;width:14px"></i>Reports & Analytics</div>
+              <div><i class="fas fa-times" style="color:#ccc;margin-right:6px;width:14px"></i>System Settings</div>
+            </div>
+          </div>
+          <div style="border:2px solid #fff3e0;border-radius:14px;padding:20px">
+            <h4 style="color:#e65100;font-size:15px;margin-bottom:12px"><i class="fas fa-user-tie" style="margin-right:6px"></i>Manager</h4>
+            <div style="font-size:13px;color:#5a6688;line-height:1.8">
+              <div><i class="fas fa-check" style="color:#4caf50;margin-right:6px;width:14px"></i>Members Management</div>
+              <div><i class="fas fa-check" style="color:#4caf50;margin-right:6px;width:14px"></i>Attendance Tracking</div>
+              <div><i class="fas fa-check" style="color:#4caf50;margin-right:6px;width:14px"></i>Billing & Receipts</div>
+              <div><i class="fas fa-check" style="color:#4caf50;margin-right:6px;width:14px"></i>Trainers Management</div>
+              <div><i class="fas fa-check" style="color:#4caf50;margin-right:6px;width:14px"></i>Inventory Shop</div>
+              <div><i class="fas fa-check" style="color:#4caf50;margin-right:6px;width:14px"></i>Reports & Analytics</div>
+              <div><i class="fas fa-times" style="color:#ccc;margin-right:6px;width:14px"></i>System Settings</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3><i class="fas fa-history" style="color:#e94560;margin-right:8px"></i>Recent Audit Logs</h3>
+          <button class="btn btn-outline btn-sm">View All</button>
+        </div>
+        <table>
+          <thead><tr><th>User</th><th>Action</th><th>Details</th><th>Date & Time</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Admin</strong></td><td>Member Created</td><td>New member Alex Rodriguez registered</td><td>Jun 15, 2026 10:45 AM</td></tr>
+            <tr><td><strong>Jane Doe</strong></td><td>Membership Renewed</td><td>Sarah Johnson - Quarterly Plan</td><td>Jun 15, 2026 09:30 AM</td></tr>
+            <tr><td><strong>Admin</strong></td><td>Invoice Generated</td><td>INV-0047 - John Smith - $50.00</td><td>Jun 15, 2026 09:15 AM</td></tr>
+            <tr><td><strong>Bob Manager</strong></td><td>Inventory Adjusted</td><td>Training Gloves stock +10 units</td><td>Jun 14, 2026 04:30 PM</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  event.target.closest('.nav-item').classList.add('active');
+}
+</script>
+<div style="position:fixed;bottom:0;left:0;right:0;text-align:center;padding:8px;font-size:11px;color:rgba(255,255,255,0.25);letter-spacing:1px;font-family:sans-serif;z-index:9999;">whitelabel@alfaasolutions</div>
+</body>
+</html>
