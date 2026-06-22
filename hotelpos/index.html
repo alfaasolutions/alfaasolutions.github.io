@@ -230,6 +230,49 @@ tr:hover td{background:rgba(255,255,255,0.02);}
 
 /* whitelabel */
 .whitelabel{position:fixed;bottom:8px;right:12px;font-size:10px;color:rgba(255,255,255,0.15);letter-spacing:1px;z-index:999;}
+
+/* THEME TOGGLE */
+.theme-toggle{display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;}
+.theme-toggle-label{font-size:11px;font-weight:600;color:var(--text2);letter-spacing:0.5px;}
+.toggle-track{width:48px;height:26px;border-radius:13px;background:var(--border);position:relative;transition:background .3s;border:1px solid rgba(255,255,255,0.08);}
+.toggle-track::after{content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .3s;box-shadow:0 1px 3px rgba(0,0,0,0.2);}
+.toggle-track .icon-moon,.toggle-track .icon-sun{position:absolute;top:4px;font-size:14px;z-index:1;transition:opacity .3s;}
+.toggle-track .icon-moon{right:5px;opacity:1;}
+.toggle-track .icon-sun{left:5px;opacity:0;}
+body.light .toggle-track{background:var(--primary);}
+body.light .toggle-track::after{transform:translateX(22px);}
+body.light .toggle-track .icon-moon{opacity:0;}
+body.light .toggle-track .icon-sun{opacity:1;}
+
+/* LIGHT MODE */
+body.light{--bg:#f5f6fa;--bg2:#ffffff;--bg3:#f0f1f5;--card:#ffffff;--border:#e2e5ef;--text:#1a1d2e;--text2:#555870;--text3:#8b8fa3;--primary:#6366f1;--primary-light:#4f46e5;--primary-bg:rgba(99,102,241,0.08);--green:#16a34a;--green-bg:rgba(22,163,74,0.08);--red:#dc2626;--red-bg:rgba(220,38,38,0.08);--orange:#ea580c;--orange-bg:rgba(234,88,12,0.08);--blue:#2563eb;--blue-bg:rgba(37,99,235,0.08);--yellow:#ca8a04;--yellow-bg:rgba(202,138,4,0.08);--pink:#db2777;--pink-bg:rgba(219,39,119,0.08);}
+body.light .sidebar{background:#fff;border-right-color:#e2e5ef;}
+body.light .sidebar-brand{border-bottom-color:#e2e5ef;}
+body.light .nav-item{color:#555870;}
+body.light .nav-item:hover{background:rgba(0,0,0,0.03);color:#1a1d2e;}
+body.light .nav-item.active{background:var(--primary-bg);color:var(--primary);}
+body.light .topbar{background:#fff;border-bottom-color:#e2e5ef;}
+body.light .user-pill{background:rgba(0,0,0,0.03);}
+body.light .pos-product{background:#f8f9fc;border-color:#e2e5ef;}
+body.light .pos-product:hover{box-shadow:0 8px 20px rgba(0,0,0,0.08);}
+body.light .pos-right{background:#f8f9fc;}
+body.light .cart-qty button{background:#fff;border-color:#e2e5ef;}
+body.light .bill-close{background:#1a1d2e;color:#fff;}
+body.light .bill-close:hover{background:#2a2d3e;}
+body.light .whitelabel{color:rgba(0,0,0,0.15);}
+body.light .chart-area{background:linear-gradient(180deg,rgba(99,102,241,0.06) 0%,transparent 100%);}
+body.light .chart-bar{background:linear-gradient(180deg,var(--primary),rgba(99,102,241,0.2));}
+body.light .stat-card:hover{box-shadow:0 4px 12px rgba(0,0,0,0.06);}
+body.light .brand-name{color:#1a1d2e;}
+body.light tr:hover td{background:rgba(0,0,0,0.02);}
+body.light .pos-search{background:#fff;}
+body.light .quick-qty button{border-color:#e2e5ef;color:#555870;}
+body.light .cart-item{border-bottom-color:rgba(0,0,0,0.06);}
+body.light .setting-row{background:#f8f9fc;border-color:#e2e5ef;}
+body.light .sidebar-footer{border-top-color:#e2e5ef;}
+body.light .nav-section{color:#8b8fa3;}
+
+*{transition:background-color .3s, color .3s, border-color .3s, box-shadow .3s;}
 </style>
 </head>
 <body>
@@ -299,7 +342,7 @@ tr:hover td{background:rgba(255,255,255,0.02);}
 
 <!-- ===== DASHBOARD ===== -->
 <div class="page active" id="page-dashboard">
-<div class="topbar"><h2>Dashboard</h2><div class="topbar-actions"><div class="topbar-btn">Today: Jun 22, 2026</div></div></div>
+<div class="topbar"><h2>Dashboard</h2><div class="topbar-actions"><div class="theme-toggle" onclick="toggleTheme()"><span class="theme-toggle-label">Theme</span><div class="toggle-track"><span class="icon-sun">&#9728;</span><span class="icon-moon">&#127769;</span></div></div><div class="topbar-btn">Today: Jun 22, 2026</div></div></div>
 <div class="content">
   <div class="stats-grid">
     <div class="stat-card">
@@ -806,6 +849,12 @@ function renderItemsGrid() {
 
 renderProducts();
 renderItemsGrid();
+
+function toggleTheme(){
+  document.body.classList.toggle('light');
+  localStorage.setItem('hotelpos-theme', document.body.classList.contains('light')?'light':'dark');
+}
+if(localStorage.getItem('hotelpos-theme')==='light') document.body.classList.add('light');
 </script>
 </body>
 </html>
