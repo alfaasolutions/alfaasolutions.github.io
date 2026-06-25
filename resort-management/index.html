@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>ResortOS — Resort & Hotel Management System</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#f0f4f9;--bg2:#ffffff;--card:#ffffff;--border:#e2e8f0;
+  --text:#0f172a;--text2:#475569;--text3:#94a3b8;
+  --primary:#2563eb;--primary-light:#3b82f6;--primary-bg:rgba(37,99,235,0.08);--primary-dark:#1d4ed8;
+  --sky:#0ea5e9;--sky-bg:rgba(14,165,233,0.1);
+  --green:#16a34a;--green-bg:rgba(22,163,74,0.1);--green-light:#22c55e;
+  --red:#dc2626;--red-bg:rgba(220,38,38,0.1);
+  --orange:#ea580c;--orange-bg:rgba(234,88,12,0.1);
+  --yellow:#ca8a04;--yellow-bg:rgba(202,138,4,0.1);
+  --purple:#7c3aed;--purple-bg:rgba(124,58,237,0.1);
+  --pink:#db2777;--pink-bg:rgba(219,39,119,0.1);
+  --teal:#0d9488;--teal-bg:rgba(13,148,136,0.1);
+  --sidebar-w:240px;--radius:16px;--radius-sm:10px;--radius-xs:8px;
+  --shadow:0 1px 3px rgba(0,0,0,0.07),0 4px 16px rgba(0,0,0,0.05);
+  --shadow-md:0 4px 12px rgba(0,0,0,0.1),0 12px 32px rgba(0,0,0,0.08);
+}
+html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);}
+body{display:flex;overflow:hidden;}
+
+/* ── SIDEBAR ── */
+.sidebar{width:var(--sidebar-w);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;z-index:20;}
+.sidebar-brand{padding:20px 18px 16px;border-bottom:1px solid var(--border);}
+.brand-row{display:flex;align-items:center;gap:10px;margin-bottom:2px;}
+.brand-icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--sky));display:flex;align-items:center;justify-content:center;font-size:17px;color:#fff;font-weight:800;flex-shrink:0;}
+.brand-name{font-size:17px;font-weight:800;letter-spacing:-0.4px;color:var(--text);}
+.brand-name span{color:var(--primary);}
+.brand-tag{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:0.5px;margin-left:46px;}
+.sidebar-nav{flex:1;padding:12px 10px;overflow-y:auto;}
+.nav-group{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:1.2px;text-transform:uppercase;padding:14px 10px 6px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--radius-sm);cursor:pointer;font-size:13px;font-weight:500;color:var(--text2);transition:all .15s;margin-bottom:1px;user-select:none;position:relative;}
+.nav-item:hover{background:var(--bg);color:var(--text);}
+.nav-item.active{background:var(--primary-bg);color:var(--primary);font-weight:600;}
+.nav-item svg{width:17px;height:17px;flex-shrink:0;opacity:.7;}
+.nav-item.active svg{opacity:1;}
+.nav-badge{margin-left:auto;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;background:var(--red-bg);color:var(--red);}
+.nav-badge.green{background:var(--green-bg);color:var(--green);}
+.nav-badge.blue{background:var(--primary-bg);color:var(--primary);}
+.sidebar-footer{padding:14px;border-top:1px solid var(--border);}
+.user-card{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--radius-sm);background:var(--bg);cursor:pointer;}
+.user-av{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--sky));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;}
+.user-info{flex:1;min-width:0;}
+.user-name{font-size:12px;font-weight:700;color:var(--text);}
+.user-role{font-size:11px;color:var(--text3);}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--green-light);box-shadow:0 0 0 2px rgba(34,197,94,0.2);animation:livepulse 2s infinite;}
+@keyframes livepulse{0%,100%{box-shadow:0 0 0 2px rgba(34,197,94,0.2);}50%{box-shadow:0 0 0 4px rgba(34,197,94,0.1);}}
+
+/* ── MAIN ── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 28px;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;}
+.topbar-left{display:flex;align-items:center;gap:16px;}
+.topbar h2{font-size:18px;font-weight:800;letter-spacing:-0.3px;}
+.topbar-breadcrumb{font-size:12px;color:var(--text3);}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.tb-btn{padding:8px 16px;border-radius:var(--radius-xs);border:1px solid var(--border);background:var(--bg2);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s;user-select:none;}
+.tb-btn:hover{border-color:var(--primary);color:var(--primary);}
+.tb-btn.primary{background:var(--primary);border-color:var(--primary);color:#fff;}
+.tb-btn.primary:hover{background:var(--primary-dark);}
+.tb-btn.sky{background:var(--sky);border-color:var(--sky);color:#fff;}
+.content{flex:1;overflow-y:auto;padding:24px 28px;}
+.page{display:none;}.page.active{display:block;}
+
+/* ── STATS ── */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:22px;}
+.stat-card{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);border:1px solid var(--border);transition:all .2s;cursor:default;}
+.stat-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px);}
+.stat-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;}
+.stat-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.stat-trend{font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;}
+.stat-up{color:var(--green);background:var(--green-bg);}
+.stat-down{color:var(--red);background:var(--red-bg);}
+.stat-val{font-size:28px;font-weight:800;letter-spacing:-1px;line-height:1;}
+.stat-label{font-size:12px;color:var(--text2);margin-top:4px;}
+.stat-sub{font-size:11px;color:var(--text3);margin-top:6px;}
+
+/* ── CARD ── */
+.card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden;margin-bottom:20px;}
+.card:last-child{margin-bottom:0;}
+.card-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);}
+.card-head h3{font-size:14px;font-weight:700;}
+.card-body{padding:20px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px;}
+
+/* ── CHART ── */
+.chart-wrap{height:180px;display:flex;align-items:flex-end;gap:6px;padding:0 4px;}
+.c-bar{flex:1;border-radius:6px 6px 0 0;background:linear-gradient(180deg,var(--primary),rgba(37,99,235,0.2));min-height:6px;cursor:pointer;transition:filter .15s;}
+.c-bar:hover{filter:brightness(1.15);}
+.c-bar.sky{background:linear-gradient(180deg,var(--sky),rgba(14,165,233,0.15));}
+.chart-labels{display:flex;gap:6px;padding:8px 4px 0;}
+.chart-labels span{flex:1;text-align:center;font-size:10px;color:var(--text3);}
+
+/* ── TABLE ── */
+.tbl-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;}
+th{padding:11px 16px;font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;border-bottom:1px solid var(--border);text-align:left;white-space:nowrap;}
+td{padding:13px 16px;font-size:13px;border-bottom:1px solid rgba(0,0,0,0.04);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(37,99,235,0.02);}
+.badge{display:inline-flex;align-items:center;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;}
+.b-green{color:var(--green);background:var(--green-bg);}
+.b-red{color:var(--red);background:var(--red-bg);}
+.b-orange{color:var(--orange);background:var(--orange-bg);}
+.b-blue{color:var(--primary);background:var(--primary-bg);}
+.b-sky{color:var(--sky);background:var(--sky-bg);}
+.b-yellow{color:var(--yellow);background:var(--yellow-bg);}
+.b-purple{color:var(--purple);background:var(--purple-bg);}
+.b-teal{color:var(--teal);background:var(--teal-bg);}
+.b-gray{color:var(--text3);background:var(--bg);}
+
+/* ── OCCUPANCY BAR ── */
+.occ-row{display:flex;align-items:center;gap:12px;padding:8px 0;}
+.occ-label{font-size:12px;font-weight:600;color:var(--text2);width:90px;flex-shrink:0;}
+.occ-bar{flex:1;height:8px;border-radius:4px;background:var(--bg);overflow:hidden;}
+.occ-fill{height:100%;border-radius:4px;}
+.occ-count{font-size:12px;font-weight:700;min-width:32px;text-align:right;color:var(--text);}
+
+/* ── MINI ITEM ── */
+.mini-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(0,0,0,0.04);}
+.mini-item:last-child{border:none;}
+.mini-item-left{display:flex;align-items:center;gap:12px;}
+.mini-rank{width:26px;height:26px;border-radius:8px;background:var(--primary-bg);color:var(--primary);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;}
+.mini-name{font-size:13px;font-weight:600;}
+.mini-sub{font-size:11px;color:var(--text3);}
+.mini-val{font-size:13px;font-weight:700;color:var(--primary);}
+
+/* ── ROOMS GRID ── */
+.rooms-filter{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+.rf-btn{padding:7px 16px;border-radius:30px;border:1px solid var(--border);background:var(--bg2);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s;user-select:none;}
+.rf-btn:hover{border-color:var(--primary-light);color:var(--primary);}
+.rf-btn.active{background:var(--primary);border-color:var(--primary);color:#fff;}
+.rooms-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:14px;}
+.room-card{background:var(--card);border:2px solid var(--border);border-radius:var(--radius);padding:18px;cursor:pointer;transition:all .2s;position:relative;box-shadow:var(--shadow);}
+.room-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);}
+.room-card.available{border-color:var(--border);}
+.room-card.available:hover{border-color:var(--green-light);}
+.room-card.occupied{border-color:var(--primary-light);background:rgba(37,99,235,0.03);}
+.room-card.dirty{border-color:var(--orange);background:var(--orange-bg);}
+.room-card.maintenance{border-color:var(--red);background:var(--red-bg);}
+.room-card.reserved{border-color:var(--purple);background:var(--purple-bg);}
+.room-card.cleaning{border-color:var(--yellow);background:var(--yellow-bg);}
+.room-num{font-size:22px;font-weight:800;letter-spacing:-0.5px;margin-bottom:4px;}
+.room-type{font-size:11px;font-weight:600;color:var(--text2);margin-bottom:12px;}
+.room-status-dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:5px;}
+.room-status-label{font-size:11px;font-weight:700;}
+.room-guest{font-size:11px;color:var(--text3);margin-top:6px;}
+.room-nights{font-size:11px;font-weight:700;color:var(--primary);margin-top:4px;}
+.room-floor-badge{position:absolute;top:12px;right:12px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;background:var(--bg);color:var(--text3);}
+
+/* ── RESERVATIONS ── */
+.res-cal{display:grid;grid-template-columns:120px repeat(14,1fr);gap:2px;margin-bottom:20px;}
+.cal-header{font-size:10px;font-weight:700;color:var(--text3);text-align:center;padding:6px 2px;background:var(--bg);border-radius:4px;}
+.cal-room-label{font-size:11px;font-weight:600;color:var(--text2);display:flex;align-items:center;padding:4px 8px;}
+.cal-cell{height:32px;border-radius:4px;background:var(--bg);}
+.cal-block{height:32px;border-radius:6px;display:flex;align-items:center;padding:0 8px;font-size:10px;font-weight:700;cursor:pointer;transition:filter .15s;white-space:nowrap;overflow:hidden;}
+.cal-block:hover{filter:brightness(0.95);}
+.cal-occ{background:linear-gradient(90deg,var(--primary),var(--sky));color:#fff;}
+.cal-res{background:linear-gradient(90deg,var(--purple),#a855f7);color:#fff;}
+.cal-main{background:linear-gradient(90deg,var(--orange),#fb923c);color:#fff;}
+
+/* ── GUEST CARD ── */
+.guest-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
+.guest-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);transition:all .2s;}
+.guest-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px);}
+.gc-top{display:flex;align-items:center;gap:14px;margin-bottom:14px;}
+.gc-av{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#fff;flex-shrink:0;}
+.gc-name{font-size:14px;font-weight:700;}
+.gc-info{font-size:11px;color:var(--text3);margin-top:2px;}
+.gc-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.gc-row{display:flex;justify-content:space-between;font-size:12px;color:var(--text2);padding:4px 0;border-bottom:1px solid rgba(0,0,0,0.04);}
+.gc-row:last-child{border:none;}
+.gc-row span:last-child{font-weight:600;color:var(--text);}
+
+/* ── HOUSEKEEPING ── */
+.hk-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;}
+.hk-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);}
+.hk-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.hk-room{font-size:16px;font-weight:800;}
+.hk-type{font-size:11px;color:var(--text3);}
+.hk-staff{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--border);margin-bottom:10px;}
+.hk-av{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;}
+.hk-sname{font-size:12px;font-weight:600;}
+.hk-time{font-size:11px;color:var(--text3);}
+.checklist{margin-top:8px;}
+.check-row{display:flex;align-items:center;gap:10px;padding:5px 0;font-size:12px;color:var(--text2);}
+.check-box{width:18px;height:18px;border-radius:5px;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0;}
+.check-box.done{background:var(--green-light);border-color:var(--green-light);color:#fff;}
+.check-box.done::after{content:'✓';font-size:11px;font-weight:700;}
+
+/* ── FINANCE ── */
+.fin-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;}
+.fin-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);}
+.fin-card-label{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;}
+.fin-card-val{font-size:24px;font-weight:800;letter-spacing:-0.5px;}
+
+/* ── ACTIVITIES ── */
+.act-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;}
+.act-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);transition:all .2s;}
+.act-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px);}
+.act-banner{height:80px;display:flex;align-items:center;justify-content:center;font-size:36px;}
+.act-body{padding:14px;}
+.act-name{font-size:13px;font-weight:700;margin-bottom:4px;}
+.act-info{font-size:11px;color:var(--text3);}
+.act-row{display:flex;align-items:center;justify-content:space-between;margin-top:12px;}
+.act-price{font-size:15px;font-weight:800;color:var(--primary);}
+.act-slots{font-size:11px;color:var(--text3);}
+
+/* ── SETTINGS ── */
+.set-group{margin-bottom:22px;}
+.set-group h4{font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px;}
+.set-row{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:8px;box-shadow:var(--shadow);}
+.set-label{font-size:13px;font-weight:600;}
+.set-label span{display:block;font-size:11px;color:var(--text3);font-weight:400;margin-top:2px;}
+.set-val{font-size:13px;font-weight:600;color:var(--primary);}
+.toggle{width:44px;height:24px;border-radius:12px;background:var(--border);position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;}
+.toggle.on{background:var(--primary);}
+.toggle::after{content:'';width:18px;height:18px;border-radius:50%;background:#fff;position:absolute;top:3px;left:3px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+.toggle.on::after{left:23px;}
+
+/* ── MODALS ── */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center;backdrop-filter:blur(3px);}
+.overlay.show{display:flex;}
+.modal{background:#fff;border-radius:20px;width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2);}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:22px 26px;border-bottom:1px solid var(--border);}
+.modal-head h3{font-size:17px;font-weight:800;}
+.modal-close{width:32px;height:32px;border-radius:9px;border:1px solid var(--border);background:var(--bg);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;font-family:inherit;color:var(--text2);transition:all .15s;}
+.modal-close:hover{background:var(--red-bg);border-color:var(--red);color:var(--red);}
+.modal-body{padding:26px;}
+.form-row{margin-bottom:18px;}
+.form-label{font-size:12px;font-weight:700;color:var(--text2);margin-bottom:6px;display:block;letter-spacing:.3px;}
+.form-input{width:100%;padding:11px 14px;border-radius:var(--radius-xs);border:1.5px solid var(--border);background:var(--bg);color:var(--text);font-size:13px;font-family:inherit;outline:none;transition:border .15s;}
+.form-input:focus{border-color:var(--primary);background:#fff;}
+.form-select{width:100%;padding:11px 14px;border-radius:var(--radius-xs);border:1.5px solid var(--border);background:var(--bg);color:var(--text);font-size:13px;font-family:inherit;outline:none;cursor:pointer;appearance:none;}
+.form-select:focus{border-color:var(--primary);}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.modal-footer{display:flex;gap:10px;padding:0 26px 26px;}
+.modal-btn{flex:1;padding:13px;border-radius:var(--radius-xs);border:1px solid var(--border);background:var(--bg);color:var(--text2);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;}
+.modal-btn:hover{border-color:var(--text2);}
+.modal-btn.confirm{background:var(--primary);border-color:var(--primary);color:#fff;}
+.modal-btn.confirm:hover{background:var(--primary-dark);}
+.modal-btn.success{background:var(--green-light);border-color:var(--green-light);color:#fff;}
+
+/* ── ROOM STATUS MODAL ── */
+.status-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:10px 0 20px;}
+.status-opt{padding:14px;border-radius:var(--radius-sm);border:2px solid var(--border);cursor:pointer;text-align:center;transition:all .15s;user-select:none;}
+.status-opt:hover{border-color:var(--primary-light);}
+.status-opt.picked{border-color:var(--primary);background:var(--primary-bg);}
+.status-opt-icon{font-size:22px;margin-bottom:5px;}
+.status-opt-label{font-size:11px;font-weight:700;color:var(--text2);}
+.status-opt.picked .status-opt-label{color:var(--primary);}
+
+/* ── SUCCESS TOAST ── */
+.toast{position:fixed;bottom:30px;right:30px;background:#fff;border:1px solid var(--border);border-radius:14px;padding:16px 20px;box-shadow:var(--shadow-md);z-index:999;display:flex;align-items:center;gap:12px;font-size:13px;font-weight:600;transform:translateY(80px);opacity:0;transition:all .4s cubic-bezier(.34,1.56,.64,1);}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast-icon{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+
+/* ── INBOX ── */
+.msg-list{display:flex;flex-direction:column;gap:10px;}
+.msg-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 18px;box-shadow:var(--shadow);display:flex;align-items:flex-start;gap:14px;cursor:pointer;transition:all .15s;}
+.msg-card:hover{box-shadow:var(--shadow-md);}
+.msg-card.unread{border-left:3px solid var(--primary);}
+.msg-av{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#fff;flex-shrink:0;}
+.msg-name{font-size:13px;font-weight:700;}
+.msg-preview{font-size:12px;color:var(--text3);margin-top:2px;}
+.msg-time{font-size:11px;color:var(--text3);margin-left:auto;white-space:nowrap;}
+.msg-unread-dot{width:8px;height:8px;border-radius:50%;background:var(--primary);margin-top:4px;flex-shrink:0;}
+
+/* ── ANALYTICS ── */
+.anal-hero{background:linear-gradient(135deg,var(--primary),var(--sky));border-radius:var(--radius);padding:28px;color:#fff;margin-bottom:20px;position:relative;overflow:hidden;}
+.anal-hero::after{content:'🏝️';position:absolute;right:28px;top:50%;transform:translateY(-50%);font-size:64px;opacity:0.2;}
+.anal-hero h2{font-size:26px;font-weight:800;margin-bottom:6px;}
+.anal-hero p{font-size:14px;opacity:.85;}
+.anal-hero-stats{display:flex;gap:32px;margin-top:20px;}
+.ah-stat{opacity:.9;}
+.ah-val{font-size:22px;font-weight:800;}
+.ah-label{font-size:11px;opacity:.8;}
+
+/* ── STAFF ── */
+.staff-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;}
+.staff-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);transition:all .2s;}
+.staff-card:hover{box-shadow:var(--shadow-md);}
+.sc-top{display:flex;align-items:center;gap:14px;margin-bottom:14px;}
+.sc-av{width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;color:#fff;flex-shrink:0;}
+.sc-name{font-size:14px;font-weight:700;}
+.sc-role{font-size:11px;color:var(--text3);margin-top:2px;}
+.sc-shift{display:flex;justify-content:space-between;font-size:12px;color:var(--text2);padding:6px 0;border-top:1px solid var(--border);margin-top:10px;}
+
+/* ── WHITELABEL ── */
+.wl{position:fixed;bottom:8px;right:14px;font-size:10px;color:rgba(0,0,0,0.2);letter-spacing:1px;z-index:999;pointer-events:none;}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════ SIDEBAR ══════════════════ -->
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-row">
+      <div class="brand-icon">🏝️</div>
+      <div class="brand-name">Resort<span>OS</span></div>
+    </div>
+    <div class="brand-tag">Property Management System</div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-group">Core</div>
+    <div class="nav-item active" onclick="nav('dashboard',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Dashboard
+    </div>
+    <div class="nav-item" onclick="nav('reservations',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      Reservations
+      <span class="nav-badge blue">8</span>
+    </div>
+    <div class="nav-item" onclick="nav('rooms',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+      Rooms
+    </div>
+    <div class="nav-item" onclick="nav('guests',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Guests
+    </div>
+    <div class="nav-group">Operations</div>
+    <div class="nav-item" onclick="nav('housekeeping',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      Housekeeping
+      <span class="nav-badge">4</span>
+    </div>
+    <div class="nav-item" onclick="nav('activities',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      Activities
+    </div>
+    <div class="nav-item" onclick="nav('inbox',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      Inbox
+      <span class="nav-badge">3</span>
+    </div>
+    <div class="nav-group">Finance & Reports</div>
+    <div class="nav-item" onclick="nav('finance',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      Finance
+    </div>
+    <div class="nav-item" onclick="nav('analytics',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+      Analytics
+    </div>
+    <div class="nav-group">System</div>
+    <div class="nav-item" onclick="nav('staff',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
+      Staff
+    </div>
+    <div class="nav-item" onclick="nav('settings',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      Settings
+    </div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="user-av">GM</div>
+      <div class="user-info">
+        <div class="user-name">General Manager</div>
+        <div class="user-role">Full Access</div>
+      </div>
+      <div class="live-dot"></div>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════════════ MAIN ══════════════════ -->
+<div class="main">
+
+<!-- ═══ DASHBOARD ═══ -->
+<div class="page active" id="page-dashboard">
+  <div class="topbar">
+    <div class="topbar-left"><h2>Dashboard</h2><span class="topbar-breadcrumb">Good morning — Jun 25, 2026</span></div>
+    <div class="topbar-right">
+      <button class="tb-btn" onclick="openCheckin()">🛎️ Check-In Guest</button>
+      <button class="tb-btn primary" onclick="openReservation()">+ New Reservation</button>
+    </div>
+  </div>
+  <div class="content">
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-top">
+          <div class="stat-icon" style="background:var(--primary-bg);">🛎️</div>
+          <span class="stat-trend stat-up">↑ 12%</span>
+        </div>
+        <div class="stat-val">$12,480</div>
+        <div class="stat-label">Today's Revenue</div>
+        <div class="stat-sub">Updated 2 min ago</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-top">
+          <div class="stat-icon" style="background:var(--green-bg);">🏠</div>
+          <span class="stat-trend stat-up">↑ 4.2%</span>
+        </div>
+        <div class="stat-val">78%</div>
+        <div class="stat-label">Occupancy Rate</div>
+        <div class="stat-sub">62 / 80 rooms occupied</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-top">
+          <div class="stat-icon" style="background:var(--sky-bg);">✈️</div>
+          <span class="stat-trend stat-up">↑ 3</span>
+        </div>
+        <div class="stat-val">14</div>
+        <div class="stat-label">Arrivals Today</div>
+        <div class="stat-sub">6 pending check-in</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-top">
+          <div class="stat-icon" style="background:var(--orange-bg);">🚪</div>
+          <span class="stat-trend stat-down">↓ 2</span>
+        </div>
+        <div class="stat-val">9</div>
+        <div class="stat-label">Departures Today</div>
+        <div class="stat-sub">3 pending checkout</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="card">
+        <div class="card-head"><h3>Revenue This Week</h3><button class="tb-btn" style="font-size:11px;padding:5px 12px;">This Week</button></div>
+        <div class="card-body">
+          <div class="chart-wrap">
+            <div class="c-bar" style="height:48%"></div>
+            <div class="c-bar sky" style="height:63%"></div>
+            <div class="c-bar" style="height:55%"></div>
+            <div class="c-bar" style="height:90%"></div>
+            <div class="c-bar sky" style="height:72%"></div>
+            <div class="c-bar" style="height:80%"></div>
+            <div class="c-bar" style="height:95%"></div>
+          </div>
+          <div class="chart-labels"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>Room Availability</h3><span class="tb-btn" style="font-size:11px;padding:5px 12px;">Total: 80</span></div>
+        <div class="card-body">
+          <div style="font-size:32px;font-weight:800;letter-spacing:-1px;margin-bottom:16px;">1,280 <span style="font-size:13px;font-weight:500;color:var(--text3);">total rooms (portfolio)</span></div>
+          <div class="occ-row"><span class="occ-label">🔵 Occupied</span><div class="occ-bar"><div class="occ-fill" style="width:66%;background:var(--primary-light);"></div></div><span class="occ-count">852</span></div>
+          <div class="occ-row"><span class="occ-label">🟣 Reserved</span><div class="occ-bar"><div class="occ-fill" style="width:21%;background:var(--purple);"></div></div><span class="occ-count">271</span></div>
+          <div class="occ-row"><span class="occ-label">🟢 Available</span><div class="occ-bar"><div class="occ-fill" style="width:11%;background:var(--green-light);"></div></div><span class="occ-count">148</span></div>
+          <div class="occ-row"><span class="occ-label">🔴 Not Ready</span><div class="occ-bar"><div class="occ-fill" style="width:1%;background:var(--red);"></div></div><span class="occ-count">9</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="card">
+        <div class="card-head"><h3>Recent Bookings</h3><button class="tb-btn" style="font-size:11px;padding:5px 12px;">Today ▾</button></div>
+        <div class="card-body" style="padding:0;">
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>Booking ID</th><th>Guest</th><th>Room</th><th>Dates</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr><td style="font-weight:700;color:var(--primary);">#BID11042</td><td>Anura Perera</td><td><span class="badge b-blue">Villa 5</span></td><td style="font-size:11px;color:var(--text3);">Jun 25 – Jun 29</td><td><span class="badge b-green">Confirmed</span></td></tr>
+                <tr><td style="font-weight:700;color:var(--primary);">#BID11041</td><td>Sarah Mitchell</td><td><span class="badge b-purple">Suite 3</span></td><td style="font-size:11px;color:var(--text3);">Jun 25 – Jun 27</td><td><span class="badge b-yellow">Pending</span></td></tr>
+                <tr><td style="font-weight:700;color:var(--primary);">#BID11040</td><td>Liu Wei</td><td><span class="badge b-sky">Deluxe 12</span></td><td style="font-size:11px;color:var(--text3);">Jun 24 – Jun 26</td><td><span class="badge b-green">Confirmed</span></td></tr>
+                <tr><td style="font-weight:700;color:var(--primary);">#BID11039</td><td>James Carter</td><td><span class="badge b-teal">Cottage 2</span></td><td style="font-size:11px;color:var(--text3);">Jun 23 – Jun 28</td><td><span class="badge b-green">Confirmed</span></td></tr>
+                <tr><td style="font-weight:700;color:var(--primary);">#BID11038</td><td>Priya Kumar</td><td><span class="badge b-blue">Villa 3</span></td><td style="font-size:11px;color:var(--text3);">Jun 23 – Jun 25</td><td><span class="badge b-orange">Checking Out</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>Top Room Types</h3></div>
+        <div class="card-body">
+          <div class="mini-item"><div class="mini-item-left"><div class="mini-rank">1</div><div><div class="mini-name">Beach Villa</div><div class="mini-sub">8 rooms · 100% occupancy</div></div></div><div class="mini-val">$9,200</div></div>
+          <div class="mini-item"><div class="mini-item-left"><div class="mini-rank">2</div><div><div class="mini-name">Ocean Suite</div><div class="mini-sub">12 rooms · 91% occupancy</div></div></div><div class="mini-val">$7,480</div></div>
+          <div class="mini-item"><div class="mini-item-left"><div class="mini-rank">3</div><div><div class="mini-name">Deluxe Room</div><div class="mini-sub">30 rooms · 73% occupancy</div></div></div><div class="mini-val">$5,120</div></div>
+          <div class="mini-item"><div class="mini-item-left"><div class="mini-rank">4</div><div><div class="mini-name">Garden Cottage</div><div class="mini-sub">10 rooms · 60% occupancy</div></div></div><div class="mini-val">$2,400</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h3>Today's Arrivals & Departures</h3><button class="tb-btn" style="font-size:11px;padding:5px 12px;">Jun 25</button></div>
+      <div class="card-body" style="padding:0;">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Guest</th><th>Room</th><th>Nationality</th><th>Nights</th><th>Type</th><th>ETA / ETD</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr><td><b>Anura Perera</b></td><td>Villa 5</td><td>🇱🇰 Sri Lanka</td><td>4</td><td><span class="badge b-green">Arrival</span></td><td>02:00 PM</td><td><button class="tb-btn" style="padding:5px 14px;font-size:11px;" onclick="openCheckin()">Check-In</button></td></tr>
+              <tr><td><b>Sarah Mitchell</b></td><td>Suite 3</td><td>🇬🇧 UK</td><td>2</td><td><span class="badge b-green">Arrival</span></td><td>03:30 PM</td><td><button class="tb-btn" style="padding:5px 14px;font-size:11px;" onclick="openCheckin()">Check-In</button></td></tr>
+              <tr><td><b>Priya Kumar</b></td><td>Villa 3</td><td>🇮🇳 India</td><td>2</td><td><span class="badge b-orange">Departure</span></td><td>11:00 AM</td><td><button class="tb-btn" style="padding:5px 14px;font-size:11px;">Check-Out</button></td></tr>
+              <tr><td><b>Marco Rossi</b></td><td>Deluxe 7</td><td>🇮🇹 Italy</td><td>3</td><td><span class="badge b-green">Arrival</span></td><td>04:00 PM</td><td><button class="tb-btn" style="padding:5px 14px;font-size:11px;" onclick="openCheckin()">Check-In</button></td></tr>
+              <tr><td><b>Chen Li</b></td><td>Cottage 4</td><td>🇨🇳 China</td><td>5</td><td><span class="badge b-orange">Departure</span></td><td>10:00 AM</td><td><button class="tb-btn" style="padding:5px 14px;font-size:11px;">Check-Out</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ RESERVATIONS ═══ -->
+<div class="page" id="page-reservations">
+  <div class="topbar">
+    <div class="topbar-left"><h2>Reservations</h2></div>
+    <div class="topbar-right">
+      <button class="tb-btn">📅 Jun 2026</button>
+      <button class="tb-btn">📤 Export</button>
+      <button class="tb-btn primary" onclick="openReservation()">+ New Reservation</button>
+    </div>
+  </div>
+  <div class="content">
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--primary-bg);">📋</div><span class="stat-trend stat-up">↑ 5</span></div><div class="stat-val">148</div><div class="stat-label">Total This Month</div></div>
+      <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--green-bg);">✅</div></div><div class="stat-val">112</div><div class="stat-label">Confirmed</div></div>
+      <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--yellow-bg);">⏳</div></div><div class="stat-val">24</div><div class="stat-label">Pending</div></div>
+      <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--red-bg);">❌</div></div><div class="stat-val">12</div><div class="stat-label">Cancelled</div></div>
+    </div>
+
+    <div class="card" style="margin-bottom:20px;">
+      <div class="card-head"><h3>Availability Calendar — Next 14 Days</h3></div>
+      <div class="card-body">
+        <div class="res-cal">
+          <div></div>
+          <div class="cal-header">25</div><div class="cal-header">26</div><div class="cal-header">27</div><div class="cal-header">28</div><div class="cal-header">29</div><div class="cal-header">30</div>
+          <div class="cal-header">1</div><div class="cal-header">2</div><div class="cal-header">3</div><div class="cal-header">4</div><div class="cal-header">5</div><div class="cal-header">6</div><div class="cal-header">7</div><div class="cal-header">8</div>
+          <div class="cal-room-label">Villa 1</div><div class="cal-block cal-occ" style="grid-column:span 4;">Perera ✓</div><div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-block cal-res" style="grid-column:span 3;">Mitchell</div><div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-cell"></div>
+          <div class="cal-room-label">Villa 2</div><div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-block cal-res" style="grid-column:span 5;">Johnson</div><div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-cell"></div>
+          <div class="cal-room-label">Suite 3</div><div class="cal-block cal-occ" style="grid-column:span 2;">Liu Wei</div><div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-block cal-res" style="grid-column:span 4;">Kumar</div><div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-cell"></div>
+          <div class="cal-room-label">Deluxe 5</div><div class="cal-cell"></div><div class="cal-block cal-main" style="grid-column:span 2;">Maintenance</div><div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-block cal-res" style="grid-column:span 3;">Carter</div><div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-cell"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h3>All Reservations</h3><div style="display:flex;gap:8px;"><div class="tb-btn">All Types</div><div class="tb-btn">All Status</div></div></div>
+      <div class="card-body" style="padding:0;">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Booking ID</th><th>Guest Name</th><th>Room</th><th>Type</th><th>Check-In</th><th>Check-Out</th><th>Nights</th><th>Amount</th><th>Source</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td style="font-weight:700;color:var(--primary);">#BID11042</td><td><b>Anura Perera</b></td><td>Villa 5</td><td><span class="badge b-blue">Villa</span></td><td>Jun 25</td><td>Jun 29</td><td>4</td><td style="font-weight:700;">$2,400</td><td><span class="badge b-sky">Direct</span></td><td><span class="badge b-green">Confirmed</span></td></tr>
+              <tr><td style="font-weight:700;color:var(--primary);">#BID11041</td><td><b>Sarah Mitchell</b></td><td>Suite 3</td><td><span class="badge b-purple">Suite</span></td><td>Jun 25</td><td>Jun 27</td><td>2</td><td style="font-weight:700;">$1,100</td><td><span class="badge b-orange">Booking.com</span></td><td><span class="badge b-yellow">Pending</span></td></tr>
+              <tr><td style="font-weight:700;color:var(--primary);">#BID11040</td><td><b>Liu Wei</b></td><td>Deluxe 12</td><td><span class="badge b-sky">Deluxe</span></td><td>Jun 24</td><td>Jun 26</td><td>2</td><td style="font-weight:700;">$540</td><td><span class="badge b-purple">Agoda</span></td><td><span class="badge b-green">Confirmed</span></td></tr>
+              <tr><td style="font-weight:700;color:var(--primary);">#BID11039</td><td><b>James Carter</b></td><td>Cottage 2</td><td><span class="badge b-teal">Cottage</span></td><td>Jun 23</td><td>Jun 28</td><td>5</td><td style="font-weight:700;">$1,500</td><td><span class="badge b-sky">Direct</span></td><td><span class="badge b-green">Confirmed</span></td></tr>
+              <tr><td style="font-weight:700;color:var(--primary);">#BID11038</td><td><b>Priya Kumar</b></td><td>Villa 3</td><td><span class="badge b-blue">Villa</span></td><td>Jun 23</td><td>Jun 25</td><td>2</td><td style="font-weight:700;">$1,200</td><td><span class="badge b-sky">Direct</span></td><td><span class="badge b-orange">Checking Out</span></td></tr>
+              <tr><td style="font-weight:700;color:var(--primary);">#BID11037</td><td><b>Emma Johnson</b></td><td>Suite 1</td><td><span class="badge b-purple">Suite</span></td><td>Jun 27</td><td>Jun 30</td><td>3</td><td style="font-weight:700;">$1,650</td><td><span class="badge b-orange">Expedia</span></td><td><span class="badge b-yellow">Pending</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ROOMS ═══ -->
+<div class="page" id="page-rooms">
+  <div class="topbar">
+    <div class="topbar-left"><h2>Rooms</h2><span class="topbar-breadcrumb">Click any room to update status</span></div>
+    <div class="topbar-right">
+      <button class="tb-btn">🔍 Search</button>
+      <button class="tb-btn primary">+ Add Room</button>
+    </div>
+  </div>
+  <div class="content">
+    <div class="stats-row">
+      <div class="stat-card" style="cursor:pointer;" onclick="filterRooms('available',this)"><div class="stat-top"><div class="stat-icon" style="background:var(--green-bg);">🟢</div></div><div class="stat-val">18</div><div class="stat-label">Available</div></div>
+      <div class="stat-card" style="cursor:pointer;" onclick="filterRooms('occupied',this)"><div class="stat-top"><div class="stat-icon" style="background:var(--primary-bg);">🔵</div></div><div class="stat-val">42</div><div class="stat-label">Occupied</div></div>
+      <div class="stat-card" style="cursor:pointer;" onclick="filterRooms('dirty',this)"><div class="stat-top"><div class="stat-icon" style="background:var(--orange-bg);">🟠</div></div><div class="stat-val">8</div><div class="stat-label">Needs Cleaning</div></div>
+      <div class="stat-card" style="cursor:pointer;" onclick="filterRooms('maintenance',this)"><div class="stat-top"><div class="stat-icon" style="background:var(--red-bg);">🔴</div></div><div class="stat-val">4</div><div class="stat-label">Maintenance</div></div>
+    </div>
+    <div class="rooms-filter" id="roomsFilter">
+      <button class="rf-btn active" onclick="filterRooms('all',this)">All Rooms</button>
+      <button class="rf-btn" onclick="filterRooms('available',this)">🟢 Available</button>
+      <button class="rf-btn" onclick="filterRooms('occupied',this)">🔵 Occupied</button>
+      <button class="rf-btn" onclick="filterRooms('dirty',this)">🟠 Dirty</button>
+      <button class="rf-btn" onclick="filterRooms('cleaning',this)">🟡 Cleaning</button>
+      <button class="rf-btn" onclick="filterRooms('maintenance',this)">🔴 Maintenance</button>
+      <button class="rf-btn" onclick="filterRooms('reserved',this)">🟣 Reserved</button>
+    </div>
+    <div class="rooms-grid" id="roomsGrid"></div>
+  </div>
+</div>
+
+<!-- ═══ GUESTS ═══ -->
+<div class="page" id="page-guests">
+  <div class="topbar">
+    <div class="topbar-left"><h2>Guests</h2></div>
+    <div class="topbar-right">
+      <button class="tb-btn">🔍 Search Guests</button>
+      <button class="tb-btn primary" onclick="openCheckin()">+ Register Guest</button>
+    </div>
+  </div>
+  <div class="content">
+    <div class="guest-grid">
+      <div class="guest-card">
+        <div class="gc-top"><div class="gc-av" style="background:linear-gradient(135deg,#667eea,#764ba2);">AP</div><div><div class="gc-name">Anura Perera</div><div class="gc-info">🇱🇰 Sri Lanka · Guest #GS-0418</div></div></div>
+        <div class="gc-tags"><span class="badge b-blue">VIP</span><span class="badge b-green">Repeat Guest</span><span class="badge b-sky">In-House</span></div>
+        <div class="gc-row"><span>Room</span><span>Villa 5</span></div>
+        <div class="gc-row"><span>Check-In</span><span>Jun 25, 2026</span></div>
+        <div class="gc-row"><span>Check-Out</span><span>Jun 29, 2026</span></div>
+        <div class="gc-row"><span>Total Stays</span><span>7 times</span></div>
+        <div class="gc-row"><span>Lifetime Value</span><span style="color:var(--green);">$14,200</span></div>
+      </div>
+      <div class="guest-card">
+        <div class="gc-top"><div class="gc-av" style="background:linear-gradient(135deg,#f093fb,#f5576c);">SM</div><div><div class="gc-name">Sarah Mitchell</div><div class="gc-info">🇬🇧 United Kingdom · Guest #GS-0417</div></div></div>
+        <div class="gc-tags"><span class="badge b-yellow">New Guest</span><span class="badge b-orange">Awaiting Check-In</span></div>
+        <div class="gc-row"><span>Room</span><span>Suite 3</span></div>
+        <div class="gc-row"><span>Check-In</span><span>Jun 25, 2026</span></div>
+        <div class="gc-row"><span>Check-Out</span><span>Jun 27, 2026</span></div>
+        <div class="gc-row"><span>Source</span><span>Booking.com</span></div>
+        <div class="gc-row"><span>Preferences</span><span>Sea view, low floor</span></div>
+      </div>
+      <div class="guest-card">
+        <div class="gc-top"><div class="gc-av" style="background:linear-gradient(135deg,#4facfe,#00f2fe);">LW</div><div><div class="gc-name">Liu Wei</div><div class="gc-info">🇨🇳 China · Guest #GS-0416</div></div></div>
+        <div class="gc-tags"><span class="badge b-sky">In-House</span><span class="badge b-blue">Repeat Guest</span></div>
+        <div class="gc-row"><span>Room</span><span>Deluxe 12</span></div>
+        <div class="gc-row"><span>Check-In</span><span>Jun 24, 2026</span></div>
+        <div class="gc-row"><span>Check-Out</span><span>Jun 26, 2026</span></div>
+        <div class="gc-row"><span>Total Stays</span><span>3 times</span></div>
+        <div class="gc-row"><span>Dietary</span><span>Vegetarian</span></div>
+      </div>
+      <div class="guest-card">
+        <div class="gc-top"><div class="gc-av" style="background:linear-gradient(135deg,#43e97b,#38f9d7);">JC</div><div><div class="gc-name">James Carter</div><div class="gc-info">🇺🇸 United States · Guest #GS-0415</div></div></div>
+        <div class="gc-tags"><span class="badge b-sky">In-House</span><span class="badge b-purple">Honeymoon</span></div>
+        <div class="gc-row"><span>Room</span><span>Cottage 2</span></div>
+        <div class="gc-row"><span>Check-In</span><span>Jun 23, 2026</span></div>
+        <div class="gc-row"><span>Check-Out</span><span>Jun 28, 2026</span></div>
+        <div class="gc-row"><span>Special Request</span><span>Rose petals</span></div>
+        <div class="gc-row"><span>Package</span><span>Honeymoon Deluxe</span></div>
+      </div>
+      <div class="guest-card">
+        <div class="gc-top"><div class="gc-av" style="background:linear-gradient(135deg,#fa709a,#fee140);">PK</div><div><div class="gc-name">Priya Kumar</div><div class="gc-info">🇮🇳 India · Guest #GS-0414</div></div></div>
+        <div class="gc-tags"><span class="badge b-orange">Checking Out</span><span class="badge b-green">Repeat Guest</span></div>
+        <div class="gc-row"><span>Room</span><span>Villa 3</span></div>
+        <div class="gc-row"><span>Stay</span><span>Jun 23 – Jun 25</span></div>
+        <div class="gc-row"><span>Room Bill</span><span>$1,200</span></div>
+        <div class="gc-row"><span>F&B Charges</span><span>$340</span></div>
+        <div class="gc-row"><span>Total</span><span style="color:var(--primary);font-weight:700;">$1,540</span></div>
+      </div>
+      <div class="guest-card">
+        <div class="gc-top"><div class="gc-av" style="background:linear-gradient(135deg,#a18cd1,#fbc2eb);">MR</div><div><div class="gc-name">Marco Rossi</div><div class="gc-info">🇮🇹 Italy · Guest #GS-0413</div></div></div>
+        <div class="gc-tags"><span class="badge b-yellow">New Guest</span><span class="badge b-green">Arrival Today</span></div>
+        <div class="gc-row"><span>Room</span><span>Deluxe 7</span></div>
+        <div class="gc-row"><span>Check-In</span><span>Jun 25, 2026</span></div>
+        <div class="gc-row"><span>Check-Out</span><span>Jun 28, 2026</span></div>
+        <div class="gc-row"><span>Source</span><span>Expedia</span></div>
+        <div class="gc-row"><span>Special</span><span>Anniversary</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ HOUSEKEEPING ═══ -->
+<div class="page" id="page-housekeeping">
+  <div class="topbar">
+    <div class="topbar-left"><h2>Housekeeping</h2></div>
+    <div class="topbar-right">
+      <button class="tb-btn">📋 Schedule</button>
+      <button class="tb-btn primary">+ Assign Task</button>
+    </div>
+  </div>
+  <div class="content">
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--orange-bg);">🧹</div></div><div class="stat-val">12</div><div class="stat-label">Rooms to Clean</div></div>
+      <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--yellow-bg);">⏳</div></div><div class="stat-val">5</div><div class="stat-label">In Progress</div></div>
+      <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--green-bg);">✅</div></div><div class="stat-val">24</div><div class="stat-label">Completed Today</div></div>
+      <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--red-bg);">🔧</div></div><div class="stat-val">3</div><div class="stat-label">Maintenance Requests</div></div>
+    </div>
+    <div class="hk-grid">
+      <div class="hk-card">
+        <div class="hk-top"><div><div class="hk-room">Villa 3</div><div class="hk-type">Deep Clean · Checkout</div></div><span class="badge b-orange">In Progress</span></div>
+        <div class="hk-staff"><div class="hk-av" style="background:linear-gradient(135deg,var(--sky),var(--primary));">KN</div><div><div class="hk-sname">Kamala Nirosha</div><div class="hk-time">Started: 10:15 AM · Est. 12:00 PM</div></div></div>
+        <div class="checklist">
+          <div class="check-row"><div class="check-box done"></div>Vacuum all areas</div>
+          <div class="check-row"><div class="check-box done"></div>Change bed linen</div>
+          <div class="check-row"><div class="check-box done"></div>Clean bathroom</div>
+          <div class="check-row"><div class="check-box" onclick="toggleCheck(this)"></div>Restock minibar</div>
+          <div class="check-row"><div class="check-box" onclick="toggleCheck(this)"></div>Final inspection</div>
+        </div>
+      </div>
+      <div class="hk-card">
+        <div class="hk-top"><div><div class="hk-room">Deluxe 8</div><div class="hk-type">Daily Service · Occupied</div></div><span class="badge b-yellow">Pending</span></div>
+        <div class="hk-staff"><div class="hk-av" style="background:linear-gradient(135deg,var(--pink),var(--purple));">RS</div><div><div class="hk-sname">Ruwanthi Silva</div><div class="hk-time">Scheduled: 11:00 AM</div></div></div>
+        <div class="checklist">
+          <div class="check-row"><div class="check-box" onclick="toggleCheck(this)"></div>Make beds</div>
+          <div class="check-row"><div class="check-box" onclick="toggleCheck(this)"></div>Replace towels</div>
+          <div class="check-row"><div class="check-box" onclick="toggleCheck(this)"></div>Clean bathroom surfaces</div>
+          <div class="check-row"><div class="check-box" onclick="toggleCheck(this)"></div>Empty rubbish bins</div>
+          <div class="check-row"><div class="check-box" onclick="toggleCheck(this)"></div>Check AC & lights</div>
+        </div>
+      </div>
+      <div class="hk-card">
+        <div class="hk-top"><div><div class="hk-room">Suite 5</div><div class="hk-type">Deep Clean · Checkout</div></div><span class="badge b-green">Done</span></div>
+        <div class="hk-staff"><div class="hk-av" style="background:linear-gradient(135deg,var(--teal),var(--sky));">PM</div><div><div class="hk-sname">Padma Maduwanthi</div><div class="hk-time">Completed: 09:45 AM</div></div></div>
+        <div class="checklist">
+          <div class="check-row"><div class="check-box done"></div>Vacuum all areas</div>
+          <div class="check-row"><div class="check-box done"></div>Change bed linen</div>
+          <div class="check-row"><div class="check-box done"></div>Clean bathroom</div>
+          <div class="check-row"><div class="check-box done"></div>Restock minibar</div>
+          <div class="check-row"><div class="check-box done"></div>Final inspection</div>
+        </div>
+      </div>
+      <div class="hk-card">
+        <div class="hk-top"><div><div class="hk-room">Cottage 4</div><div class="hk-type">Maintenance Request</div></div><span class="badge b-red">Urgent</span></div>
+        <div class="hk-staff"><div class="hk-av" style="background:linear-gradient(135deg,var(--orange),var(--yellow));">DN</div><div><div class="hk-sname">Dinesh Nuwantha</div><div class="hk-time">Reported: 08:30 AM</div></div></div>
+        <div class="checklist">
+          <div class="check-row"><div class="check-box" onclick="toggleCheck(this)"></div>Fix leaking faucet</div>
+          <div class="check-row"><div class="check-box" onclick="toggleCheck(this)"></div>Replace ceiling light</div>
+          <div class="check-row"><div class="check-box" onclick="toggleCheck(this)"></div>Check AC unit</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ACTIVITIES ═══ -->
+<div class="page" id="page-activities">
+  <div class="topbar">
+    <div class="topbar-left"><h2>Activities & Experiences</h2></div>
+    <div class="topbar-right">
+      <button class="tb-btn">📅 Bookings</button>
+      <button class="tb-btn primary">+ Add Activity</button>
+    </div>
+  </div>
+  <div class="content">
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--sky-bg);">🤿</div></div><div class="stat-val">32</div><div class="stat-label">Bookings Today</div></div>
+      <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--green-bg);">💰</div></div><div class="stat-val">$3,840</div><div class="stat-label">Activities Revenue</div></div>
+      <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--purple-bg);">⭐</div></div><div class="stat-val">4.8</div><div class="stat-label">Average Rating</div></div>
+      <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--orange-bg);">📋</div></div><div class="stat-val">18</div><div class="stat-label">Activities Available</div></div>
+    </div>
+    <div class="act-grid">
+      <div class="act-card"><div class="act-banner" style="background:linear-gradient(135deg,#00b4d8,#023e8a);">🤿</div><div class="act-body"><div class="act-name">Scuba Diving</div><div class="act-info">⏱ 3 hours · 👥 Max 8 guests · ⭐ 4.9</div><div class="act-row"><div class="act-price">$85/person</div><div class="act-slots"><span class="badge b-green">4 slots left</span></div></div></div></div>
+      <div class="act-card"><div class="act-banner" style="background:linear-gradient(135deg,#48cae4,#90e0ef);">🚣</div><div class="act-body"><div class="act-name">Kayaking Tour</div><div class="act-info">⏱ 2 hours · 👥 Max 12 guests · ⭐ 4.7</div><div class="act-row"><div class="act-price">$45/person</div><div class="act-slots"><span class="badge b-yellow">2 slots left</span></div></div></div></div>
+      <div class="act-card"><div class="act-banner" style="background:linear-gradient(135deg,#80b918,#2dc653);">🧘</div><div class="act-body"><div class="act-name">Sunrise Yoga</div><div class="act-info">⏱ 1 hour · 👥 Max 15 guests · ⭐ 4.8</div><div class="act-row"><div class="act-price">$25/person</div><div class="act-slots"><span class="badge b-green">8 slots left</span></div></div></div></div>
+      <div class="act-card"><div class="act-banner" style="background:linear-gradient(135deg,#f48c06,#ffba08);">🏄</div><div class="act-body"><div class="act-name">Surfing Lessons</div><div class="act-info">⏱ 2 hours · 👥 Max 6 guests · ⭐ 4.6</div><div class="act-row"><div class="act-price">$65/person</div><div class="act-slots"><span class="badge b-red">Full</span></div></div></div></div>
+      <div class="act-card"><div class="act-banner" style="background:linear-gradient(135deg,#7b2d8b,#bc5090);">💆</div><div class="act-body"><div class="act-name">Spa & Wellness</div><div class="act-info">⏱ 90 min · 👥 Max 4 guests · ⭐ 5.0</div><div class="act-row"><div class="act-price">$120/person</div><div class="act-slots"><span class="badge b-green">6 slots left</span></div></div></div></div>
+      <div class="act-card"><div class="act-banner" style="background:linear-gradient(135deg,#4ea8de,#48cae4);">🐋</div><div class="act-body"><div class="act-name">Whale Watching</div><div class="act-info">⏱ 4 hours · 👥 Max 20 guests · ⭐ 4.9</div><div class="act-row"><div class="act-price">$95/person</div><div class="act-slots"><span class="badge b-yellow">3 slots left</span></div></div></div></div>
+      <div class="act-card"><div class="act-banner" style="background:linear-gradient(135deg,#e76f51,#f4a261);">🦁</div><div class="act-body"><div class="act-name">Safari Trip</div><div class="act-info">⏱ Full day · 👥 Max 10 guests · ⭐ 4.8</div><div class="act-row"><div class="act-price">$150/person</div><div class="act-slots"><span class="badge b-green">5 slots left</span></div></div></div></div>
+      <div class="act-card"><div class="act-banner" style="background:linear-gradient(135deg,#d62828,#f77f00);">🎊</div><div class="act-body"><div class="act-name">Sunset BBQ Event</div><div class="act-info">⏱ 3 hours · 👥 Max 40 guests · ⭐ 4.7</div><div class="act-row"><div class="act-price">$75/person</div><div class="act-slots"><span class="badge b-green">12 slots left</span></div></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ INBOX ═══ -->
+<div class="page" id="page-inbox">
+  <div class="topbar">
+    <div class="topbar-left"><h2>Inbox</h2><span class="topbar-breadcrumb">3 unread messages</span></div>
+    <div class="topbar-right">
+      <button class="tb-btn primary">✉️ Compose</button>
+    </div>
+  </div>
+  <div class="content">
+    <div class="msg-list">
+      <div class="msg-card unread"><div class="msg-av" style="background:linear-gradient(135deg,#667eea,#764ba2);">AP</div><div><div class="msg-name">Anura Perera · Villa 5</div><div class="msg-preview">Requesting early check-in at 11 AM if possible. Our flight lands at 8 AM.</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;"><div class="msg-time">10:24 AM</div><div class="msg-unread-dot"></div></div></div>
+      <div class="msg-card unread"><div class="msg-av" style="background:linear-gradient(135deg,#43e97b,#38f9d7);">JC</div><div><div class="msg-name">James Carter · Cottage 2</div><div class="msg-preview">Hi! Can we book the whale watching tour for tomorrow morning? Also, could you arrange a surprise cake for my wife's birthday?</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;"><div class="msg-time">09:50 AM</div><div class="msg-unread-dot"></div></div></div>
+      <div class="msg-card unread"><div class="msg-av" style="background:linear-gradient(135deg,#f093fb,#f5576c);">SM</div><div><div class="msg-name">Sarah Mitchell · Suite 3</div><div class="msg-preview">Could you please confirm that my room has an ocean view? I specifically requested one on Booking.com.</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;"><div class="msg-time">09:15 AM</div><div class="msg-unread-dot"></div></div></div>
+      <div class="msg-card"><div class="msg-av" style="background:linear-gradient(135deg,#4facfe,#00f2fe);">LW</div><div><div class="msg-name">Liu Wei · Deluxe 12</div><div class="msg-preview">Thank you for the welcome fruit basket! The room is lovely. We'd like to extend our stay by one more night if available.</div></div><div class="msg-time">Yesterday</div></div>
+      <div class="msg-card"><div class="msg-av" style="background:linear-gradient(135deg,#a18cd1,#fbc2eb);">📋</div><div><div class="msg-name">Booking.com — New Reservation</div><div class="msg-preview">New booking confirmed: Emma Johnson, Suite 1, Jun 27-30. Confirmation #BID11037.</div></div><div class="msg-time">Yesterday</div></div>
+      <div class="msg-card"><div class="msg-av" style="background:linear-gradient(135deg,#f7971e,#ffd200);">⚙️</div><div><div class="msg-name">System Alert — Inventory</div><div class="msg-preview">Low stock warning: Champagne (3 bottles remaining), Beach towels (8 remaining). Please reorder.</div></div><div class="msg-time">Jun 24</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ FINANCE ═══ -->
+<div class="page" id="page-finance">
+  <div class="topbar">
+    <div class="topbar-left"><h2>Finance</h2></div>
+    <div class="topbar-right">
+      <button class="tb-btn">📅 June 2026</button>
+      <button class="tb-btn">📤 Export PDF</button>
+      <button class="tb-btn primary">+ Add Expense</button>
+    </div>
+  </div>
+  <div class="content">
+    <div class="fin-cards">
+      <div class="fin-card"><div class="fin-card-label">Monthly Revenue</div><div class="fin-card-val" style="color:var(--green);">$147,852</div><div style="font-size:12px;color:var(--text3);margin-top:6px;">↑ 18.3% vs last month</div></div>
+      <div class="fin-card"><div class="fin-card-label">Monthly Expenses</div><div class="fin-card-val" style="color:var(--red);">$62,400</div><div style="font-size:12px;color:var(--text3);margin-top:6px;">↓ 4.1% vs last month</div></div>
+      <div class="fin-card"><div class="fin-card-label">Net Profit</div><div class="fin-card-val" style="color:var(--primary);">$85,452</div><div style="font-size:12px;color:var(--text3);margin-top:6px;">57.8% profit margin</div></div>
+    </div>
+    <div class="g2">
+      <div class="card">
+        <div class="card-head"><h3>Revenue by Department</h3></div>
+        <div class="card-body">
+          <div class="mini-item"><div class="mini-item-left"><div class="mini-rank">1</div><div><div class="mini-name">Room Revenue</div><div class="mini-sub">62% of total</div></div></div><div class="mini-val">$91,668</div></div>
+          <div class="mini-item"><div class="mini-item-left"><div class="mini-rank">2</div><div><div class="mini-name">Restaurant & F&B</div><div class="mini-sub">21% of total</div></div></div><div class="mini-val">$31,049</div></div>
+          <div class="mini-item"><div class="mini-item-left"><div class="mini-rank">3</div><div><div class="mini-name">Activities & Spa</div><div class="mini-sub">12% of total</div></div></div><div class="mini-val">$17,742</div></div>
+          <div class="mini-item"><div class="mini-item-left"><div class="mini-rank">4</div><div><div class="mini-name">Other Services</div><div class="mini-sub">5% of total</div></div></div><div class="mini-val">$7,393</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>Recent Expenses</h3></div>
+        <div class="card-body" style="padding:0;">
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>Description</th><th>Category</th><th>Amount</th></tr></thead>
+              <tbody>
+                <tr><td>Staff Salaries</td><td><span class="badge b-blue">HR</span></td><td style="font-weight:700;color:var(--red);">$28,000</td></tr>
+                <tr><td>Food & Beverage Stock</td><td><span class="badge b-teal">F&B</span></td><td style="font-weight:700;color:var(--red);">$12,400</td></tr>
+                <tr><td>Electricity & Utilities</td><td><span class="badge b-orange">Utilities</span></td><td style="font-weight:700;color:var(--red);">$8,600</td></tr>
+                <tr><td>Property Maintenance</td><td><span class="badge b-yellow">Maintenance</span></td><td style="font-weight:700;color:var(--red);">$7,200</td></tr>
+                <tr><td>Marketing & OTA Fees</td><td><span class="badge b-purple">Marketing</span></td><td style="font-weight:700;color:var(--red);">$6,200</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ANALYTICS ═══ -->
+<div class="page" id="page-analytics">
+  <div class="topbar">
+    <div class="topbar-left"><h2>Analytics</h2></div>
+    <div class="topbar-right"><button class="tb-btn">📤 Export Report</button></div>
+  </div>
+  <div class="content">
+    <div class="anal-hero">
+      <div class="anal-hero h2" style="font-size:22px;font-weight:800;margin-bottom:4px;">🏝️ ResortOS AI Insights — June 2026</div>
+      <div style="font-size:13px;opacity:.85;">Villa occupancy is strong. Consider a 15% off promotion on Cottages for next week to boost low segment.</div>
+      <div class="anal-hero-stats">
+        <div class="ah-stat"><div class="ah-val">78%</div><div class="ah-label">Avg Occupancy</div></div>
+        <div class="ah-stat"><div class="ah-val">$189</div><div class="ah-label">RevPAR</div></div>
+        <div class="ah-stat"><div class="ah-val">$242</div><div class="ah-label">ADR</div></div>
+        <div class="ah-stat"><div class="ah-val">4.8 ⭐</div><div class="ah-label">Guest Score</div></div>
+      </div>
+    </div>
+    <div class="g2">
+      <div class="card">
+        <div class="card-head"><h3>Bookings by Source</h3></div>
+        <div class="card-body">
+          <div class="occ-row"><span class="occ-label">Direct</span><div class="occ-bar"><div class="occ-fill" style="width:42%;background:var(--primary);"></div></div><span class="occ-count">42%</span></div>
+          <div class="occ-row"><span class="occ-label">Booking.com</span><div class="occ-bar"><div class="occ-fill" style="width:28%;background:var(--sky);"></div></div><span class="occ-count">28%</span></div>
+          <div class="occ-row"><span class="occ-label">Agoda</span><div class="occ-bar"><div class="occ-fill" style="width:16%;background:var(--purple);"></div></div><span class="occ-count">16%</span></div>
+          <div class="occ-row"><span class="occ-label">Expedia</span><div class="occ-bar"><div class="occ-fill" style="width:9%;background:var(--orange);"></div></div><span class="occ-count">9%</span></div>
+          <div class="occ-row"><span class="occ-label">Other</span><div class="occ-bar"><div class="occ-fill" style="width:5%;background:var(--text3);"></div></div><span class="occ-count">5%</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>Guest Nationality</h3></div>
+        <div class="card-body">
+          <div class="occ-row"><span class="occ-label">🇬🇧 UK</span><div class="occ-bar"><div class="occ-fill" style="width:24%;background:var(--primary);"></div></div><span class="occ-count">24%</span></div>
+          <div class="occ-row"><span class="occ-label">🇩🇪 Germany</span><div class="occ-bar"><div class="occ-fill" style="width:18%;background:var(--sky);"></div></div><span class="occ-count">18%</span></div>
+          <div class="occ-row"><span class="occ-label">🇨🇳 China</span><div class="occ-bar"><div class="occ-fill" style="width:16%;background:var(--teal);"></div></div><span class="occ-count">16%</span></div>
+          <div class="occ-row"><span class="occ-label">🇺🇸 USA</span><div class="occ-bar"><div class="occ-fill" style="width:14%;background:var(--purple);"></div></div><span class="occ-count">14%</span></div>
+          <div class="occ-row"><span class="occ-label">🇮🇳 India</span><div class="occ-bar"><div class="occ-fill" style="width:12%;background:var(--orange);"></div></div><span class="occ-count">12%</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h3>Occupancy Trend — Last 6 Months</h3></div>
+      <div class="card-body">
+        <div class="chart-wrap" style="height:160px;">
+          <div class="c-bar sky" style="height:55%"></div>
+          <div class="c-bar" style="height:61%"></div>
+          <div class="c-bar sky" style="height:72%"></div>
+          <div class="c-bar" style="height:68%"></div>
+          <div class="c-bar sky" style="height:85%"></div>
+          <div class="c-bar" style="height:78%"></div>
+        </div>
+        <div class="chart-labels"><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ STAFF ═══ -->
+<div class="page" id="page-staff">
+  <div class="topbar">
+    <div class="topbar-left"><h2>Staff Management</h2></div>
+    <div class="topbar-right">
+      <button class="tb-btn">📋 Shift Schedule</button>
+      <button class="tb-btn primary">+ Add Staff</button>
+    </div>
+  </div>
+  <div class="content">
+    <div class="staff-grid">
+      <div class="staff-card"><div class="sc-top"><div class="sc-av" style="background:linear-gradient(135deg,var(--primary),var(--sky));">GM</div><div><div class="sc-name">Pradeep Jayawardena</div><div class="sc-role">General Manager</div></div></div><div style="display:flex;gap:6px;flex-wrap:wrap;"><span class="badge b-blue">Full Access</span><span class="badge b-green">On Duty</span></div><div class="sc-shift"><span>Shift: 08:00 – 17:00</span><span>All Departments</span></div></div>
+      <div class="staff-card"><div class="sc-top"><div class="sc-av" style="background:linear-gradient(135deg,var(--green-light),var(--teal));">KN</div><div><div class="sc-name">Kamala Nirosha</div><div class="sc-role">Head Housekeeper</div></div></div><div style="display:flex;gap:6px;flex-wrap:wrap;"><span class="badge b-teal">Housekeeping</span><span class="badge b-green">On Duty</span></div><div class="sc-shift"><span>Shift: 07:00 – 16:00</span><span>All Floors</span></div></div>
+      <div class="staff-card"><div class="sc-top"><div class="sc-av" style="background:linear-gradient(135deg,var(--orange),var(--yellow));">CK</div><div><div class="sc-name">Chaminda Kumarage</div><div class="sc-role">Head Chef</div></div></div><div style="display:flex;gap:6px;flex-wrap:wrap;"><span class="badge b-orange">Kitchen</span><span class="badge b-green">On Duty</span></div><div class="sc-shift"><span>Shift: 06:00 – 15:00</span><span>Main Kitchen</span></div></div>
+      <div class="staff-card"><div class="sc-top"><div class="sc-av" style="background:linear-gradient(135deg,var(--purple),var(--pink));">RS</div><div><div class="sc-name">Ruwanthi Silva</div><div class="sc-role">Front Desk Officer</div></div></div><div style="display:flex;gap:6px;flex-wrap:wrap;"><span class="badge b-purple">Reception</span><span class="badge b-green">On Duty</span></div><div class="sc-shift"><span>Shift: 08:00 – 17:00</span><span>Front Desk</span></div></div>
+      <div class="staff-card"><div class="sc-top"><div class="sc-av" style="background:linear-gradient(135deg,var(--sky),var(--teal));">DN</div><div><div class="sc-name">Dinesh Nuwantha</div><div class="sc-role">Maintenance Tech</div></div></div><div style="display:flex;gap:6px;flex-wrap:wrap;"><span class="badge b-yellow">Maintenance</span><span class="badge b-green">On Duty</span></div><div class="sc-shift"><span>Shift: 08:00 – 17:00</span><span>Property</span></div></div>
+      <div class="staff-card"><div class="sc-top"><div class="sc-av" style="background:linear-gradient(135deg,var(--pink),#f97316);">PM</div><div><div class="sc-name">Padma Maduwanthi</div><div class="sc-role">Activity Coordinator</div></div></div><div style="display:flex;gap:6px;flex-wrap:wrap;"><span class="badge b-sky">Activities</span><span class="badge b-yellow">Break</span></div><div class="sc-shift"><span>Shift: 07:00 – 16:00</span><span>Beach & Pool</span></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SETTINGS ═══ -->
+<div class="page" id="page-settings">
+  <div class="topbar">
+    <div class="topbar-left"><h2>Settings</h2></div>
+    <div class="topbar-right"><button class="tb-btn primary">Save Changes</button></div>
+  </div>
+  <div class="content">
+    <div class="g2">
+      <div>
+        <div class="set-group">
+          <h4>🏝️ Resort Information</h4>
+          <div class="set-row"><div class="set-label">Resort Name<span>On invoices & receipts</span></div><div class="set-val">Coral Bay Resort & Spa</div></div>
+          <div class="set-row"><div class="set-label">Address<span>Legal address</span></div><div class="set-val">Mirissa, Southern Province, Sri Lanka</div></div>
+          <div class="set-row"><div class="set-label">Total Rooms</div><div class="set-val">80 rooms</div></div>
+          <div class="set-row"><div class="set-label">Star Rating</div><div class="set-val">⭐⭐⭐⭐⭐</div></div>
+        </div>
+        <div class="set-group">
+          <h4>💰 Billing & Tax</h4>
+          <div class="set-row"><div class="set-label">VAT Rate<span>Applied to all bills</span></div><div class="set-val">15%</div></div>
+          <div class="set-row"><div class="set-label">Service Charge</div><div class="set-val">10%</div></div>
+          <div class="set-row"><div class="set-label">Currency</div><div class="set-val">USD ($)</div></div>
+          <div class="set-row"><div class="set-label">Auto Invoice on Checkout<span>Send by email</span></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+        </div>
+      </div>
+      <div>
+        <div class="set-group">
+          <h4>☁️ Integrations</h4>
+          <div class="set-row"><div class="set-label">Booking.com<span>Channel Manager sync</span></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="set-row"><div class="set-label">Agoda<span>Channel Manager sync</span></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="set-row"><div class="set-label">Expedia<span>Channel Manager sync</span></div><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+          <div class="set-row"><div class="set-label">WhatsApp Automation<span>Auto guest messages</span></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="set-row"><div class="set-label">Guest Mobile App<span>QR Concierge</span></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+        </div>
+        <div class="set-group">
+          <h4>🔔 Notifications</h4>
+          <div class="set-row"><div class="set-label">New Reservation Alert</div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="set-row"><div class="set-label">Low Inventory Alert</div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="set-row"><div class="set-label">Guest Complaint Detection<span>AI powered</span></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end .main -->
+
+<!-- ══════════════════ MODALS ══════════════════ -->
+
+<!-- CHECK-IN MODAL -->
+<div class="overlay" id="checkinModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>🛎️ Guest Check-In</h3>
+      <button class="modal-close" onclick="closeModal('checkinModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-row"><label class="form-label">First Name</label><input class="form-input" placeholder="e.g. Anura" id="ci-fname"></div>
+        <div class="form-row"><label class="form-label">Last Name</label><input class="form-input" placeholder="e.g. Perera" id="ci-lname"></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-row"><label class="form-label">Nationality</label><select class="form-select" id="ci-nat"><option>🇱🇰 Sri Lanka</option><option>🇬🇧 United Kingdom</option><option>🇺🇸 United States</option><option>🇩🇪 Germany</option><option>🇨🇳 China</option><option>🇮🇳 India</option><option>🇦🇺 Australia</option><option>Other</option></select></div>
+        <div class="form-row"><label class="form-label">ID / Passport #</label><input class="form-input" placeholder="e.g. N12345678" id="ci-id"></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-row"><label class="form-label">Assign Room</label><select class="form-select" id="ci-room"><option>Villa 2 — $600/night</option><option>Suite 4 — $550/night</option><option>Deluxe 7 — $270/night</option><option>Deluxe 14 — $270/night</option><option>Cottage 3 — $300/night</option></select></div>
+        <div class="form-row"><label class="form-label">Number of Nights</label><input class="form-input" type="number" value="3" min="1" id="ci-nights"></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-row"><label class="form-label">Check-In Date</label><input class="form-input" type="date" id="ci-date" value="2026-06-25"></div>
+        <div class="form-row"><label class="form-label">Guests</label><select class="form-select"><option>1 Adult</option><option>2 Adults</option><option>2 Adults + 1 Child</option><option>2 Adults + 2 Children</option></select></div>
+      </div>
+      <div class="form-row"><label class="form-label">Special Requests</label><input class="form-input" placeholder="e.g. Sea view, anniversary setup, early check-in..." id="ci-special"></div>
+      <div class="form-row"><label class="form-label">Deposit Collected</label>
+        <div style="display:flex;gap:8px;">
+          <input class="form-input" type="number" placeholder="Amount" id="ci-deposit" style="flex:1;">
+          <select class="form-select" style="width:130px;"><option>Cash</option><option>Card</option><option>Bank Transfer</option></select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn" onclick="closeModal('checkinModal')">Cancel</button>
+      <button class="modal-btn confirm" onclick="confirmCheckin()">✅ Confirm Check-In</button>
+    </div>
+  </div>
+</div>
+
+<!-- RESERVATION MODAL -->
+<div class="overlay" id="reservationModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>📋 New Reservation</h3>
+      <button class="modal-close" onclick="closeModal('reservationModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-row"><label class="form-label">Guest Name</label><input class="form-input" placeholder="Full name" id="res-name"></div>
+        <div class="form-row"><label class="form-label">Email</label><input class="form-input" type="email" placeholder="guest@email.com" id="res-email"></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-row"><label class="form-label">Phone</label><input class="form-input" placeholder="+94 77 000 0000" id="res-phone"></div>
+        <div class="form-row"><label class="form-label">Nationality</label><select class="form-select"><option>🇱🇰 Sri Lanka</option><option>🇬🇧 UK</option><option>🇺🇸 USA</option><option>🇩🇪 Germany</option><option>🇨🇳 China</option><option>🇮🇳 India</option><option>Other</option></select></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-row"><label class="form-label">Room Type</label><select class="form-select" id="res-roomtype" onchange="updateRoomPrice()"><option value="600">Beach Villa — $600/night</option><option value="550">Ocean Suite — $550/night</option><option value="270">Deluxe Room — $270/night</option><option value="300">Garden Cottage — $300/night</option><option value="380">Family Room — $380/night</option></select></div>
+        <div class="form-row"><label class="form-label">Guests</label><select class="form-select"><option>1 Adult</option><option>2 Adults</option><option>2 Adults + 1 Child</option><option>2 Adults + 2 Children</option></select></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-row"><label class="form-label">Check-In</label><input class="form-input" type="date" id="res-checkin" value="2026-06-25" oninput="calcResTotal()"></div>
+        <div class="form-row"><label class="form-label">Check-Out</label><input class="form-input" type="date" id="res-checkout" value="2026-06-28" oninput="calcResTotal()"></div>
+      </div>
+      <div class="form-row"><label class="form-label">Package / Special Offer</label><select class="form-select"><option>Room Only</option><option>Bed & Breakfast</option><option>Half Board</option><option>Full Board</option><option>All Inclusive</option><option>Honeymoon Package (+$150)</option><option>Anniversary Package (+$100)</option></select></div>
+      <div style="background:var(--primary-bg);border:1px solid rgba(37,99,235,0.15);border-radius:var(--radius-sm);padding:14px 18px;margin-top:8px;">
+        <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text2);margin-bottom:6px;"><span>Room Rate</span><span id="res-rate">$600/night</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text2);margin-bottom:6px;"><span>Duration</span><span id="res-duration">3 nights</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:800;color:var(--primary);border-top:1px solid rgba(37,99,235,0.15);padding-top:8px;"><span>Estimated Total</span><span id="res-total">$1,800</span></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn" onclick="closeModal('reservationModal')">Cancel</button>
+      <button class="modal-btn confirm" onclick="confirmReservation()">📋 Confirm Reservation</button>
+    </div>
+  </div>
+</div>
+
+<!-- ROOM STATUS MODAL -->
+<div class="overlay" id="roomStatusModal">
+  <div class="modal" style="width:440px;">
+    <div class="modal-head">
+      <h3 id="rsm-title">Room 101 — Update Status</h3>
+      <button class="modal-close" onclick="closeModal('roomStatusModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="font-size:13px;color:var(--text2);margin-bottom:16px;">Select the new status for this room:</div>
+      <div class="status-grid">
+        <div class="status-opt" onclick="pickStatus(this,'available')"><div class="status-opt-icon">🟢</div><div class="status-opt-label">Available</div></div>
+        <div class="status-opt" onclick="pickStatus(this,'occupied')"><div class="status-opt-icon">🔵</div><div class="status-opt-label">Occupied</div></div>
+        <div class="status-opt" onclick="pickStatus(this,'dirty')"><div class="status-opt-icon">🟠</div><div class="status-opt-label">Dirty</div></div>
+        <div class="status-opt" onclick="pickStatus(this,'cleaning')"><div class="status-opt-icon">🟡</div><div class="status-opt-label">Cleaning</div></div>
+        <div class="status-opt" onclick="pickStatus(this,'maintenance')"><div class="status-opt-icon">🔴</div><div class="status-opt-label">Maintenance</div></div>
+        <div class="status-opt" onclick="pickStatus(this,'reserved')"><div class="status-opt-icon">🟣</div><div class="status-opt-label">Reserved</div></div>
+      </div>
+      <div style="font-size:12px;color:var(--text3);" id="rsm-current">Current: Available</div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn" onclick="closeModal('roomStatusModal')">Cancel</button>
+      <button class="modal-btn confirm" onclick="applyRoomStatus()">💾 Update Status</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <div class="toast-icon" id="toastIcon">✅</div>
+  <div id="toastMsg">Action completed</div>
+</div>
+
+<div class="wl">whitelabel@alfaasolutions</div>
+
+<script>
+// ════ NAVIGATION ════
+function nav(page, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  if (el) el.classList.add('active');
+  if (page === 'rooms') renderRoomsGrid();
+}
+
+// ════ ROOMS DATA ════
+const ROOMS = [
+  {num:'Villa 1',type:'Beach Villa',floor:'Ground',status:'occupied',guest:'Mr. Perera',nights:'4 nights left'},
+  {num:'Villa 2',type:'Beach Villa',floor:'Ground',status:'available',guest:'',nights:''},
+  {num:'Villa 3',type:'Beach Villa',floor:'Ground',status:'occupied',guest:'Mrs. Kumar',nights:'Checking out today'},
+  {num:'Villa 4',type:'Beach Villa',floor:'Ground',status:'reserved',guest:'Johnson (Jun 27)',nights:'2 days away'},
+  {num:'Villa 5',type:'Beach Villa',floor:'Ground',status:'occupied',guest:'Mr. Perera',nights:'Check-in today'},
+  {num:'Suite 1',type:'Ocean Suite',floor:'Floor 2',status:'reserved',guest:'Emma Johnson',nights:'Arrives Jun 27'},
+  {num:'Suite 2',type:'Ocean Suite',floor:'Floor 2',status:'available',guest:'',nights:''},
+  {num:'Suite 3',type:'Ocean Suite',floor:'Floor 2',status:'occupied',guest:'Ms. Mitchell',nights:'Check-in today'},
+  {num:'Suite 4',type:'Ocean Suite',floor:'Floor 2',status:'available',guest:'',nights:''},
+  {num:'Suite 5',type:'Ocean Suite',floor:'Floor 2',status:'cleaning',guest:'',nights:'Checkout clean'},
+  {num:'Deluxe 1',type:'Deluxe Room',floor:'Floor 1',status:'occupied',guest:'Mr. Liu Wei',nights:'1 night left'},
+  {num:'Deluxe 2',type:'Deluxe Room',floor:'Floor 1',status:'available',guest:'',nights:''},
+  {num:'Deluxe 3',type:'Deluxe Room',floor:'Floor 1',status:'dirty',guest:'',nights:'Post-checkout'},
+  {num:'Deluxe 4',type:'Deluxe Room',floor:'Floor 1',status:'occupied',guest:'Ms. Rodrigo',nights:'3 nights left'},
+  {num:'Deluxe 5',type:'Deluxe Room',floor:'Floor 1',status:'maintenance',guest:'',nights:'AC repair'},
+  {num:'Deluxe 6',type:'Deluxe Room',floor:'Floor 1',status:'available',guest:'',nights:''},
+  {num:'Deluxe 7',type:'Deluxe Room',floor:'Floor 1',status:'reserved',guest:'Mr. Rossi',nights:'Arrives today'},
+  {num:'Cottage 1',type:'Garden Cottage',floor:'Garden',status:'occupied',guest:'Mr. Carter',nights:'3 nights left'},
+  {num:'Cottage 2',type:'Garden Cottage',floor:'Garden',status:'occupied',guest:'Mr. Carter',nights:'3 nights left'},
+  {num:'Cottage 3',type:'Garden Cottage',floor:'Garden',status:'available',guest:'',nights:''},
+  {num:'Cottage 4',type:'Garden Cottage',floor:'Garden',status:'maintenance',guest:'',nights:'Faucet repair'},
+  {num:'Cottage 5',type:'Garden Cottage',floor:'Garden',status:'dirty',guest:'',nights:'Post-checkout'},
+];
+
+const STATUS_CONFIG = {
+  available:  {dot:'#22c55e', label:'Available', text:'color:var(--green);'},
+  occupied:   {dot:'#3b82f6', label:'Occupied',  text:'color:var(--primary);'},
+  dirty:      {dot:'#ea580c', label:'Dirty',      text:'color:var(--orange);'},
+  cleaning:   {dot:'#ca8a04', label:'Cleaning',   text:'color:var(--yellow);'},
+  maintenance:{dot:'#dc2626', label:'Maintenance',text:'color:var(--red);'},
+  reserved:   {dot:'#7c3aed', label:'Reserved',   text:'color:var(--purple);'},
+};
+
+let currentFilter = 'all';
+let pendingRoomIdx = null;
+let pendingStatus = null;
+
+function renderRoomsGrid(filter) {
+  if (filter !== undefined) currentFilter = filter;
+  const grid = document.getElementById('roomsGrid');
+  const rooms = ROOMS.filter(r => currentFilter === 'all' || r.status === currentFilter);
+  grid.innerHTML = rooms.map((r, i) => {
+    const cfg = STATUS_CONFIG[r.status];
+    const idx = ROOMS.indexOf(r);
+    return `<div class="room-card ${r.status}" onclick="openRoomStatus(${idx})">
+      <div class="room-floor-badge">${r.floor}</div>
+      <div class="room-num">${r.num}</div>
+      <div class="room-type">${r.type}</div>
+      <div style="display:flex;align-items:center;">
+        <div class="room-status-dot" style="background:${cfg.dot};"></div>
+        <span class="room-status-label" style="${cfg.text}">${cfg.label}</span>
+      </div>
+      ${r.guest ? `<div class="room-guest">👤 ${r.guest}</div>` : ''}
+      ${r.nights ? `<div class="room-nights">${r.nights}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+function filterRooms(type, el) {
+  currentFilter = type;
+  document.querySelectorAll('.rf-btn').forEach(b => b.classList.remove('active'));
+  if (el && el.classList.contains('rf-btn')) el.classList.add('active');
+  renderRoomsGrid();
+}
+
+// ════ ROOM STATUS MODAL ════
+function openRoomStatus(idx) {
+  pendingRoomIdx = idx;
+  pendingStatus = null;
+  const r = ROOMS[idx];
+  document.getElementById('rsm-title').textContent = `${r.num} — Update Status`;
+  document.getElementById('rsm-current').textContent = `Current status: ${STATUS_CONFIG[r.status].label}`;
+  document.querySelectorAll('.status-opt').forEach(o => o.classList.remove('picked'));
+  document.getElementById('roomStatusModal').classList.add('show');
+}
+
+function pickStatus(el, status) {
+  pendingStatus = status;
+  document.querySelectorAll('.status-opt').forEach(o => o.classList.remove('picked'));
+  el.classList.add('picked');
+}
+
+function applyRoomStatus() {
+  if (pendingRoomIdx === null || !pendingStatus) {
+    showToast('⚠️', 'Please select a status first.');
+    return;
+  }
+  ROOMS[pendingRoomIdx].status = pendingStatus;
+  if (pendingStatus !== 'occupied' && pendingStatus !== 'reserved') {
+    ROOMS[pendingRoomIdx].guest = '';
+    ROOMS[pendingRoomIdx].nights = '';
+  }
+  closeModal('roomStatusModal');
+  renderRoomsGrid();
+  showToast('✅', `${ROOMS[pendingRoomIdx].num} updated to ${STATUS_CONFIG[pendingStatus].label}`);
+}
+
+// ════ CHECK-IN ════
+function openCheckin() { document.getElementById('checkinModal').classList.add('show'); }
+
+function confirmCheckin() {
+  const fname = document.getElementById('ci-fname').value.trim();
+  const lname = document.getElementById('ci-lname').value.trim();
+  if (!fname || !lname) { showToast('⚠️', 'Please enter the guest name.'); return; }
+  const room = document.getElementById('ci-room').value;
+  closeModal('checkinModal');
+  showToast('🛎️', `${fname} ${lname} checked in to ${room.split('—')[0].trim()}!`);
+  document.getElementById('ci-fname').value = '';
+  document.getElementById('ci-lname').value = '';
+  document.getElementById('ci-id').value = '';
+  document.getElementById('ci-special').value = '';
+  document.getElementById('ci-deposit').value = '';
+}
+
+// ════ RESERVATION ════
+function openReservation() {
+  calcResTotal();
+  document.getElementById('reservationModal').classList.add('show');
+}
+
+function updateRoomPrice() { calcResTotal(); }
+
+function calcResTotal() {
+  const select = document.getElementById('res-roomtype');
+  const rate = parseInt(select.value) || 600;
+  const cin = new Date(document.getElementById('res-checkin').value);
+  const cout = new Date(document.getElementById('res-checkout').value);
+  const nights = Math.max(1, Math.round((cout - cin) / 86400000));
+  const rateText = select.options[select.selectedIndex].text.split('—')[0].trim();
+  document.getElementById('res-rate').textContent = `$${rate}/night`;
+  document.getElementById('res-duration').textContent = `${nights} night${nights !== 1 ? 's' : ''}`;
+  document.getElementById('res-total').textContent = `$${(rate * nights).toLocaleString()}`;
+}
+
+function confirmReservation() {
+  const name = document.getElementById('res-name').value.trim();
+  if (!name) { showToast('⚠️', 'Please enter a guest name.'); return; }
+  const roomType = document.getElementById('res-roomtype').options[document.getElementById('res-roomtype').selectedIndex].text.split('—')[0].trim();
+  const total = document.getElementById('res-total').textContent;
+  closeModal('reservationModal');
+  showToast('📋', `Reservation confirmed for ${name} — ${roomType} · ${total}`);
+  document.getElementById('res-name').value = '';
+  document.getElementById('res-email').value = '';
+  document.getElementById('res-phone').value = '';
+}
+
+// ════ HOUSEKEEPING CHECKLIST ════
+function toggleCheck(el) {
+  el.classList.toggle('done');
+}
+
+// ════ MODAL HELPERS ════
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+document.querySelectorAll('.overlay').forEach(o => o.addEventListener('click', e => { if (e.target === o) o.classList.remove('show'); }));
+
+// ════ TOAST ════
+let toastTimer;
+function showToast(icon, msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastIcon').textContent = icon;
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// ════ INIT ════
+renderRoomsGrid();
+calcResTotal();
+</script>
+</body>
+</html>
