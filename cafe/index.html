@@ -2,146 +2,1429 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cafe Pro</title>
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>CloudCafé — Smart Restaurant POS</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
 :root{
---bg:#0f1117;--bg2:#161822;--card:#1a1d2e;--border:#2a2d3e;--text:#e8e9ed;
---primary:#6366f1;--green:#22c55e;
+  --bg:#0f1117;--bg2:#161822;--bg3:#1c1f2e;--card:#1a1d2e;--border:#2a2d3e;
+  --text:#e8e9ed;--text2:#8b8fa3;--text3:#555870;
+  --primary:#6366f1;--primary-light:#818cf8;--primary-bg:rgba(99,102,241,0.12);
+  --green:#22c55e;--green-bg:rgba(34,197,94,0.12);
+  --red:#ef4444;--red-bg:rgba(239,68,68,0.12);
+  --orange:#f97316;--orange-bg:rgba(249,115,22,0.12);
+  --blue:#3b82f6;--blue-bg:rgba(59,130,246,0.12);
+  --yellow:#eab308;--yellow-bg:rgba(234,179,8,0.12);
+  --pink:#ec4899;--pink-bg:rgba(236,72,153,0.12);
+  --teal:#14b8a6;--teal-bg:rgba(20,184,166,0.12);
+  --sidebar-w:240px;--radius:14px;--radius-sm:10px;
 }
-.light{
---bg:#f4f7fb;--bg2:#ffffff;--card:#ffffff;--border:#dbe3ef;--text:#1f2937;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Inter,sans-serif;background:var(--bg);color:var(--text);display:flex;height:100vh;transition:.3s}
-.sidebar{width:240px;background:var(--bg2);border-right:1px solid var(--border)}
-.sidebar-brand{padding:20px;font-size:22px;font-weight:800}
-.nav-item{padding:14px 18px;cursor:pointer}
-.nav-item.active,.nav-item:hover{background:#6366f122}
-.main{flex:1;overflow:auto}
-.topbar{display:flex;justify-content:space-between;align-items:center;padding:16px;background:var(--bg2);border-bottom:1px solid var(--border)}
-.content{padding:20px}
-.page{display:none}.page.active{display:block}
-.grid,.bento{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:16px}
-.pos-layout{display:grid;grid-template-columns:2fr 1fr;gap:16px}
-.products{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.product{background:var(--card);padding:15px;border-radius:16px;border:1px solid var(--border)}
-.product button,.checkout,.themebtn{width:100%;padding:10px;border:none;border-radius:10px;background:var(--primary);color:#fff;cursor:pointer}
-.cart-item{display:flex;justify-content:space-between;margin:8px 0}
-.qty button{width:24px}
-.totalbox{margin-top:20px;border-top:1px solid var(--border);padding-top:10px}
-input{width:100%;padding:10px;border-radius:10px;border:1px solid var(--border);margin-bottom:12px}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);display:flex;height:100vh;overflow:hidden;}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar-w);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;z-index:10;}
+.sidebar-brand{padding:22px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);}
+.brand-icon{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--teal),var(--primary));display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fff;}
+.brand-name{font-size:16px;font-weight:800;letter-spacing:-0.3px;}
+.brand-name span{color:var(--teal);}
+.brand-sub{font-size:10px;color:var(--text3);font-weight:500;margin-top:1px;}
+.sidebar-nav{flex:1;padding:16px 12px;overflow-y:auto;}
+.nav-section{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:1.5px;padding:16px 12px 8px;text-transform:uppercase;}
+.nav-item{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:var(--radius-sm);cursor:pointer;font-size:13.5px;font-weight:500;color:var(--text2);transition:all .15s;margin-bottom:2px;user-select:none;}
+.nav-item:hover{background:rgba(255,255,255,0.04);color:var(--text);}
+.nav-item.active{background:var(--primary-bg);color:var(--primary-light);font-weight:600;}
+.nav-item svg{width:18px;height:18px;flex-shrink:0;}
+.nav-badge{margin-left:auto;background:var(--green);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;}
+.nav-badge.orange{background:var(--orange);}
+.sidebar-footer{padding:16px;border-top:1px solid var(--border);}
+.user-pill{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--radius-sm);background:rgba(255,255,255,0.03);}
+.user-avatar{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--teal),var(--blue));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;}
+.user-info{font-size:12px;}
+.user-info div:first-child{font-weight:600;color:var(--text);}
+.user-info div:last-child{color:var(--text3);font-size:11px;}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);margin-left:auto;box-shadow:0 0 6px var(--green);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:15px 28px;border-bottom:1px solid var(--border);background:var(--bg2);flex-shrink:0;}
+.topbar h2{font-size:19px;font-weight:800;letter-spacing:-0.3px;}
+.topbar-actions{display:flex;align-items:center;gap:10px;}
+.topbar-btn{padding:8px 16px;border-radius:var(--radius-sm);border:1px solid var(--border);background:transparent;color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;font-family:inherit;user-select:none;}
+.topbar-btn:hover{border-color:var(--primary);color:var(--primary-light);}
+.topbar-btn.primary{background:var(--primary);border-color:var(--primary);color:#fff;}
+.topbar-btn.primary:hover{background:var(--primary-light);}
+.topbar-btn.teal{background:var(--teal);border-color:var(--teal);color:#fff;}
+.content{flex:1;overflow-y:auto;padding:24px 28px;}
+
+/* PAGE */
+.page{display:none;}
+.page.active{display:block;}
+.page-pos.active{display:flex;}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;transition:all .2s;}
+.stat-card:hover{border-color:rgba(255,255,255,0.1);transform:translateY(-2px);}
+.stat-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:14px;}
+.stat-value{font-size:26px;font-weight:800;letter-spacing:-0.8px;}
+.stat-label{font-size:12px;color:var(--text2);margin-top:4px;}
+.stat-change{font-size:11px;font-weight:600;margin-top:8px;display:inline-flex;align-items:center;gap:3px;padding:3px 8px;border-radius:20px;}
+.stat-up{color:var(--green);background:var(--green-bg);}
+.stat-down{color:var(--red);background:var(--red-bg);}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:20px;}
+.card:last-child{margin-bottom:0;}
+.card-header{display:flex;align-items:center;justify-content:space-between;padding:17px 20px;border-bottom:1px solid var(--border);}
+.card-header h3{font-size:14px;font-weight:700;}
+.card-body{padding:20px;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px;}
+
+/* CHART */
+.chart-area{height:190px;background:linear-gradient(180deg,rgba(20,184,166,0.08) 0%,transparent 100%);border-radius:var(--radius-sm);display:flex;align-items:flex-end;padding:0 8px;gap:5px;}
+.chart-bar{flex:1;border-radius:6px 6px 0 0;background:linear-gradient(180deg,var(--teal),rgba(20,184,166,0.25));min-height:8px;}
+.chart-bar:hover{filter:brightness(1.2);}
+.chart-labels{display:flex;padding:8px 8px 0;gap:5px;}
+.chart-labels span{flex:1;text-align:center;font-size:10px;color:var(--text3);}
+
+/* TABLE */
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;}
+th{text-align:left;padding:11px 16px;font-size:11px;font-weight:700;color:var(--text3);letter-spacing:0.5px;text-transform:uppercase;border-bottom:1px solid var(--border);}
+td{padding:12px 16px;font-size:13px;border-bottom:1px solid rgba(255,255,255,0.03);}
+tr:hover td{background:rgba(255,255,255,0.02);}
+.badge{display:inline-block;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;}
+.badge-green{color:var(--green);background:var(--green-bg);}
+.badge-red{color:var(--red);background:var(--red-bg);}
+.badge-orange{color:var(--orange);background:var(--orange-bg);}
+.badge-blue{color:var(--blue);background:var(--blue-bg);}
+.badge-teal{color:var(--teal);background:var(--teal-bg);}
+.badge-yellow{color:var(--yellow);background:var(--yellow-bg);}
+.badge-pink{color:var(--pink);background:var(--pink-bg);}
+
+/* TOP ITEMS */
+.top-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.03);}
+.top-item:last-child{border:none;}
+.top-item-info{display:flex;align-items:center;gap:12px;}
+.top-item-rank{width:24px;height:24px;border-radius:8px;background:var(--teal-bg);color:var(--teal);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;}
+.top-item-name{font-size:13px;font-weight:600;}
+.top-item-cat{font-size:11px;color:var(--text3);}
+.top-item-count{font-size:14px;font-weight:700;color:var(--teal);}
+
+/* ====== POS ====== */
+.page-pos{height:100%;overflow:hidden;gap:0;}
+.pos-left{flex:1;display:flex;flex-direction:column;overflow:hidden;border-right:1px solid var(--border);}
+
+/* ORDER TYPE TABS */
+.order-type-bar{display:flex;gap:0;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--bg2);}
+.order-type-tab{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:13px 10px;font-size:12px;font-weight:600;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;user-select:none;}
+.order-type-tab:hover{color:var(--text2);}
+.order-type-tab.active{color:var(--teal);border-bottom-color:var(--teal);}
+
+.pos-header{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.pos-search{flex:1;padding:10px 16px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:13px;font-family:inherit;outline:none;transition:border .15s;}
+.pos-search:focus{border-color:var(--teal);}
+.pos-search::placeholder{color:var(--text3);}
+.pos-table-select{padding:10px 14px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:12px;font-family:inherit;outline:none;cursor:pointer;}
+
+.pos-categories{display:flex;gap:8px;padding:12px 20px;border-bottom:1px solid var(--border);flex-shrink:0;overflow-x:auto;}
+.pos-cat{padding:7px 16px;border-radius:30px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .15s;font-family:inherit;user-select:none;}
+.pos-cat:hover{border-color:rgba(255,255,255,0.15);color:var(--text);}
+.pos-cat.active{background:var(--teal);border-color:var(--teal);color:#fff;}
+
+.pos-products{flex:1;overflow-y:auto;padding:16px 20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:12px;align-content:start;}
+.pos-product{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;cursor:pointer;transition:all .15s;text-align:center;position:relative;}
+.pos-product:hover{border-color:var(--teal);transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,0.2);}
+.pos-product.in-cart{border-color:var(--teal);background:var(--teal-bg);}
+.pos-product.unavailable{opacity:0.4;pointer-events:none;}
+.pos-product-img{width:52px;height:52px;border-radius:12px;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:26px;}
+.pos-product-name{font-size:12.5px;font-weight:600;margin-bottom:4px;line-height:1.3;}
+.pos-product-price{font-size:14px;font-weight:800;color:var(--teal);}
+.pos-product-tag{position:absolute;top:8px;right:8px;font-size:9px;font-weight:700;padding:2px 6px;border-radius:6px;}
+
+/* CART */
+.pos-right{width:380px;display:flex;flex-direction:column;background:var(--bg2);flex-shrink:0;}
+.cart-header{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.cart-header h3{font-size:14px;font-weight:700;}
+.cart-meta{display:flex;align-items:center;gap:8px;}
+.cart-count{background:var(--teal);color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;}
+.cart-table-badge{background:var(--primary-bg);color:var(--primary-light);font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;}
+
+/* ITEM NOTE */
+.cart-items{flex:1;overflow-y:auto;padding:8px 16px;}
+.cart-item{display:flex;align-items:flex-start;gap:10px;padding:11px 8px;border-bottom:1px solid rgba(255,255,255,0.04);}
+.cart-item-info{flex:1;min-width:0;}
+.cart-item-name{font-size:13px;font-weight:600;}
+.cart-item-price{font-size:11px;color:var(--text3);margin-top:1px;}
+.cart-item-note{font-size:11px;color:var(--teal);margin-top:3px;font-style:italic;}
+.cart-qty{display:flex;align-items:center;gap:5px;margin-top:4px;}
+.cart-qty button{width:26px;height:26px;border-radius:7px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .1s;font-family:inherit;}
+.cart-qty button:hover{border-color:var(--teal);color:var(--teal);}
+.cart-qty span{font-size:14px;font-weight:700;min-width:20px;text-align:center;}
+.cart-item-total{font-size:14px;font-weight:700;min-width:65px;text-align:right;padding-top:2px;}
+.cart-item-remove{width:22px;height:22px;border-radius:6px;border:none;background:var(--red-bg);color:var(--red);cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;margin-top:3px;transition:all .1s;flex-shrink:0;}
+.cart-item-remove:hover{background:var(--red);color:#fff;}
+
+.cart-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--text3);font-size:13px;gap:8px;}
+.cart-empty-icon{font-size:44px;opacity:0.3;}
+
+/* DISCOUNT ROW */
+.discount-row{display:flex;align-items:center;gap:8px;padding:10px 16px;border-top:1px solid var(--border);flex-shrink:0;}
+.discount-row input{flex:1;padding:8px 12px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:12px;font-family:inherit;outline:none;}
+.discount-row input:focus{border-color:var(--teal);}
+.discount-row input::placeholder{color:var(--text3);}
+.discount-type{display:flex;gap:4px;}
+.disc-btn{padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;}
+.disc-btn.active{background:var(--teal);border-color:var(--teal);color:#fff;}
+
+.cart-footer{padding:14px 20px;border-top:1px solid var(--border);flex-shrink:0;}
+.cart-totals{margin-bottom:14px;}
+.cart-row{display:flex;justify-content:space-between;padding:5px 0;font-size:13px;color:var(--text2);}
+.cart-row.total{font-size:17px;font-weight:800;color:var(--text);padding:10px 0 0;border-top:1px solid var(--border);margin-top:6px;}
+.cart-row .disc-val{color:var(--green);}
+.cart-actions{display:flex;gap:8px;}
+.cart-btn{flex:1;padding:11px;border-radius:var(--radius-sm);border:1px solid var(--border);background:transparent;color:var(--text2);font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;font-family:inherit;user-select:none;}
+.cart-btn:hover{border-color:rgba(255,255,255,0.15);color:var(--text);}
+.cart-btn.checkout{background:var(--teal);border-color:var(--teal);color:#fff;font-size:12px;}
+.cart-btn.checkout:hover{filter:brightness(1.1);}
+
+/* PAYMENT MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:100;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.modal-overlay.show{display:flex;}
+.modal-box{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);width:420px;max-height:90vh;overflow-y:auto;}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--border);}
+.modal-header h3{font-size:15px;font-weight:700;}
+.modal-close{width:30px;height:30px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;font-family:inherit;}
+.modal-close:hover{border-color:var(--red);color:var(--red);}
+.modal-body{padding:22px;}
+
+/* PAYMENT OPTIONS */
+.pay-methods{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
+.pay-method{padding:16px;border-radius:var(--radius-sm);border:1px solid var(--border);cursor:pointer;transition:all .15s;text-align:center;user-select:none;}
+.pay-method:hover{border-color:var(--teal);}
+.pay-method.active{border-color:var(--teal);background:var(--teal-bg);}
+.pay-method-icon{font-size:24px;margin-bottom:6px;}
+.pay-method-label{font-size:12px;font-weight:700;color:var(--text2);}
+.pay-method.active .pay-method-label{color:var(--teal);}
+.pay-total{font-size:28px;font-weight:800;text-align:center;margin-bottom:20px;color:var(--teal);}
+.pay-total-label{font-size:12px;color:var(--text3);text-align:center;margin-top:4px;}
+.pay-input-wrap{margin-bottom:16px;}
+.pay-input-label{font-size:11px;font-weight:700;color:var(--text3);letter-spacing:0.5px;margin-bottom:6px;}
+.pay-input{width:100%;padding:12px 16px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:16px;font-weight:700;font-family:inherit;outline:none;transition:border .15s;}
+.pay-input:focus{border-color:var(--teal);}
+.pay-change{display:flex;justify-content:space-between;padding:12px 16px;border-radius:var(--radius-sm);background:var(--green-bg);border:1px solid rgba(34,197,94,0.2);margin-bottom:20px;}
+.pay-change-label{font-size:12px;color:var(--green);font-weight:600;}
+.pay-change-val{font-size:16px;font-weight:800;color:var(--green);}
+.modal-actions{display:flex;gap:10px;}
+.modal-btn{flex:1;padding:13px;border-radius:var(--radius-sm);border:1px solid var(--border);background:transparent;color:var(--text2);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;}
+.modal-btn.confirm{background:var(--teal);border-color:var(--teal);color:#fff;}
+.modal-btn.confirm:hover{filter:brightness(1.1);}
+
+/* BILL PREVIEW */
+.bill-modal{background:#fff;border-radius:var(--radius);width:340px;max-height:90vh;overflow-y:auto;}
+.bill-receipt{padding:24px 20px;color:#111;font-size:12px;line-height:1.5;}
+.bill-receipt .hotel-name{text-align:center;font-size:16px;font-weight:800;margin-bottom:2px;}
+.bill-receipt .hotel-addr{text-align:center;font-size:11px;color:#666;margin-bottom:2px;}
+.bill-receipt .hotel-phone{text-align:center;font-size:11px;color:#666;margin-bottom:12px;}
+.bill-receipt .divider{border:none;border-top:1px dashed #ccc;margin:10px 0;}
+.bill-receipt .bill-info{display:flex;justify-content:space-between;font-size:11px;color:#555;}
+.bill-receipt table{width:100%;margin:10px 0;}
+.bill-receipt th{text-align:left;font-size:11px;font-weight:700;border-bottom:1px solid #ddd;padding:4px 0;color:#333;text-transform:none;letter-spacing:0;}
+.bill-receipt td{padding:4px 0;font-size:12px;border-bottom:none;color:#333;}
+.bill-receipt td:last-child{text-align:right;}
+.bill-receipt .total-row{font-weight:800;font-size:14px;}
+.bill-receipt .footer-msg{text-align:center;font-size:11px;color:#888;margin-top:12px;}
+.bill-receipt .copy-label{text-align:center;font-size:10px;font-weight:700;color:#aaa;letter-spacing:2px;margin-bottom:8px;}
+.bill-close{display:block;width:100%;padding:12px;border:none;background:#1a1d2e;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;border-radius:0 0 var(--radius) var(--radius);}
+.bill-close:hover{background:#2a2d3e;}
+
+/* TABLE MANAGEMENT */
+.tables-filter{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+.tbl-filter{padding:7px 16px;border-radius:30px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s;user-select:none;}
+.tbl-filter:hover{border-color:rgba(255,255,255,0.15);color:var(--text);}
+.tbl-filter.active{background:var(--teal);border-color:var(--teal);color:#fff;}
+
+.tables-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px;}
+.table-card{background:var(--card);border:2px solid var(--border);border-radius:var(--radius);padding:20px;cursor:pointer;transition:all .2s;text-align:center;position:relative;}
+.table-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.2);}
+.table-card.free{border-color:var(--border);}
+.table-card.free:hover{border-color:var(--green);}
+.table-card.occupied{border-color:var(--orange);background:var(--orange-bg);}
+.table-card.reserved{border-color:var(--blue);background:var(--blue-bg);}
+.table-card-icon{font-size:32px;margin-bottom:10px;}
+.table-card-name{font-size:14px;font-weight:800;margin-bottom:4px;}
+.table-card-seats{font-size:11px;color:var(--text3);margin-bottom:10px;}
+.table-card-status{font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;display:inline-block;}
+.table-card.free .table-card-status{color:var(--green);background:var(--green-bg);}
+.table-card.occupied .table-card-status{color:var(--orange);background:var(--orange-bg);}
+.table-card.reserved .table-card-status{color:var(--blue);background:var(--blue-bg);}
+.table-card-order{font-size:12px;color:var(--text2);margin-top:8px;}
+.table-card-timer{font-size:13px;font-weight:700;color:var(--orange);margin-top:4px;}
+.table-card-total{font-size:16px;font-weight:800;color:var(--teal);margin-top:6px;}
+.table-actions{position:absolute;top:10px;right:10px;display:flex;gap:4px;}
+.table-action-btn{width:26px;height:26px;border-radius:7px;border:1px solid var(--border);background:var(--bg);color:var(--text3);cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;transition:all .1s;}
+.table-action-btn:hover{border-color:var(--primary);color:var(--primary-light);}
+
+/* KITCHEN */
+.kot-board{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+.kot-col-header{font-size:11px;font-weight:700;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.kot-col-header .col-count{background:var(--bg3);color:var(--text2);font-size:10px;padding:2px 8px;border-radius:20px;}
+.kot-ticket{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;cursor:pointer;transition:all .2s;}
+.kot-ticket:hover{border-color:rgba(255,255,255,0.12);transform:translateY(-1px);}
+.kot-ticket.urgent{border-color:var(--red);animation:urgentPulse 2s infinite;}
+@keyframes urgentPulse{0%,100%{border-color:var(--red);}50%{border-color:rgba(239,68,68,0.3);}}
+.kot-ticket-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.kot-ticket-id{font-size:13px;font-weight:800;color:var(--primary-light);}
+.kot-ticket-table{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;}
+.kot-ticket-time{font-size:11px;color:var(--text3);margin-top:4px;}
+.kot-ticket-items{border-top:1px solid var(--border);padding-top:10px;margin-top:4px;}
+.kot-item{display:flex;align-items:center;justify-content:space-between;padding:5px 0;font-size:12px;}
+.kot-item-name{font-weight:600;}
+.kot-item-qty{font-size:14px;font-weight:800;color:var(--teal);}
+.kot-item-note{font-size:10px;color:var(--orange);margin-top:2px;font-style:italic;}
+.kot-btn{width:100%;margin-top:12px;padding:8px;border-radius:var(--radius-sm);border:none;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;}
+
+/* INVENTORY */
+.inventory-header{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+.inv-search{flex:1;padding:10px 16px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg2);color:var(--text);font-size:13px;font-family:inherit;outline:none;}
+.inv-search:focus{border-color:var(--teal);}
+.inv-search::placeholder{color:var(--text3);}
+.stock-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-bottom:20px;}
+.stock-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;transition:all .2s;}
+.stock-card:hover{border-color:rgba(255,255,255,0.1);}
+.stock-card.low{border-color:var(--red);background:var(--red-bg);}
+.stock-card.medium{border-color:var(--yellow);}
+.stock-card-top{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+.stock-card-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.stock-card-name{font-size:13px;font-weight:700;}
+.stock-card-cat{font-size:11px;color:var(--text3);}
+.stock-bar-wrap{display:flex;align-items:center;gap:10px;}
+.stock-bar{flex:1;height:6px;border-radius:3px;background:var(--border);overflow:hidden;}
+.stock-bar-fill{height:100%;border-radius:3px;transition:width .5s;}
+.stock-bar-fill.high{background:var(--green);}
+.stock-bar-fill.medium{background:var(--yellow);}
+.stock-bar-fill.low{background:var(--red);}
+.stock-val{font-size:12px;font-weight:700;}
+
+/* MENU ITEMS GRID */
+.items-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;}
+.item-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;transition:all .2s;}
+.item-card:hover{border-color:rgba(255,255,255,0.1);}
+.item-card-top{display:flex;align-items:center;gap:14px;margin-bottom:14px;}
+.item-card-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;}
+.item-card-name{font-size:14px;font-weight:700;}
+.item-card-cat{font-size:11px;color:var(--text3);margin-top:2px;}
+.item-card-sizes{display:flex;gap:6px;margin:10px 0;}
+.size-pill{padding:4px 10px;border-radius:20px;border:1px solid var(--border);font-size:11px;font-weight:600;color:var(--text2);}
+.size-pill.active{border-color:var(--teal);color:var(--teal);background:var(--teal-bg);}
+.item-card-bottom{display:flex;align-items:center;justify-content:space-between;}
+.item-card-price{font-size:16px;font-weight:800;color:var(--teal);}
+.item-toggle{width:38px;height:22px;border-radius:11px;background:var(--green);position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;}
+.item-toggle.off{background:var(--border);}
+.item-toggle::after{content:'';width:16px;height:16px;border-radius:50%;background:#fff;position:absolute;top:3px;left:3px;transition:left .2s;}
+.item-toggle.off::after{left:3px;}
+.item-toggle:not(.off)::after{left:19px;}
+
+/* REPORTS */
+.report-tabs{display:flex;gap:4px;padding:4px;background:var(--bg3);border-radius:var(--radius-sm);margin-bottom:20px;width:fit-content;}
+.report-tab{padding:8px 20px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;color:var(--text2);transition:all .15s;user-select:none;}
+.report-tab.active{background:var(--card);color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,0.2);}
+
+/* USERS */
+.role-select{padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:12px;font-family:inherit;cursor:pointer;}
+
+/* SETTINGS */
+.settings-group{margin-bottom:24px;}
+.settings-group h4{font-size:13px;font-weight:700;margin-bottom:12px;color:var(--text2);letter-spacing:0.5px;text-transform:uppercase;}
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:8px;background:var(--card);}
+.setting-label{font-size:13px;font-weight:500;}
+.setting-label span{display:block;font-size:11px;color:var(--text3);margin-top:2px;}
+.setting-value{font-size:13px;font-weight:600;color:var(--teal);text-align:right;}
+.toggle{width:42px;height:24px;border-radius:12px;background:var(--border);position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;}
+.toggle.on{background:var(--teal);}
+.toggle::after{content:'';width:18px;height:18px;border-radius:50%;background:#fff;position:absolute;top:3px;left:3px;transition:left .2s;}
+.toggle.on::after{left:21px;}
+.setting-input{padding:7px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:13px;font-family:inherit;outline:none;width:200px;text-align:right;}
+.setting-input:focus{border-color:var(--teal);}
+
+/* ACTIVITY LOG */
+.activity-item{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.03);}
+.activity-icon{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.activity-info{flex:1;}
+.activity-info div:first-child{font-size:13px;font-weight:500;}
+.activity-info div:last-child{font-size:11px;color:var(--text3);margin-top:2px;}
+.activity-time{font-size:11px;color:var(--text3);}
+
+/* WHITELABEL */
+.whitelabel{position:fixed;bottom:8px;right:12px;font-size:10px;color:rgba(255,255,255,0.15);letter-spacing:1px;z-index:999;}
+
+/* THEME */
+.theme-toggle{display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;}
+.theme-toggle-label{font-size:11px;font-weight:600;color:var(--text2);}
+.toggle-track{width:48px;height:26px;border-radius:13px;background:var(--border);position:relative;transition:background .3s;border:1px solid rgba(255,255,255,0.08);}
+.toggle-track::after{content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .3s;}
+.toggle-track .icon-moon,.toggle-track .icon-sun{position:absolute;top:4px;font-size:14px;z-index:1;transition:opacity .3s;}
+.toggle-track .icon-moon{right:5px;opacity:1;}
+.toggle-track .icon-sun{left:5px;opacity:0;}
+body.light .toggle-track{background:var(--teal);}
+body.light .toggle-track::after{transform:translateX(22px);}
+body.light .toggle-track .icon-moon{opacity:0;}
+body.light .toggle-track .icon-sun{opacity:1;}
+
+/* LIGHT MODE */
+body.light{--bg:#f5f6fa;--bg2:#ffffff;--bg3:#f0f1f5;--card:#ffffff;--border:#e2e5ef;--text:#1a1d2e;--text2:#555870;--text3:#8b8fa3;--teal:#0d9488;--teal-bg:rgba(13,148,136,0.08);--primary:#6366f1;--primary-light:#4f46e5;--primary-bg:rgba(99,102,241,0.08);--green:#16a34a;--green-bg:rgba(22,163,74,0.08);--red:#dc2626;--red-bg:rgba(220,38,38,0.08);--orange:#ea580c;--orange-bg:rgba(234,88,12,0.08);--blue:#2563eb;--blue-bg:rgba(37,99,235,0.08);--yellow:#ca8a04;--yellow-bg:rgba(202,138,4,0.08);--pink:#db2777;--pink-bg:rgba(219,39,119,0.08);}
+body.light .sidebar{background:#fff;}
+body.light .topbar{background:#fff;}
+body.light .pos-right{background:#f8f9fc;}
+body.light .pos-product{background:#f8f9fc;}
+body.light .whitelabel{color:rgba(0,0,0,0.15);}
+body.light tr:hover td{background:rgba(0,0,0,0.02);}
+body.light .report-tabs{background:#e8eaf0;}
+body.light .report-tab.active{background:#fff;}
+body.light .modal-box{background:#fff;}
+body.light .bill-close{background:#1a1d2e;color:#fff;}
+
+*{transition:background-color .3s,color .3s,border-color .3s;}
 </style>
 </head>
 <body>
+
+<!-- SIDEBAR -->
 <div class="sidebar">
-<div class="sidebar-brand">☕ HotelPOS</div>
-<div class="nav-item active" onclick="showPage('dashboard',this)">Dashboard</div>
-<div class="nav-item" onclick="showPage('pos',this)">POS</div>
-<div class="nav-item" onclick="showPage('cafe',this)">Cafe Functions</div>
+  <div class="sidebar-brand">
+    <div class="brand-icon">☕</div>
+    <div>
+      <div class="brand-name">Cloud<span>Café</span></div>
+      <div class="brand-sub">Restaurant POS v1.0</div>
+    </div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-section">Main</div>
+    <div class="nav-item active" onclick="showPage('dashboard',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Dashboard
+    </div>
+    <div class="nav-item" onclick="showPage('pos',this)" style="background:linear-gradient(135deg,rgba(20,184,166,0.08),rgba(20,184,166,0.02));border:1px solid rgba(20,184,166,0.2);margin:8px 0;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+      <span style="font-weight:700;color:var(--teal);">POS Terminal</span>
+    </div>
+    <div class="nav-item" onclick="showPage('tables',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M12 12v3"/><path d="M8 21v-2"/><path d="M16 21v-2"/></svg>
+      Table Map
+      <span class="nav-badge orange">3 Active</span>
+    </div>
+    <div class="nav-item" onclick="showPage('kitchen',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"/><line x1="6" y1="17" x2="18" y2="17"/></svg>
+      Kitchen (KOT)
+      <span class="nav-badge">5</span>
+    </div>
+    <div class="nav-section">Management</div>
+    <div class="nav-item" onclick="showPage('menu',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      Menu Items
+    </div>
+    <div class="nav-item" onclick="showPage('inventory',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+      Inventory
+      <span class="nav-badge orange">2 Low</span>
+    </div>
+    <div class="nav-section">Reports</div>
+    <div class="nav-item" onclick="showPage('reports',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+      Reports
+    </div>
+    <div class="nav-item" onclick="showPage('history',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+      Sales History
+    </div>
+    <div class="nav-section">System</div>
+    <div class="nav-item" onclick="showPage('users',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Users & Roles
+    </div>
+    <div class="nav-item" onclick="showPage('settings',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      Settings
+    </div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-pill">
+      <div class="user-avatar">A</div>
+      <div class="user-info"><div>Admin</div><div>Full Access</div></div>
+      <div class="live-dot"></div>
+    </div>
+  </div>
 </div>
 
+<!-- MAIN -->
 <div class="main">
 
+<!-- ===== DASHBOARD ===== -->
 <div class="page active" id="page-dashboard">
-<div class="topbar"><h2>Dashboard</h2><button class="themebtn" onclick="toggleTheme()">🌙 / ☀️ Theme</button></div>
+<div class="topbar">
+  <h2>Dashboard</h2>
+  <div class="topbar-actions">
+    <div class="theme-toggle" onclick="toggleTheme()">
+      <span class="theme-toggle-label">Theme</span>
+      <div class="toggle-track"><span class="icon-sun">&#9728;</span><span class="icon-moon">&#127769;</span></div>
+    </div>
+    <div class="topbar-btn">&#127760; Live Sync</div>
+    <div class="topbar-btn">&#128197; Jun 25, 2026</div>
+  </div>
+</div>
 <div class="content">
-<div class="grid">
-<div class="card"><h3>💰 Sales</h3><h1>Rs.47,850</h1></div>
-<div class="card"><h3>🧾 Orders</h3><h1>64</h1></div>
-<div class="card"><h3>📦 Items</h3><h1>312</h1></div>
-</div>
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon" style="background:var(--teal-bg);color:var(--teal);">&#128176;</div>
+      <div class="stat-value">Rs. 38,420</div>
+      <div class="stat-label">Today's Revenue</div>
+      <div class="stat-change stat-up">&#9650; 18.3% vs yesterday</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="background:var(--blue-bg);color:var(--blue);">&#128196;</div>
+      <div class="stat-value">52</div>
+      <div class="stat-label">Orders Today</div>
+      <div class="stat-change stat-up">&#9650; 7 more</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="background:var(--orange-bg);color:var(--orange);">&#129689;</div>
+      <div class="stat-value">12 / 20</div>
+      <div class="stat-label">Tables Occupied</div>
+      <div class="stat-change stat-up">&#9650; 60% occupancy</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="background:var(--green-bg);color:var(--green);">&#9749;</div>
+      <div class="stat-value">Rs. 738</div>
+      <div class="stat-label">Avg Order Value</div>
+      <div class="stat-change stat-down">&#9660; 1.4%</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><h3>Revenue This Week</h3><div class="topbar-btn" style="font-size:11px;">Weekly</div></div>
+      <div class="card-body">
+        <div class="chart-area">
+          <div class="chart-bar" style="height:55%"></div>
+          <div class="chart-bar" style="height:70%"></div>
+          <div class="chart-bar" style="height:42%"></div>
+          <div class="chart-bar" style="height:88%"></div>
+          <div class="chart-bar" style="height:65%"></div>
+          <div class="chart-bar" style="height:78%"></div>
+          <div class="chart-bar" style="height:93%"></div>
+        </div>
+        <div class="chart-labels"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h3>Top Items Today</h3><div class="topbar-btn" style="font-size:11px;">Today</div></div>
+      <div class="card-body">
+        <div class="top-item"><div class="top-item-info"><div class="top-item-rank">1</div><div><div class="top-item-name">Caramel Latte</div><div class="top-item-cat">Hot Drinks</div></div></div><div class="top-item-count">94</div></div>
+        <div class="top-item"><div class="top-item-info"><div class="top-item-rank">2</div><div><div class="top-item-name">Club Sandwich</div><div class="top-item-cat">Meals</div></div></div><div class="top-item-count">71</div></div>
+        <div class="top-item"><div class="top-item-info"><div class="top-item-rank">3</div><div><div class="top-item-name">Iced Mocha</div><div class="top-item-cat">Cold Drinks</div></div></div><div class="top-item-count">58</div></div>
+        <div class="top-item"><div class="top-item-info"><div class="top-item-rank">4</div><div><div class="top-item-name">Chicken Burger</div><div class="top-item-cat">Meals</div></div></div><div class="top-item-count">46</div></div>
+        <div class="top-item"><div class="top-item-info"><div class="top-item-rank">5</div><div><div class="top-item-name">Cheesecake</div><div class="top-item-cat">Desserts</div></div></div><div class="top-item-count">39</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><h3>Orders by Type</h3></div>
+      <div class="card-body">
+        <div class="top-item"><div class="top-item-info"><div style="width:32px;height:32px;border-radius:10px;background:var(--teal-bg);display:flex;align-items:center;justify-content:center;font-size:16px;">&#129689;</div><div><div class="top-item-name">Dine-In</div><div class="top-item-cat">28 orders</div></div></div><div class="top-item-count">Rs. 22,400</div></div>
+        <div class="top-item"><div class="top-item-info"><div style="width:32px;height:32px;border-radius:10px;background:var(--blue-bg);display:flex;align-items:center;justify-content:center;font-size:16px;">&#128717;</div><div><div class="top-item-name">Takeaway</div><div class="top-item-cat">18 orders</div></div></div><div class="top-item-count">Rs. 11,520</div></div>
+        <div class="top-item"><div class="top-item-info"><div style="width:32px;height:32px;border-radius:10px;background:var(--orange-bg);display:flex;align-items:center;justify-content:center;font-size:16px;">&#128663;</div><div><div class="top-item-name">Delivery</div><div class="top-item-cat">6 orders</div></div></div><div class="top-item-count">Rs. 4,500</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h3>Recent Activity</h3></div>
+      <div class="card-body">
+        <div class="activity-item"><div class="activity-icon" style="background:var(--teal-bg);">&#128196;</div><div class="activity-info"><div>Bill #0052 printed — Table 4</div><div>Cashier A · Rs. 2,450</div></div><div class="activity-time">2 min ago</div></div>
+        <div class="activity-item"><div class="activity-icon" style="background:var(--orange-bg);">&#129689;</div><div class="activity-info"><div>Table 7 seated — 4 guests</div><div>Host</div></div><div class="activity-time">5 min ago</div></div>
+        <div class="activity-item"><div class="activity-icon" style="background:var(--green-bg);">&#9989;</div><div class="activity-info"><div>KOT #048 marked Ready</div><div>Chef Nimal</div></div><div class="activity-time">8 min ago</div></div>
+        <div class="activity-item"><div class="activity-icon" style="background:var(--blue-bg);">&#128176;</div><div class="activity-info"><div>Payment received — Table 2</div><div>Card · Rs. 3,800</div></div><div class="activity-time">12 min ago</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h3>Recent Bills</h3><div class="topbar-btn" style="font-size:11px;">View All</div></div>
+    <div class="card-body"><div class="table-wrap">
+      <table>
+        <thead><tr><th>Bill #</th><th>Table / Type</th><th>Time</th><th>Items</th><th>Amount</th><th>Payment</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600;color:var(--teal);">#0052</td><td>Table 4</td><td>02:10 PM</td><td>6</td><td style="font-weight:700;">Rs. 2,450</td><td><span class="badge badge-blue">Card</span></td><td><span class="badge badge-green">Paid</span></td></tr>
+          <tr><td style="font-weight:600;color:var(--teal);">#0051</td><td>Takeaway</td><td>01:55 PM</td><td>3</td><td style="font-weight:700;">Rs. 980</td><td><span class="badge badge-teal">Cash</span></td><td><span class="badge badge-green">Paid</span></td></tr>
+          <tr><td style="font-weight:600;color:var(--teal);">#0050</td><td>Table 11</td><td>01:40 PM</td><td>8</td><td style="font-weight:700;">Rs. 3,200</td><td>—</td><td><span class="badge badge-orange">Open</span></td></tr>
+          <tr><td style="font-weight:600;color:var(--teal);">#0049</td><td>Delivery</td><td>01:20 PM</td><td>4</td><td style="font-weight:700;">Rs. 1,640</td><td><span class="badge badge-blue">Card</span></td><td><span class="badge badge-green">Paid</span></td></tr>
+          <tr><td style="font-weight:600;color:var(--teal);">#0048</td><td>Table 6</td><td>12:50 PM</td><td>5</td><td style="font-weight:700;">Rs. 1,870</td><td><span class="badge badge-teal">Cash</span></td><td><span class="badge badge-green">Paid</span></td></tr>
+        </tbody>
+      </table>
+    </div></div>
+  </div>
 </div>
 </div>
 
-<div class="page" id="page-pos">
-<div class="topbar"><h2>POS Terminal</h2></div>
+<!-- ===== POS TERMINAL ===== -->
+<div class="page page-pos" id="page-pos">
+  <div class="pos-left">
+    <div class="order-type-bar">
+      <div class="order-type-tab active" onclick="selectOrderType(this)">&#129689; Dine-In</div>
+      <div class="order-type-tab" onclick="selectOrderType(this)">&#128717; Takeaway</div>
+      <div class="order-type-tab" onclick="selectOrderType(this)">&#128663; Delivery</div>
+      <div class="order-type-tab" onclick="selectOrderType(this)">&#128682; Walk-In</div>
+    </div>
+    <div class="pos-header">
+      <input class="pos-search" placeholder="&#128269; Search menu items..." oninput="filterProducts(this.value)">
+      <select class="pos-table-select" id="tableSelect">
+        <option value="">Select Table...</option>
+        <option>Table 1 (Free)</option>
+        <option>Table 2 (Free)</option>
+        <option>Table 5 (Free)</option>
+        <option>Table 8 (Free)</option>
+        <option>Table 12 (Free)</option>
+      </select>
+    </div>
+    <div class="pos-categories">
+      <button class="pos-cat active" onclick="filterCat('all',this)">All</button>
+      <button class="pos-cat" onclick="filterCat('hot',this)">&#9749; Hot Drinks</button>
+      <button class="pos-cat" onclick="filterCat('cold',this)">&#129380; Cold Drinks</button>
+      <button class="pos-cat" onclick="filterCat('meals',this)">&#127860; Meals</button>
+      <button class="pos-cat" onclick="filterCat('snacks',this)">&#127839; Snacks</button>
+      <button class="pos-cat" onclick="filterCat('breakfast',this)">&#127859; Breakfast</button>
+      <button class="pos-cat" onclick="filterCat('desserts',this)">&#127846; Desserts</button>
+    </div>
+    <div class="pos-products" id="posProducts"></div>
+  </div>
+
+  <!-- CART -->
+  <div class="pos-right">
+    <div class="cart-header">
+      <h3>&#128196; Current Order</h3>
+      <div class="cart-meta">
+        <span class="cart-table-badge" id="cartTableLabel">No Table</span>
+        <span class="cart-count" id="cartCount">0</span>
+      </div>
+    </div>
+    <div class="cart-items" id="cartItems">
+      <div class="cart-empty">
+        <div class="cart-empty-icon">&#9749;</div>
+        No items yet<br>
+        <span style="font-size:11px;">Tap a menu item to add</span>
+      </div>
+    </div>
+    <div class="discount-row">
+      <input placeholder="Discount amount..." id="discountInput" type="number" min="0">
+      <div class="discount-type">
+        <button class="disc-btn active" onclick="setDiscType('fixed',this)">Rs.</button>
+        <button class="disc-btn" onclick="setDiscType('pct',this)">%</button>
+      </div>
+    </div>
+    <div class="cart-footer">
+      <div class="cart-totals">
+        <div class="cart-row"><span>Subtotal</span><span id="cartSubtotal">Rs. 0.00</span></div>
+        <div class="cart-row"><span>Service (10%)</span><span id="cartService">Rs. 0.00</span></div>
+        <div class="cart-row"><span>Discount</span><span class="disc-val" id="cartDiscount">— Rs. 0.00</span></div>
+        <div class="cart-row total"><span>Grand Total</span><span id="cartTotal">Rs. 0.00</span></div>
+      </div>
+      <div class="cart-actions">
+        <button class="cart-btn" onclick="holdOrder()">&#128338; Hold</button>
+        <button class="cart-btn" onclick="clearCart()">&#128465; Clear</button>
+        <button class="cart-btn checkout" onclick="openPayment()">&#128176; Checkout</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TABLE MAP ===== -->
+<div class="page" id="page-tables">
+<div class="topbar"><h2>Table Map</h2><div class="topbar-actions"><div class="topbar-btn primary">+ Add Table</div><div class="topbar-btn">&#128260; Refresh</div></div></div>
 <div class="content">
-<div class="pos-layout">
-
-<div>
-<input type="text" placeholder="Search items...">
-<div class="products">
-<div class="product"><h4>☕ Coffee</h4><p>Rs.500</p><button onclick="addItem('Coffee',500)">Add</button></div>
-<div class="product"><h4>🍰 Cake</h4><p>Rs.750</p><button onclick="addItem('Cake',750)">Add</button></div>
-<div class="product"><h4>🥪 Sandwich</h4><p>Rs.950</p><button onclick="addItem('Sandwich',950)">Add</button></div>
-<div class="product"><h4>🧋 Milk Tea</h4><p>Rs.400</p><button onclick="addItem('Milk Tea',400)">Add</button></div>
-<div class="product"><h4>🍔 Burger</h4><p>Rs.1200</p><button onclick="addItem('Burger',1200)">Add</button></div>
-<div class="product"><h4>🥤 Juice</h4><p>Rs.600</p><button onclick="addItem('Juice',600)">Add</button></div>
+  <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);">
+    <div class="stat-card"><div class="stat-icon" style="background:var(--green-bg);color:var(--green);">&#9989;</div><div class="stat-value">8</div><div class="stat-label">Free Tables</div></div>
+    <div class="stat-card"><div class="stat-icon" style="background:var(--orange-bg);color:var(--orange);">&#128483;</div><div class="stat-value">12</div><div class="stat-label">Occupied</div></div>
+    <div class="stat-card"><div class="stat-icon" style="background:var(--blue-bg);color:var(--blue);">&#128197;</div><div class="stat-value">3</div><div class="stat-label">Reserved</div></div>
+    <div class="stat-card"><div class="stat-icon" style="background:var(--teal-bg);color:var(--teal);">&#129689;</div><div class="stat-value">23 / 20</div><div class="stat-label">Total Covers</div></div>
+  </div>
+  <div class="tables-filter">
+    <button class="tbl-filter active" onclick="filterTables('all',this)">All Tables</button>
+    <button class="tbl-filter" onclick="filterTables('free',this)">&#9989; Free</button>
+    <button class="tbl-filter" onclick="filterTables('occupied',this)">&#128483; Occupied</button>
+    <button class="tbl-filter" onclick="filterTables('reserved',this)">&#128197; Reserved</button>
+  </div>
+  <div class="tables-grid">
+    <div class="table-card occupied" onclick="showPage('pos',document.querySelector('.nav-item:nth-child(3)'))">
+      <div class="table-actions"><button class="table-action-btn" title="Transfer">&#8644;</button><button class="table-action-btn" title="Merge">&#128279;</button></div>
+      <div class="table-card-icon">&#129689;</div>
+      <div class="table-card-name">Table 1</div>
+      <div class="table-card-seats">4 seats · Indoor</div>
+      <div class="table-card-status">Occupied</div>
+      <div class="table-card-timer">&#9203; 00:42:15</div>
+      <div class="table-card-total">Rs. 3,200</div>
+    </div>
+    <div class="table-card free">
+      <div class="table-card-icon">&#129689;</div>
+      <div class="table-card-name">Table 2</div>
+      <div class="table-card-seats">2 seats · Indoor</div>
+      <div class="table-card-status">Free</div>
+    </div>
+    <div class="table-card occupied">
+      <div class="table-actions"><button class="table-action-btn">&#8644;</button><button class="table-action-btn">&#128279;</button></div>
+      <div class="table-card-icon">&#129689;</div>
+      <div class="table-card-name">Table 3</div>
+      <div class="table-card-seats">4 seats · Indoor</div>
+      <div class="table-card-status">Occupied</div>
+      <div class="table-card-timer">&#9203; 00:18:30</div>
+      <div class="table-card-total">Rs. 1,650</div>
+    </div>
+    <div class="table-card reserved">
+      <div class="table-card-icon">&#129689;</div>
+      <div class="table-card-name">Table 4</div>
+      <div class="table-card-seats">6 seats · Indoor</div>
+      <div class="table-card-status">Reserved</div>
+      <div class="table-card-order" style="color:var(--blue);">7:00 PM · Mr. Perera</div>
+    </div>
+    <div class="table-card occupied">
+      <div class="table-actions"><button class="table-action-btn">&#8644;</button><button class="table-action-btn">&#128279;</button></div>
+      <div class="table-card-icon">&#9925;</div>
+      <div class="table-card-name">Table 5</div>
+      <div class="table-card-seats">8 seats · Outdoor</div>
+      <div class="table-card-status">Occupied</div>
+      <div class="table-card-timer">&#9203; 01:05:00</div>
+      <div class="table-card-total">Rs. 6,800</div>
+    </div>
+    <div class="table-card free">
+      <div class="table-card-icon">&#9925;</div>
+      <div class="table-card-name">Table 6</div>
+      <div class="table-card-seats">4 seats · Outdoor</div>
+      <div class="table-card-status">Free</div>
+    </div>
+    <div class="table-card occupied">
+      <div class="table-actions"><button class="table-action-btn">&#8644;</button><button class="table-action-btn">&#128279;</button></div>
+      <div class="table-card-icon">&#129689;</div>
+      <div class="table-card-name">Table 7</div>
+      <div class="table-card-seats">2 seats · Bar</div>
+      <div class="table-card-status">Occupied</div>
+      <div class="table-card-timer">&#9203; 00:08:12</div>
+      <div class="table-card-total">Rs. 480</div>
+    </div>
+    <div class="table-card free">
+      <div class="table-card-icon">&#129689;</div>
+      <div class="table-card-name">Table 8</div>
+      <div class="table-card-seats">4 seats · Indoor</div>
+      <div class="table-card-status">Free</div>
+    </div>
+    <div class="table-card reserved">
+      <div class="table-card-icon">&#129689;</div>
+      <div class="table-card-name">Table 9</div>
+      <div class="table-card-seats">4 seats · Indoor</div>
+      <div class="table-card-status">Reserved</div>
+      <div class="table-card-order" style="color:var(--blue);">6:30 PM · Ms. Silva</div>
+    </div>
+  </div>
 </div>
 </div>
 
-<div class="card">
-<h3>🛒 Cart</h3>
-<div id="cart"></div>
-<div class="totalbox">
-<p>Subtotal: Rs.<span id="subtotal">0</span></p>
-<p>Tax 10%: Rs.<span id="tax">0</span></p>
-<h3>Total: Rs.<span id="total">0</span></h3>
-<button class="checkout">Checkout</button>
+<!-- ===== KITCHEN KOT ===== -->
+<div class="page" id="page-kitchen">
+<div class="topbar"><h2>Kitchen Display — KOT</h2><div class="topbar-actions"><div class="topbar-btn">&#128260; Auto-refresh: ON</div><div class="topbar-btn">&#128424; Printer Mode</div></div></div>
+<div class="content" style="padding:20px 24px;">
+  <div class="kot-board">
+    <!-- PENDING -->
+    <div>
+      <div class="kot-col-header" style="color:var(--orange);">&#128993; Pending <span class="col-count">3</span></div>
+      <div class="kot-ticket urgent">
+        <div class="kot-ticket-header">
+          <div>
+            <div class="kot-ticket-id">#KOT-058</div>
+            <div class="kot-ticket-time">&#9203; 08:24 waiting</div>
+          </div>
+          <span class="kot-ticket-table badge-orange badge">Table 5</span>
+        </div>
+        <div class="kot-ticket-items">
+          <div class="kot-item"><span class="kot-item-name">Chicken Burger</span><span class="kot-item-qty">x2</span></div>
+          <div class="kot-item-note">&#x2022; No onions, extra sauce</div>
+          <div class="kot-item"><span class="kot-item-name">Caramel Latte</span><span class="kot-item-qty">x2</span></div>
+          <div class="kot-item"><span class="kot-item-name">Cheesecake</span><span class="kot-item-qty">x1</span></div>
+        </div>
+        <button class="kot-btn" style="background:var(--orange);color:#fff;" onclick="this.closest('.kot-ticket').style.opacity='0.5'">Start Preparing</button>
+      </div>
+      <div class="kot-ticket">
+        <div class="kot-ticket-header">
+          <div>
+            <div class="kot-ticket-id">#KOT-059</div>
+            <div class="kot-ticket-time">&#9203; 03:10 waiting</div>
+          </div>
+          <span class="kot-ticket-table badge-blue badge">Takeaway</span>
+        </div>
+        <div class="kot-ticket-items">
+          <div class="kot-item"><span class="kot-item-name">Club Sandwich</span><span class="kot-item-qty">x1</span></div>
+          <div class="kot-item"><span class="kot-item-name">Iced Mocha</span><span class="kot-item-qty">x1</span></div>
+          <div class="kot-item-note">&#x2022; Less ice</div>
+        </div>
+        <button class="kot-btn" style="background:var(--orange);color:#fff;" onclick="this.closest('.kot-ticket').style.opacity='0.5'">Start Preparing</button>
+      </div>
+      <div class="kot-ticket">
+        <div class="kot-ticket-header">
+          <div>
+            <div class="kot-ticket-id">#KOT-060</div>
+            <div class="kot-ticket-time">&#9203; 01:40 waiting</div>
+          </div>
+          <span class="kot-ticket-table badge-orange badge">Table 3</span>
+        </div>
+        <div class="kot-ticket-items">
+          <div class="kot-item"><span class="kot-item-name">Eggs Benedict</span><span class="kot-item-qty">x2</span></div>
+          <div class="kot-item"><span class="kot-item-name">Fresh OJ</span><span class="kot-item-qty">x2</span></div>
+        </div>
+        <button class="kot-btn" style="background:var(--orange);color:#fff;" onclick="this.closest('.kot-ticket').style.opacity='0.5'">Start Preparing</button>
+      </div>
+    </div>
+
+    <!-- PREPARING -->
+    <div>
+      <div class="kot-col-header" style="color:var(--blue);">&#128994; Preparing <span class="col-count">2</span></div>
+      <div class="kot-ticket">
+        <div class="kot-ticket-header">
+          <div>
+            <div class="kot-ticket-id">#KOT-055</div>
+            <div class="kot-ticket-time">&#128293; 12:30 cooking</div>
+          </div>
+          <span class="kot-ticket-table badge-teal badge">Table 1</span>
+        </div>
+        <div class="kot-ticket-items">
+          <div class="kot-item"><span class="kot-item-name">Grilled Chicken</span><span class="kot-item-qty">x1</span></div>
+          <div class="kot-item"><span class="kot-item-name">Pasta Carbonara</span><span class="kot-item-qty">x1</span></div>
+          <div class="kot-item-note">&#x2022; Pasta: gluten-free</div>
+          <div class="kot-item"><span class="kot-item-name">Sparkling Water</span><span class="kot-item-qty">x2</span></div>
+        </div>
+        <button class="kot-btn" style="background:var(--teal);color:#fff;" onclick="this.closest('.kot-ticket').style.opacity='0.5'">Mark Ready</button>
+      </div>
+      <div class="kot-ticket">
+        <div class="kot-ticket-header">
+          <div>
+            <div class="kot-ticket-id">#KOT-056</div>
+            <div class="kot-ticket-time">&#128293; 08:00 cooking</div>
+          </div>
+          <span class="kot-ticket-table badge-orange badge">Table 7</span>
+        </div>
+        <div class="kot-ticket-items">
+          <div class="kot-item"><span class="kot-item-name">Americano</span><span class="kot-item-qty">x2</span></div>
+          <div class="kot-item"><span class="kot-item-name">Brownie</span><span class="kot-item-qty">x1</span></div>
+        </div>
+        <button class="kot-btn" style="background:var(--teal);color:#fff;" onclick="this.closest('.kot-ticket').style.opacity='0.5'">Mark Ready</button>
+      </div>
+    </div>
+
+    <!-- READY -->
+    <div>
+      <div class="kot-col-header" style="color:var(--teal);">&#9989; Ready <span class="col-count">2</span></div>
+      <div class="kot-ticket" style="opacity:0.85;">
+        <div class="kot-ticket-header">
+          <div>
+            <div class="kot-ticket-id">#KOT-053</div>
+            <div class="kot-ticket-time">Ready to serve</div>
+          </div>
+          <span class="kot-ticket-table badge-green badge">Table 9</span>
+        </div>
+        <div class="kot-ticket-items">
+          <div class="kot-item"><span class="kot-item-name">Avocado Toast</span><span class="kot-item-qty">x1</span></div>
+          <div class="kot-item"><span class="kot-item-name">Matcha Latte</span><span class="kot-item-qty">x1</span></div>
+        </div>
+        <button class="kot-btn" style="background:var(--green);color:#fff;" onclick="this.closest('.kot-ticket').style.opacity='0.5'">Mark Served</button>
+      </div>
+      <div class="kot-ticket" style="opacity:0.85;">
+        <div class="kot-ticket-header">
+          <div>
+            <div class="kot-ticket-id">#KOT-054</div>
+            <div class="kot-ticket-time">Ready to serve</div>
+          </div>
+          <span class="kot-ticket-table badge-blue badge">Takeaway</span>
+        </div>
+        <div class="kot-ticket-items">
+          <div class="kot-item"><span class="kot-item-name">BLT Sandwich</span><span class="kot-item-qty">x2</span></div>
+          <div class="kot-item"><span class="kot-item-name">Smoothie</span><span class="kot-item-qty">x2</span></div>
+        </div>
+        <button class="kot-btn" style="background:var(--green);color:#fff;" onclick="this.closest('.kot-ticket').style.opacity='0.5'">Mark Served</button>
+      </div>
+    </div>
+
+    <!-- SERVED -->
+    <div>
+      <div class="kot-col-header" style="color:var(--text3);">&#10003; Served <span class="col-count">8</span></div>
+      <div class="kot-ticket" style="opacity:0.5;">
+        <div class="kot-ticket-header">
+          <div><div class="kot-ticket-id">#KOT-052</div><div class="kot-ticket-time">Served 01:30 PM</div></div>
+          <span class="badge" style="background:var(--bg3);color:var(--text3);">Table 2</span>
+        </div>
+        <div class="kot-ticket-items">
+          <div class="kot-item"><span class="kot-item-name">Caesar Salad</span><span class="kot-item-qty">x2</span></div>
+          <div class="kot-item"><span class="kot-item-name">Lemon Iced Tea</span><span class="kot-item-qty">x2</span></div>
+        </div>
+      </div>
+      <div class="kot-ticket" style="opacity:0.5;">
+        <div class="kot-ticket-header">
+          <div><div class="kot-ticket-id">#KOT-051</div><div class="kot-ticket-time">Served 01:10 PM</div></div>
+          <span class="badge" style="background:var(--bg3);color:var(--text3);">Table 6</span>
+        </div>
+        <div class="kot-ticket-items">
+          <div class="kot-item"><span class="kot-item-name">Fish & Chips</span><span class="kot-item-qty">x1</span></div>
+          <div class="kot-item"><span class="kot-item-name">Cappuccino</span><span class="kot-item-qty">x1</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 </div>
 
-</div>
-</div>
-</div>
-
-<div class="page" id="page-cafe">
-<div class="topbar"><h2>☕ Cafe Functions</h2></div>
+<!-- ===== MENU ITEMS ===== -->
+<div class="page" id="page-menu">
+<div class="topbar"><h2>Menu Items</h2><div class="topbar-actions"><div class="topbar-btn">&#128247; Import</div><div class="topbar-btn primary">+ Add Item</div></div></div>
 <div class="content">
-<div class="bento">
-<div class="card"><h3>🟡 Active Orders</h3><p>12 Orders</p></div>
-<div class="card"><h3>⚡ Quick POS</h3><p>Rush Hour Mode</p></div>
-<div class="card"><h3>🪑 Tables</h3><p>8 Occupied</p></div>
-<div class="card"><h3>👨‍🍳 Kitchen Flow</h3><p>Cooking Queue</p></div>
-<div class="card"><h3>☕ Bar Orders</h3><p>6 Drinks Pending</p></div>
-<div class="card"><h3>📦 Takeaway</h3><p>3 Deliveries</p></div>
-<div class="card"><h3>📊 Sales</h3><p>Live Revenue</p></div>
-<div class="card"><h3>📦 Inventory</h3><p>Milk Low</p></div>
-<div class="card"><h3>👥 Staff Load</h3><p>Balanced</p></div>
-</div>
+  <div class="items-grid" id="menuItemsGrid"></div>
 </div>
 </div>
 
+<!-- ===== INVENTORY ===== -->
+<div class="page" id="page-inventory">
+<div class="topbar"><h2>Inventory</h2><div class="topbar-actions"><div class="topbar-btn">&#128421; Adjust Stock</div><div class="topbar-btn primary">+ Add Item</div></div></div>
+<div class="content">
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-icon" style="background:var(--green-bg);color:var(--green);">&#128994;</div><div class="stat-value">48</div><div class="stat-label">Total Items</div></div>
+    <div class="stat-card"><div class="stat-icon" style="background:var(--red-bg);color:var(--red);">&#128993;</div><div class="stat-value">2</div><div class="stat-label">Low Stock</div><div class="stat-change stat-down">&#9660; Reorder needed</div></div>
+    <div class="stat-card"><div class="stat-icon" style="background:var(--blue-bg);color:var(--blue);">&#128230;</div><div class="stat-value">5</div><div class="stat-label">On Order</div></div>
+    <div class="stat-card"><div class="stat-icon" style="background:var(--teal-bg);color:var(--teal);">&#128200;</div><div class="stat-value">Rs. 142,000</div><div class="stat-label">Stock Value</div></div>
+  </div>
+  <div class="inventory-header">
+    <input class="inv-search" placeholder="&#128269; Search ingredients...">
+    <div class="topbar-btn">All Categories</div>
+  </div>
+  <div class="stock-grid">
+    <div class="stock-card low">
+      <div class="stock-card-top"><div class="stock-card-icon" style="background:var(--red-bg);">&#129371;</div><div><div class="stock-card-name">Coffee Beans</div><div class="stock-card-cat">Beverages</div></div></div>
+      <div class="stock-bar-wrap"><div class="stock-bar"><div class="stock-bar-fill low" style="width:12%"></div></div><span class="stock-val" style="color:var(--red);">1.2 kg</span></div>
+      <div style="font-size:11px;color:var(--red);margin-top:8px;font-weight:600;">⚠ Below minimum (5 kg)</div>
+    </div>
+    <div class="stock-card low">
+      <div class="stock-card-top"><div class="stock-card-icon" style="background:var(--red-bg);">&#127850;</div><div><div class="stock-card-name">Chicken Breast</div><div class="stock-card-cat">Proteins</div></div></div>
+      <div class="stock-bar-wrap"><div class="stock-bar"><div class="stock-bar-fill low" style="width:18%"></div></div><span class="stock-val" style="color:var(--red);">0.9 kg</span></div>
+      <div style="font-size:11px;color:var(--red);margin-top:8px;font-weight:600;">⚠ Below minimum (5 kg)</div>
+    </div>
+    <div class="stock-card medium">
+      <div class="stock-card-top"><div class="stock-card-icon" style="background:var(--yellow-bg);">&#129371;</div><div><div class="stock-card-name">Whole Milk</div><div class="stock-card-cat">Dairy</div></div></div>
+      <div class="stock-bar-wrap"><div class="stock-bar"><div class="stock-bar-fill medium" style="width:45%"></div></div><span class="stock-val" style="color:var(--yellow);">9 L</span></div>
+    </div>
+    <div class="stock-card">
+      <div class="stock-card-top"><div class="stock-card-icon" style="background:var(--green-bg);">&#127859;</div><div><div class="stock-card-name">Eggs</div><div class="stock-card-cat">Proteins</div></div></div>
+      <div class="stock-bar-wrap"><div class="stock-bar"><div class="stock-bar-fill high" style="width:80%"></div></div><span class="stock-val" style="color:var(--green);">64 pcs</span></div>
+    </div>
+    <div class="stock-card">
+      <div class="stock-card-top"><div class="stock-card-icon" style="background:var(--green-bg);">&#127812;</div><div><div class="stock-card-name">Plain Flour</div><div class="stock-card-cat">Dry Goods</div></div></div>
+      <div class="stock-bar-wrap"><div class="stock-bar"><div class="stock-bar-fill high" style="width:70%"></div></div><span class="stock-val" style="color:var(--green);">14 kg</span></div>
+    </div>
+    <div class="stock-card medium">
+      <div class="stock-card-top"><div class="stock-card-icon" style="background:var(--yellow-bg);">&#127858;</div><div><div class="stock-card-name">White Sugar</div><div class="stock-card-cat">Dry Goods</div></div></div>
+      <div class="stock-bar-wrap"><div class="stock-bar"><div class="stock-bar-fill medium" style="width:38%"></div></div><span class="stock-val" style="color:var(--yellow);">3.8 kg</span></div>
+    </div>
+    <div class="stock-card">
+      <div class="stock-card-top"><div class="stock-card-icon" style="background:var(--blue-bg);">&#128167;</div><div><div class="stock-card-name">Sparkling Water</div><div class="stock-card-cat">Beverages</div></div></div>
+      <div class="stock-bar-wrap"><div class="stock-bar"><div class="stock-bar-fill high" style="width:90%"></div></div><span class="stock-val" style="color:var(--green);">48 btl</span></div>
+    </div>
+    <div class="stock-card">
+      <div class="stock-card-top"><div class="stock-card-icon" style="background:var(--green-bg);">&#129382;</div><div><div class="stock-card-name">Butter</div><div class="stock-card-cat">Dairy</div></div></div>
+      <div class="stock-bar-wrap"><div class="stock-bar"><div class="stock-bar-fill high" style="width:65%"></div></div><span class="stock-val" style="color:var(--green);">2.6 kg</span></div>
+    </div>
+  </div>
 </div>
+</div>
+
+<!-- ===== REPORTS ===== -->
+<div class="page" id="page-reports">
+<div class="topbar"><h2>Reports</h2><div class="topbar-actions"><div class="topbar-btn">&#128197; This Month</div><div class="topbar-btn">&#128421; Export Excel</div><div class="topbar-btn primary">&#128424; Export PDF</div></div></div>
+<div class="content">
+  <div class="report-tabs">
+    <div class="report-tab active" onclick="setReportTab(this)">Sales</div>
+    <div class="report-tab" onclick="setReportTab(this)">Items</div>
+    <div class="report-tab" onclick="setReportTab(this)">Staff</div>
+    <div class="report-tab" onclick="setReportTab(this)">Payment</div>
+    <div class="report-tab" onclick="setReportTab(this)">Peak Hours</div>
+  </div>
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-icon" style="background:var(--teal-bg);color:var(--teal);">&#128176;</div><div class="stat-value">Rs. 684,200</div><div class="stat-label">Monthly Revenue</div><div class="stat-change stat-up">&#9650; 14.2% vs last month</div></div>
+    <div class="stat-card"><div class="stat-icon" style="background:var(--blue-bg);color:var(--blue);">&#128196;</div><div class="stat-value">928</div><div class="stat-label">Total Orders</div></div>
+    <div class="stat-card"><div class="stat-icon" style="background:var(--orange-bg);color:var(--orange);">&#128200;</div><div class="stat-value">Rs. 737</div><div class="stat-label">Avg Order Value</div></div>
+    <div class="stat-card"><div class="stat-icon" style="background:var(--red-bg);color:var(--red);">&#128181;</div><div class="stat-value">Rs. 248,000</div><div class="stat-label">Monthly Expenses</div></div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><h3>Revenue Trend</h3></div>
+      <div class="card-body">
+        <div class="chart-area">
+          <div class="chart-bar" style="height:50%"></div>
+          <div class="chart-bar" style="height:65%"></div>
+          <div class="chart-bar" style="height:80%"></div>
+          <div class="chart-bar" style="height:60%"></div>
+          <div class="chart-bar" style="height:90%"></div>
+          <div class="chart-bar" style="height:75%"></div>
+          <div class="chart-bar" style="height:85%"></div>
+        </div>
+        <div class="chart-labels"><span>W1</span><span>W2</span><span>W3</span><span>W4</span><span>W5</span><span>W6</span><span>W7</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h3>Payment Methods</h3></div>
+      <div class="card-body">
+        <div class="top-item"><div class="top-item-info"><div class="top-item-rank" style="background:var(--teal-bg);color:var(--teal);">&#128176;</div><div><div class="top-item-name">Cash</div><div class="top-item-cat">54% of orders</div></div></div><div class="top-item-count">Rs. 369,468</div></div>
+        <div class="top-item"><div class="top-item-info"><div class="top-item-rank" style="background:var(--blue-bg);color:var(--blue);">&#128179;</div><div><div class="top-item-name">Card</div><div class="top-item-cat">38% of orders</div></div></div><div class="top-item-count">Rs. 259,996</div></div>
+        <div class="top-item"><div class="top-item-info"><div class="top-item-rank" style="background:var(--orange-bg);color:var(--orange);">&#128241;</div><div><div class="top-item-name">Mobile Pay</div><div class="top-item-cat">8% of orders</div></div></div><div class="top-item-count">Rs. 54,736</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ===== SALES HISTORY ===== -->
+<div class="page" id="page-history">
+<div class="topbar"><h2>Sales History</h2><div class="topbar-actions"><div class="topbar-btn">&#128269; Search Bills</div><div class="topbar-btn">&#128197; Jun 1 – Jun 25</div><div class="topbar-btn primary">&#128421; Export</div></div></div>
+<div class="content">
+  <div class="card">
+    <div class="card-body"><div class="table-wrap">
+      <table>
+        <thead><tr><th>Bill #</th><th>Type</th><th>Table</th><th>Date</th><th>Time</th><th>Items</th><th>Total</th><th>Payment</th><th>Cashier</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600;color:var(--teal);">#0052</td><td><span class="badge badge-teal">Dine-In</span></td><td>Table 4</td><td>Jun 25</td><td>02:10 PM</td><td>6</td><td style="font-weight:700;">Rs. 2,450</td><td><span class="badge badge-blue">Card</span></td><td>Cashier A</td><td><span class="badge badge-green">Paid</span></td></tr>
+          <tr><td style="font-weight:600;color:var(--teal);">#0051</td><td><span class="badge badge-blue">Takeaway</span></td><td>—</td><td>Jun 25</td><td>01:55 PM</td><td>3</td><td style="font-weight:700;">Rs. 980</td><td><span class="badge badge-teal">Cash</span></td><td>Cashier B</td><td><span class="badge badge-green">Paid</span></td></tr>
+          <tr><td style="font-weight:600;color:var(--teal);">#0050</td><td><span class="badge badge-teal">Dine-In</span></td><td>Table 11</td><td>Jun 25</td><td>01:40 PM</td><td>8</td><td style="font-weight:700;">Rs. 3,200</td><td>—</td><td>Cashier A</td><td><span class="badge badge-orange">Open</span></td></tr>
+          <tr><td style="font-weight:600;color:var(--teal);">#0049</td><td><span class="badge badge-orange">Delivery</span></td><td>—</td><td>Jun 25</td><td>01:20 PM</td><td>4</td><td style="font-weight:700;">Rs. 1,640</td><td><span class="badge badge-blue">Card</span></td><td>System</td><td><span class="badge badge-green">Paid</span></td></tr>
+          <tr><td style="font-weight:600;color:var(--teal);">#0048</td><td><span class="badge badge-teal">Dine-In</span></td><td>Table 6</td><td>Jun 25</td><td>12:50 PM</td><td>5</td><td style="font-weight:700;">Rs. 1,870</td><td><span class="badge badge-teal">Cash</span></td><td>Cashier A</td><td><span class="badge badge-green">Paid</span></td></tr>
+          <tr><td style="font-weight:600;color:var(--teal);">#0047</td><td><span class="badge badge-teal">Dine-In</span></td><td>Table 8</td><td>Jun 24</td><td>08:20 PM</td><td>7</td><td style="font-weight:700;">Rs. 2,960</td><td><span class="badge badge-blue">Card</span></td><td>Cashier B</td><td><span class="badge badge-green">Paid</span></td></tr>
+          <tr><td style="font-weight:600;color:var(--teal);">#0046</td><td><span class="badge badge-blue">Takeaway</span></td><td>—</td><td>Jun 24</td><td>07:45 PM</td><td>2</td><td style="font-weight:700;">Rs. 640</td><td><span class="badge badge-teal">Cash</span></td><td>Cashier A</td><td><span class="badge badge-red">Cancelled</span></td></tr>
+        </tbody>
+      </table>
+    </div></div>
+  </div>
+</div>
+</div>
+
+<!-- ===== USERS & ROLES ===== -->
+<div class="page" id="page-users">
+<div class="topbar"><h2>Users & Roles</h2><div class="topbar-actions"><div class="topbar-btn">&#128196; Activity Log</div><div class="topbar-btn primary">+ Add User</div></div></div>
+<div class="content">
+  <div class="card">
+    <div class="card-body"><div class="table-wrap">
+      <table>
+        <thead><tr><th>User</th><th>Role</th><th>Permissions</th><th>Active Device</th><th>Last Login</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><div style="display:flex;align-items:center;gap:10px;"><div style="width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--teal),var(--primary));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;">A</div><div><div style="font-weight:600;">Admin</div><div style="font-size:11px;color:var(--text3);">admin@cloudcafe.lk</div></div></div></td>
+            <td><span class="badge badge-blue">Admin</span></td>
+            <td style="font-size:12px;color:var(--text2);">Full Access</td>
+            <td style="font-size:12px;">MacBook · Chrome</td>
+            <td style="font-size:12px;color:var(--text3);">Just now</td>
+            <td><span class="badge badge-green">Online</span></td>
+          </tr>
+          <tr>
+            <td><div style="display:flex;align-items:center;gap:10px;"><div style="width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--green),var(--teal));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;">K</div><div><div style="font-weight:600;">Kasun (Cashier)</div><div style="font-size:11px;color:var(--text3);">kasun@cloudcafe.lk</div></div></div></td>
+            <td><span class="badge badge-teal">Cashier</span></td>
+            <td style="font-size:12px;color:var(--text2);">Bills, Print, History</td>
+            <td style="font-size:12px;">iPad · Safari</td>
+            <td style="font-size:12px;color:var(--text3);">10 min ago</td>
+            <td><span class="badge badge-green">Online</span></td>
+          </tr>
+          <tr>
+            <td><div style="display:flex;align-items:center;gap:10px;"><div style="width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--orange),var(--yellow));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;">N</div><div><div style="font-weight:600;">Nimal (Chef)</div><div style="font-size:11px;color:var(--text3);">nimal@cloudcafe.lk</div></div></div></td>
+            <td><span class="badge badge-orange">Kitchen</span></td>
+            <td style="font-size:12px;color:var(--text2);">KOT View Only</td>
+            <td style="font-size:12px;">Kitchen Screen</td>
+            <td style="font-size:12px;color:var(--text3);">5 min ago</td>
+            <td><span class="badge badge-green">Online</span></td>
+          </tr>
+          <tr>
+            <td><div style="display:flex;align-items:center;gap:10px;"><div style="width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--pink),var(--primary));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;">S</div><div><div style="font-weight:600;">Samanthi (Manager)</div><div style="font-size:11px;color:var(--text3);">samanthi@cloudcafe.lk</div></div></div></td>
+            <td><span class="badge badge-pink">Manager</span></td>
+            <td style="font-size:12px;color:var(--text2);">Reports, Monitor, No Billing</td>
+            <td style="font-size:12px;">Android · Chrome</td>
+            <td style="font-size:12px;color:var(--text3);">32 min ago</td>
+            <td><span class="badge badge-orange">Away</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div></div>
+  </div>
+</div>
+</div>
+
+<!-- ===== SETTINGS ===== -->
+<div class="page" id="page-settings">
+<div class="topbar"><h2>Settings</h2><div class="topbar-actions"><div class="topbar-btn primary">Save Changes</div></div></div>
+<div class="content">
+  <div class="grid-2">
+    <div>
+      <div class="settings-group">
+        <h4>&#9749; Café Information</h4>
+        <div class="setting-row"><div class="setting-label">Café Name<span>On receipts & KOT</span></div><div class="setting-value">Cloud Café & Restaurant</div></div>
+        <div class="setting-row"><div class="setting-label">Address<span>Receipt footer</span></div><div class="setting-value">No. 12, Marine Drive, Colombo 03</div></div>
+        <div class="setting-row"><div class="setting-label">Telephone</div><div class="setting-value">+94 77 123 4567</div></div>
+        <div class="setting-row"><div class="setting-label">Receipt Message</div><div class="setting-value">Thank you — see you again!</div></div>
+      </div>
+      <div class="settings-group">
+        <h4>&#128176; Tax & Charges</h4>
+        <div class="setting-row"><div class="setting-label">VAT<span>Applied to all bills</span></div><div class="setting-value">0%</div></div>
+        <div class="setting-row"><div class="setting-label">Service Charge<span>Dine-in only</span></div><div class="setting-value">10%</div></div>
+        <div class="setting-row"><div class="setting-label">Delivery Fee</div><div class="setting-value">Rs. 150 flat</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="settings-group">
+        <h4>&#9729; Cloud & Sync</h4>
+        <div class="setting-row"><div class="setting-label">Real-time Sync<span>Push KOT to kitchen instantly</span></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+        <div class="setting-row"><div class="setting-label">Auto Backup<span>Daily to cloud at midnight</span></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+        <div class="setting-row"><div class="setting-label">Multi-device Login<span>Allow concurrent sessions</span></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+      </div>
+      <div class="settings-group">
+        <h4>&#128424; Printing</h4>
+        <div class="setting-row"><div class="setting-label">Paper Size</div><div class="setting-value">80mm</div></div>
+        <div class="setting-row"><div class="setting-label">Auto-Print KOT<span>Send to kitchen on checkout</span></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+        <div class="setting-row"><div class="setting-label">Print Customer Copy<span>Print bill automatically</span></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+        <div class="setting-row"><div class="setting-label">Reprint Last Bill<span>Allow reprinting closed bills</span></div><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+      </div>
+      <div class="settings-group">
+        <h4>&#128663; Delivery Integrations</h4>
+        <div class="setting-row"><div class="setting-label">Uber Eats<span>API integration (coming soon)</span></div><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+        <div class="setting-row"><div class="setting-label">PickMe Food<span>API integration (coming soon)</span></div><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+</div><!-- end .main -->
+
+<!-- PAYMENT MODAL -->
+<div class="modal-overlay" id="paymentModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>&#128176; Checkout</h3>
+      <button class="modal-close" onclick="closePayment()">&#10005;</button>
+    </div>
+    <div class="modal-body">
+      <div class="pay-total" id="payTotal">Rs. 0.00</div>
+      <div class="pay-total-label">Grand Total to collect</div>
+      <div class="pay-methods" style="margin-top:18px;">
+        <div class="pay-method active" onclick="selectPayMethod(this)"><div class="pay-method-icon">&#128176;</div><div class="pay-method-label">Cash</div></div>
+        <div class="pay-method" onclick="selectPayMethod(this)"><div class="pay-method-icon">&#128179;</div><div class="pay-method-label">Card</div></div>
+        <div class="pay-method" onclick="selectPayMethod(this)"><div class="pay-method-icon">&#128241;</div><div class="pay-method-label">Mobile Pay</div></div>
+        <div class="pay-method" onclick="selectPayMethod(this)"><div class="pay-method-icon">&#128203;</div><div class="pay-method-label">Credit (Tab)</div></div>
+      </div>
+      <div class="pay-input-wrap">
+        <div class="pay-input-label">AMOUNT RECEIVED</div>
+        <input class="pay-input" type="number" placeholder="0.00" id="cashReceived" oninput="calcChange()">
+      </div>
+      <div class="pay-change">
+        <span class="pay-change-label">&#9654; Change to return</span>
+        <span class="pay-change-val" id="changeAmount">Rs. 0.00</span>
+      </div>
+      <div class="modal-actions">
+        <button class="modal-btn" onclick="closePayment()">Cancel</button>
+        <button class="modal-btn confirm" onclick="completeSale()">&#10003; Confirm &amp; Print Bill</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BILL PREVIEW MODAL -->
+<div class="modal-overlay" id="billModal">
+  <div class="bill-modal">
+    <div class="bill-receipt" id="billReceipt"></div>
+    <button class="bill-close" onclick="closeBill()">&#10005; Close Receipt</button>
+  </div>
+</div>
+
+<div class="whitelabel">whitelabel@alfaasolutions</div>
 
 <script>
-function showPage(page,el){
-document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
-document.getElementById('page-'+page).classList.add('active');
-document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
-el.classList.add('active');
-}
-function toggleTheme(){document.body.classList.toggle('light');}
+// PRODUCTS DATA
+const PRODUCTS = [
+  {id:1,name:'Americano',cat:'hot',price:280,emoji:'&#9749;',sizes:['Small','Regular','Large']},
+  {id:2,name:'Cappuccino',cat:'hot',price:380,emoji:'&#9749;',sizes:['Regular','Large']},
+  {id:3,name:'Caramel Latte',cat:'hot',price:450,emoji:'&#9749;',sizes:['Regular','Large']},
+  {id:4,name:'Flat White',cat:'hot',price:420,emoji:'&#9749;',sizes:['Regular']},
+  {id:5,name:'Matcha Latte',cat:'hot',price:480,emoji:'&#9749;',sizes:['Regular','Large']},
+  {id:6,name:'English Breakfast',cat:'hot',price:220,emoji:'&#9749;',sizes:['Cup','Pot']},
+  {id:7,name:'Iced Mocha',cat:'cold',price:520,emoji:'&#129380;',sizes:['Regular','Large']},
+  {id:8,name:'Iced Latte',cat:'cold',price:490,emoji:'&#129380;',sizes:['Regular','Large']},
+  {id:9,name:'Cold Brew',cat:'cold',price:550,emoji:'&#129380;',sizes:['Regular']},
+  {id:10,name:'Smoothie',cat:'cold',price:480,emoji:'&#129377;',sizes:['Regular']},
+  {id:11,name:'Lemon Iced Tea',cat:'cold',price:320,emoji:'&#127819;',sizes:['Regular','Large']},
+  {id:12,name:'Sparkling Water',cat:'cold',price:180,emoji:'&#128167;',sizes:['250ml','500ml']},
+  {id:13,name:'Club Sandwich',cat:'meals',price:950,emoji:'&#129361;',sizes:[]},
+  {id:14,name:'Chicken Burger',cat:'meals',price:1100,emoji:'&#127828;',sizes:[]},
+  {id:15,name:'Grilled Chicken',cat:'meals',price:1350,emoji:'&#127829;',sizes:[]},
+  {id:16,name:'Pasta Carbonara',cat:'meals',price:1200,emoji:'&#127837;',sizes:[]},
+  {id:17,name:'Caesar Salad',cat:'meals',price:850,emoji:'&#129367;',sizes:[]},
+  {id:18,name:'Fish & Chips',cat:'meals',price:1150,emoji:'&#127840;',sizes:[]},
+  {id:19,name:'Avocado Toast',cat:'breakfast',price:780,emoji:'&#129361;',sizes:[]},
+  {id:20,name:'Eggs Benedict',cat:'breakfast',price:850,emoji:'&#127859;',sizes:[]},
+  {id:21,name:'Pancakes',cat:'breakfast',price:680,emoji:'&#129387;',sizes:['Stack of 2','Stack of 4']},
+  {id:22,name:'Full Breakfast',cat:'breakfast',price:1200,emoji:'&#127859;',sizes:[]},
+  {id:23,name:'BLT Sandwich',cat:'snacks',price:650,emoji:'&#129361;',sizes:[]},
+  {id:24,name:'Cheese Croissant',cat:'snacks',price:420,emoji:'&#129386;',sizes:[]},
+  {id:25,name:'Garlic Bread',cat:'snacks',price:380,emoji:'&#127838;',sizes:[]},
+  {id:26,name:'Samosa (2 pcs)',cat:'snacks',price:280,emoji:'&#129385;',sizes:[]},
+  {id:27,name:'Cheesecake',cat:'desserts',price:480,emoji:'&#127856;',sizes:[]},
+  {id:28,name:'Brownie',cat:'desserts',price:380,emoji:'&#127848;',sizes:[]},
+  {id:29,name:'Ice Cream',cat:'desserts',price:350,emoji:'&#127846;',sizes:['1 Scoop','2 Scoops']},
+  {id:30,name:'Tiramisu',cat:'desserts',price:520,emoji:'&#127856;',sizes:[]},
+];
 
-let cart=[];
-function addItem(name,price){
-let item=cart.find(i=>i.name===name);
-if(item)item.qty++;
-else cart.push({name,price,qty:1});
-renderCart();
+// MENU ITEMS GRID (Menu Management page)
+function renderMenuGrid() {
+  const colors = {hot:'var(--orange-bg)',cold:'var(--blue-bg)',meals:'var(--teal-bg)',breakfast:'var(--yellow-bg)',snacks:'var(--green-bg)',desserts:'var(--pink-bg)'};
+  const labels = {hot:'Hot Drinks',cold:'Cold Drinks',meals:'Meals',breakfast:'Breakfast',snacks:'Snacks',desserts:'Desserts'};
+  document.getElementById('menuItemsGrid').innerHTML = PRODUCTS.map(p=>`
+    <div class="item-card">
+      <div class="item-card-top">
+        <div class="item-card-icon" style="background:${colors[p.cat]||'var(--primary-bg)'};">${p.emoji}</div>
+        <div>
+          <div class="item-card-name">${p.name}</div>
+          <div class="item-card-cat">${labels[p.cat]||p.cat}</div>
+        </div>
+      </div>
+      ${p.sizes.length?`<div class="item-card-sizes">${p.sizes.map((s,i)=>`<span class="size-pill${i===0?' active':''}">${s}</span>`).join('')}</div>`:''}
+      <div class="item-card-bottom">
+        <div class="item-card-price">Rs. ${p.price}</div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <button class="topbar-btn" style="padding:5px 10px;font-size:11px;">Edit</button>
+          <div class="item-toggle" onclick="this.classList.toggle('off')"></div>
+        </div>
+      </div>
+    </div>
+  `).join('');
 }
-function changeQty(name,d){
-let item=cart.find(i=>i.name===name);
-item.qty+=d;
-if(item.qty<=0) cart=cart.filter(i=>i.name!==name);
-renderCart();
+
+// POS
+let cart = [], currentCat = 'all', currentSearch = '', billNumber = 52, discType = 'fixed';
+
+function renderProducts(filter='all', search='') {
+  let items = PRODUCTS;
+  if(filter!=='all') items = items.filter(p=>p.cat===filter);
+  if(search) items = items.filter(p=>p.name.toLowerCase().includes(search.toLowerCase()));
+  document.getElementById('posProducts').innerHTML = items.map(p => {
+    const inCart = cart.find(c=>c.id===p.id);
+    return `<div class="pos-product${inCart?' in-cart':''}" onclick="addToCart(${p.id})">
+      <div class="pos-product-img">${p.emoji}</div>
+      <div class="pos-product-name">${p.name}</div>
+      <div class="pos-product-price">Rs. ${p.price}</div>
+      ${inCart?`<div style="font-size:10px;color:var(--teal);margin-top:4px;font-weight:700;">x${inCart.qty} in cart</div>`:''}
+    </div>`;
+  }).join('');
 }
-function renderCart(){
-let c=document.getElementById('cart');
-c.innerHTML='';
-let sub=0;
-cart.forEach(i=>{
-sub+=i.price*i.qty;
-c.innerHTML+=`<div class="cart-item">${i.name} (${i.qty}) <span class="qty"><button onclick="changeQty('${i.name}',-1)">-</button><button onclick="changeQty('${i.name}',1)">+</button></span></div>`;
-});
-let tax=sub*0.1;
-document.getElementById('subtotal').innerText=sub.toFixed(2);
-document.getElementById('tax').innerText=tax.toFixed(2);
-document.getElementById('total').innerText=(sub+tax).toFixed(2);
+
+function addToCart(id) {
+  const prod = PRODUCTS.find(p=>p.id===id);
+  const existing = cart.find(c=>c.id===id);
+  if(existing) existing.qty += 1;
+  else cart.push({...prod, qty:1});
+  renderCart(); renderProducts(currentCat, currentSearch);
 }
+
+function changeQty(idx, d) {
+  cart[idx].qty += d;
+  if(cart[idx].qty <= 0) cart.splice(idx,1);
+  renderCart(); renderProducts(currentCat, currentSearch);
+}
+
+function removeItem(idx) { cart.splice(idx,1); renderCart(); renderProducts(currentCat, currentSearch); }
+function clearCart() { cart=[]; renderCart(); renderProducts(currentCat, currentSearch); }
+function holdOrder() { if(cart.length) clearCart(); }
+
+function getDiscount(sub) {
+  const v = parseFloat(document.getElementById('discountInput').value)||0;
+  if(discType==='pct') return Math.round(sub * v/100);
+  return Math.min(v, sub);
+}
+
+function renderCart() {
+  const el = document.getElementById('cartItems');
+  document.getElementById('cartCount').textContent = cart.reduce((s,i)=>s+i.qty,0);
+  const tbl = document.getElementById('tableSelect');
+  document.getElementById('cartTableLabel').textContent = tbl && tbl.value ? tbl.value : 'No Table';
+
+  if(!cart.length) {
+    el.innerHTML='<div class="cart-empty"><div class="cart-empty-icon">&#9749;</div>No items yet<br><span style="font-size:11px;">Tap a menu item to add</span></div>';
+    ['cartSubtotal','cartService','cartTotal'].forEach(id=>document.getElementById(id).textContent='Rs. 0.00');
+    document.getElementById('cartDiscount').textContent='— Rs. 0.00';
+    return;
+  }
+  el.innerHTML = cart.map((item,i)=>`
+    <div class="cart-item">
+      <div class="cart-item-info">
+        <div class="cart-item-name">${item.name}</div>
+        <div class="cart-item-price">Rs. ${item.price} each</div>
+      </div>
+      <div>
+        <div class="cart-qty">
+          <button onclick="changeQty(${i},-1)">−</button>
+          <span>${item.qty}</span>
+          <button onclick="changeQty(${i},1)">+</button>
+        </div>
+      </div>
+      <div class="cart-item-total">Rs. ${(item.price*item.qty).toLocaleString()}</div>
+      <button class="cart-item-remove" onclick="removeItem(${i})">✕</button>
+    </div>
+  `).join('');
+
+  const sub = cart.reduce((s,i)=>s+i.price*i.qty,0);
+  const service = Math.round(sub*0.1);
+  const disc = getDiscount(sub);
+  const total = sub + service - disc;
+  document.getElementById('cartSubtotal').textContent = `Rs. ${sub.toLocaleString()}`;
+  document.getElementById('cartService').textContent = `Rs. ${service.toLocaleString()}`;
+  document.getElementById('cartDiscount').textContent = `— Rs. ${disc.toLocaleString()}`;
+  document.getElementById('cartTotal').textContent = `Rs. ${total.toLocaleString()}`;
+}
+
+function filterCat(cat, el) {
+  currentCat = cat;
+  document.querySelectorAll('.pos-cat').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  renderProducts(cat, currentSearch);
+}
+
+function filterProducts(val) { currentSearch = val; renderProducts(currentCat, val); }
+
+function setDiscType(type, el) {
+  discType = type;
+  document.querySelectorAll('.disc-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  renderCart();
+}
+
+function selectOrderType(el) {
+  document.querySelectorAll('.order-type-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// PAYMENT
+function openPayment() {
+  if(!cart.length) return;
+  const sub = cart.reduce((s,i)=>s+i.price*i.qty,0);
+  const service = Math.round(sub*0.1);
+  const disc = getDiscount(sub);
+  const total = sub + service - disc;
+  document.getElementById('payTotal').textContent = `Rs. ${total.toLocaleString()}`;
+  document.getElementById('cashReceived').value = '';
+  document.getElementById('changeAmount').textContent = 'Rs. 0.00';
+  document.getElementById('paymentModal').classList.add('show');
+}
+
+function closePayment() { document.getElementById('paymentModal').classList.remove('show'); }
+
+function selectPayMethod(el) {
+  document.querySelectorAll('.pay-method').forEach(m=>m.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function calcChange() {
+  const sub = cart.reduce((s,i)=>s+i.price*i.qty,0);
+  const service = Math.round(sub*0.1);
+  const disc = getDiscount(sub);
+  const total = sub + service - disc;
+  const recv = parseFloat(document.getElementById('cashReceived').value)||0;
+  const change = Math.max(0, recv - total);
+  document.getElementById('changeAmount').textContent = `Rs. ${change.toLocaleString()}`;
+}
+
+function completeSale() {
+  closePayment();
+  billNumber++;
+  const sub = cart.reduce((s,i)=>s+i.price*i.qty,0);
+  const service = Math.round(sub*0.1);
+  const disc = getDiscount(sub);
+  const total = sub + service - disc;
+  const now = new Date();
+  const time = now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+  const tbl = document.getElementById('tableSelect');
+  const tableLabel = tbl && tbl.value ? tbl.value : 'Takeaway';
+  const itemRows = cart.map(i=>`<tr><td>${i.name}</td><td style="text-align:center;">${i.qty}</td><td style="text-align:right;">Rs. ${i.price}</td><td style="text-align:right;">Rs. ${(i.price*i.qty).toLocaleString()}</td></tr>`).join('');
+
+  document.getElementById('billReceipt').innerHTML = `
+    <div class="copy-label">— CUSTOMER COPY —</div>
+    <div class="hotel-name">Cloud Café &amp; Restaurant</div>
+    <div class="hotel-addr">No. 12, Marine Drive, Colombo 03</div>
+    <div class="hotel-phone">Tel: +94 77 123 4567</div>
+    <hr class="divider">
+    <div class="bill-info"><span>Bill #${String(billNumber).padStart(4,'0')}</span><span>Jun 25, 2026</span></div>
+    <div class="bill-info"><span>${tableLabel}</span><span>${time}</span></div>
+    <hr class="divider">
+    <table>
+      <thead><tr><th>Item</th><th style="text-align:center;">Qty</th><th style="text-align:right;">Price</th><th style="text-align:right;">Total</th></tr></thead>
+      <tbody>${itemRows}</tbody>
+    </table>
+    <hr class="divider">
+    <div style="display:flex;justify-content:space-between;font-size:12px;"><span>Subtotal</span><span>Rs. ${sub.toLocaleString()}</span></div>
+    <div style="display:flex;justify-content:space-between;font-size:12px;color:#888;"><span>Service (10%)</span><span>Rs. ${service.toLocaleString()}</span></div>
+    <div style="display:flex;justify-content:space-between;font-size:12px;color:#888;"><span>Discount</span><span>— Rs. ${disc.toLocaleString()}</span></div>
+    <hr class="divider">
+    <div class="total-row" style="display:flex;justify-content:space-between;">
+      <span>GRAND TOTAL</span><span>Rs. ${total.toLocaleString()}</span>
+    </div>
+    <div class="footer-msg">Thank you — see you again! ☕</div>
+    <hr class="divider">
+    <div class="copy-label" style="margin-top:14px;">— KITCHEN COPY (KOT) —</div>
+    <div style="text-align:center;font-weight:800;font-size:15px;margin-bottom:8px;">KITCHEN ORDER</div>
+    <div class="bill-info"><span>#KOT-${String(billNumber).padStart(3,'0')}</span><span>${tableLabel} · ${time}</span></div>
+    <hr class="divider">
+    <table>
+      <thead><tr><th>Item</th><th style="text-align:center;">Qty</th></tr></thead>
+      <tbody>${cart.map(i=>`<tr><td style="font-weight:700;font-size:13px;">${i.name}</td><td style="text-align:center;font-weight:800;font-size:15px;">${i.qty}</td></tr>`).join('')}</tbody>
+    </table>
+    <hr class="divider">
+    <div class="footer-msg">Prepare with care!</div>
+  `;
+  document.getElementById('billModal').classList.add('show');
+}
+
+function closeBill() { document.getElementById('billModal').classList.remove('show'); clearCart(); }
+
+// NAVIGATION
+function showPage(page, el) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  if(el) el.classList.add('active');
+  if(page==='pos') renderProducts();
+}
+
+// TABLE FILTER (visual only)
+function filterTables(type, el) {
+  document.querySelectorAll('.tbl-filter').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// REPORT TABS
+function setReportTab(el) {
+  document.querySelectorAll('.report-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// THEME
+function toggleTheme() {
+  document.body.classList.toggle('light');
+  localStorage.setItem('cloudcafe-theme', document.body.classList.contains('light')?'light':'dark');
+}
+if(localStorage.getItem('cloudcafe-theme')==='light') document.body.classList.add('light');
+
+// INIT
+renderProducts();
+renderMenuGrid();
+
+// Table select sync with cart header
+document.getElementById('tableSelect').addEventListener('change', renderCart);
+document.getElementById('discountInput').addEventListener('input', renderCart);
 </script>
 </body>
 </html>
