@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>AlfaaBooks - Smart Business Accounting</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#0f1117;--bg2:#161822;--bg3:#1c1f2e;--card:#1a1d2e;--border:#2a2d3e;
+  --text:#e8e9ed;--text2:#8b8fa3;--text3:#555870;
+  --primary:#6366f1;--primary-light:#818cf8;--primary-bg:rgba(99,102,241,0.12);
+  --green:#22c55e;--green-bg:rgba(34,197,94,0.12);
+  --red:#ef4444;--red-bg:rgba(239,68,68,0.12);
+  --orange:#f97316;--orange-bg:rgba(249,115,22,0.12);
+  --blue:#3b82f6;--blue-bg:rgba(59,130,246,0.12);
+  --yellow:#eab308;--yellow-bg:rgba(234,179,8,0.12);
+  --pink:#ec4899;--pink-bg:rgba(236,72,153,0.12);
+  --teal:#14b8a6;--teal-bg:rgba(20,184,166,0.12);
+  --sidebar-w:248px;--radius:14px;--radius-sm:10px;
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);display:flex;height:100vh;overflow:hidden;}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar-w);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;z-index:10;}
+.sidebar-brand{padding:22px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);}
+.brand-icon{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--primary),var(--teal));display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:900;color:#fff;letter-spacing:-1px;}
+.brand-name{font-size:17px;font-weight:800;letter-spacing:-0.3px;}
+.brand-name span{color:var(--primary-light);}
+.brand-sub{font-size:10px;color:var(--text3);letter-spacing:0.5px;margin-top:1px;}
+.sidebar-nav{flex:1;padding:14px 12px;overflow-y:auto;}
+.nav-section{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:1.5px;padding:14px 12px 7px;text-transform:uppercase;}
+.nav-item{display:flex;align-items:center;gap:11px;padding:10px 13px;border-radius:var(--radius-sm);cursor:pointer;font-size:13px;font-weight:500;color:var(--text2);transition:all .15s;margin-bottom:2px;position:relative;}
+.nav-item:hover{background:rgba(255,255,255,0.04);color:var(--text);}
+.nav-item.active{background:var(--primary-bg);color:var(--primary-light);font-weight:600;}
+.nav-item svg{width:17px;height:17px;flex-shrink:0;}
+.nav-badge{margin-left:auto;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;}
+.sidebar-footer{padding:14px;border-top:1px solid var(--border);}
+.user-pill{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--radius-sm);background:rgba(255,255,255,0.03);}
+.user-avatar{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--teal));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;}
+.user-info{font-size:12px;}
+.user-info div:first-child{font-weight:600;color:var(--text);}
+.user-info div:last-child{color:var(--text3);font-size:11px;}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:15px 26px;border-bottom:1px solid var(--border);background:var(--bg2);flex-shrink:0;}
+.topbar h2{font-size:19px;font-weight:800;letter-spacing:-0.3px;}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.topbar-btn{padding:7px 14px;border-radius:var(--radius-sm);border:1px solid var(--border);background:transparent;color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;font-family:inherit;}
+.topbar-btn:hover{border-color:var(--primary);color:var(--primary-light);}
+.topbar-btn.primary{background:var(--primary);border-color:var(--primary);color:#fff;}
+.topbar-btn.primary:hover{background:var(--primary-light);}
+.topbar-btn.danger{background:var(--red-bg);border-color:var(--red);color:var(--red);}
+.ai-pill{display:flex;align-items:center;gap:7px;padding:7px 14px;border-radius:30px;border:1px solid rgba(99,102,241,0.3);background:var(--primary-bg);color:var(--primary-light);font-size:12px;font-weight:600;cursor:pointer;}
+.ai-dot{width:6px;height:6px;border-radius:50%;background:var(--primary-light);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+.content{flex:1;overflow-y:auto;padding:22px 26px;}
+.page{display:none;}
+.page.active{display:block;}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;transition:all .2s;}
+.stat-card:hover{border-color:rgba(255,255,255,0.1);transform:translateY(-2px);}
+.stat-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;}
+.stat-icon{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:17px;}
+.stat-trend{font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;display:flex;align-items:center;gap:3px;}
+.stat-up{color:var(--green);background:var(--green-bg);}
+.stat-down{color:var(--red);background:var(--red-bg);}
+.stat-value{font-size:26px;font-weight:800;letter-spacing:-1px;margin-bottom:3px;}
+.stat-label{font-size:11.5px;color:var(--text2);}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:16px;}
+.card-header{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--border);}
+.card-header h3{font-size:14px;font-weight:700;}
+.card-body{padding:18px;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px;}
+
+/* CHART */
+.chart-area{height:180px;position:relative;display:flex;align-items:flex-end;gap:5px;padding:0 4px;}
+.chart-bar{flex:1;border-radius:6px 6px 0 0;background:linear-gradient(180deg,var(--primary),rgba(99,102,241,0.25));transition:height .5s;min-height:6px;}
+.chart-bar:hover{background:linear-gradient(180deg,var(--primary-light),rgba(99,102,241,0.45));cursor:pointer;}
+.chart-bar.green{background:linear-gradient(180deg,var(--green),rgba(34,197,94,0.2));}
+.chart-bar.red{background:linear-gradient(180deg,var(--red),rgba(239,68,68,0.2));}
+.chart-labels{display:flex;padding:8px 4px 0;gap:5px;}
+.chart-labels span{flex:1;text-align:center;font-size:10px;color:var(--text3);}
+
+/* TABLE */
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;}
+th{text-align:left;padding:11px 14px;font-size:11px;font-weight:700;color:var(--text3);letter-spacing:0.5px;text-transform:uppercase;border-bottom:1px solid var(--border);}
+td{padding:11px 14px;font-size:13px;border-bottom:1px solid rgba(255,255,255,0.03);}
+tr:hover td{background:rgba(255,255,255,0.02);}
+.badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;}
+.badge-green{color:var(--green);background:var(--green-bg);}
+.badge-red{color:var(--red);background:var(--red-bg);}
+.badge-orange{color:var(--orange);background:var(--orange-bg);}
+.badge-blue{color:var(--blue);background:var(--blue-bg);}
+.badge-purple{color:var(--primary-light);background:var(--primary-bg);}
+.badge-teal{color:var(--teal);background:var(--teal-bg);}
+.badge-yellow{color:var(--yellow);background:var(--yellow-bg);}
+
+/* AI CHAT */
+.ai-chat{display:flex;flex-direction:column;height:100%;overflow:hidden;}
+.ai-chat-messages{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:16px;}
+.ai-msg{max-width:75%;padding:13px 16px;border-radius:14px;font-size:13.5px;line-height:1.6;}
+.ai-msg.bot{background:var(--card);border:1px solid var(--border);border-bottom-left-radius:4px;}
+.ai-msg.user{background:var(--primary-bg);border:1px solid rgba(99,102,241,0.2);border-bottom-right-radius:4px;align-self:flex-end;}
+.ai-msg.bot .sender{font-size:11px;font-weight:700;color:var(--primary-light);margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+.ai-insight{background:var(--green-bg);border:1px solid rgba(34,197,94,0.2);border-radius:10px;padding:11px 14px;font-size:12.5px;color:var(--green);margin-top:8px;line-height:1.5;}
+.ai-chat-input{padding:14px 18px;border-top:1px solid var(--border);display:flex;gap:10px;}
+.ai-input{flex:1;padding:10px 14px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:13px;font-family:inherit;outline:none;transition:border .15s;}
+.ai-input:focus{border-color:var(--primary);}
+.ai-input::placeholder{color:var(--text3);}
+.ai-send{padding:10px 18px;border-radius:var(--radius-sm);border:none;background:var(--primary);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;}
+.ai-send:hover{background:var(--primary-light);}
+.quick-asks{display:flex;flex-wrap:wrap;gap:8px;padding:0 18px 12px;}
+.quick-ask-btn{padding:6px 13px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;font-family:inherit;}
+.quick-ask-btn:hover{border-color:var(--primary);color:var(--primary-light);background:var(--primary-bg);}
+
+/* HEALTH SCORE */
+.health-score{text-align:center;padding:24px;}
+.score-ring{width:120px;height:120px;border-radius:50%;background:conic-gradient(var(--green) 0% 78%, var(--border) 78% 100%);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;position:relative;}
+.score-inner{width:88px;height:88px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;flex-direction:column;}
+.score-num{font-size:28px;font-weight:800;color:var(--green);}
+.score-label{font-size:10px;color:var(--text3);letter-spacing:0.5px;}
+.score-grade{font-size:14px;font-weight:700;color:var(--text);}
+.score-factors{display:flex;flex-direction:column;gap:8px;margin-top:4px;}
+.score-factor{display:flex;align-items:center;justify-content:space-between;font-size:12px;}
+.score-factor-bar{flex:1;height:4px;background:var(--border);border-radius:2px;margin:0 12px;overflow:hidden;}
+.score-factor-fill{height:100%;border-radius:2px;}
+
+/* INVOICE */
+.invoice-list .inv-row{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.04);cursor:pointer;transition:all .15s;}
+.invoice-list .inv-row:hover{background:rgba(255,255,255,0.02);margin:0 -8px;padding:12px 8px;}
+.inv-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.inv-info{flex:1;min-width:0;}
+.inv-name{font-size:13px;font-weight:600;}
+.inv-meta{font-size:11px;color:var(--text3);margin-top:2px;}
+.inv-amount{font-size:14px;font-weight:700;min-width:90px;text-align:right;}
+.inv-status{min-width:70px;text-align:right;}
+
+/* CASH FLOW */
+.cf-indicator{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+.cf-bar-wrap{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+.cf-bar{height:100%;border-radius:3px;}
+.cf-amount{font-size:13px;font-weight:700;min-width:100px;text-align:right;}
+.cf-label{font-size:12.5px;font-weight:500;min-width:100px;}
+
+/* SAFE TO SPEND */
+.safe-spend{background:linear-gradient(135deg,rgba(34,197,94,0.1),rgba(20,184,166,0.08));border:1px solid rgba(34,197,94,0.2);border-radius:var(--radius);padding:20px;text-align:center;}
+.safe-spend-label{font-size:12px;color:var(--text2);margin-bottom:6px;}
+.safe-spend-value{font-size:32px;font-weight:800;color:var(--green);letter-spacing:-1px;}
+.safe-spend-sub{font-size:11px;color:var(--text3);margin-top:4px;}
+
+/* ANOMALY */
+.anomaly-item{display:flex;align-items:flex-start;gap:12px;padding:13px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+.anomaly-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.anomaly-text{font-size:12.5px;line-height:1.5;flex:1;}
+.anomaly-action{font-size:11px;font-weight:600;color:var(--primary-light);cursor:pointer;padding:4px 10px;border-radius:8px;background:var(--primary-bg);white-space:nowrap;}
+
+/* FORECAST */
+.forecast-bar-group{display:flex;gap:4px;align-items:flex-end;}
+.forecast-bar{border-radius:4px 4px 0 0;}
+.forecast-label{font-size:10px;color:var(--text3);text-align:center;flex:1;}
+
+/* LEDGER */
+.ledger-entry{display:flex;align-items:center;gap:14px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,0.03);}
+.ledger-dr{color:var(--red);font-weight:700;min-width:90px;text-align:right;font-size:13px;}
+.ledger-cr{color:var(--green);font-weight:700;min-width:90px;text-align:right;font-size:13px;}
+.ledger-account{flex:1;font-size:13px;}
+.ledger-date{font-size:11px;color:var(--text3);min-width:65px;}
+
+/* GAMIFIED */
+.badge-earned{display:flex;align-items:center;gap:12px;padding:13px;border-radius:var(--radius-sm);background:var(--card);border:1px solid var(--border);transition:all .2s;}
+.badge-earned:hover{border-color:var(--yellow);}
+.badge-icon{font-size:28px;}
+.badge-title{font-size:13px;font-weight:700;margin-bottom:2px;}
+.badge-desc{font-size:11px;color:var(--text3);}
+.badge-date{font-size:10px;color:var(--yellow);font-weight:600;margin-left:auto;}
+.badges-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;}
+
+/* THEME */
+.theme-toggle{display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;}
+.toggle-track{width:44px;height:24px;border-radius:12px;background:var(--border);position:relative;border:1px solid rgba(255,255,255,0.06);}
+.toggle-track::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .25s;}
+body.light .toggle-track{background:var(--primary);}
+body.light .toggle-track::after{transform:translateX(20px);}
+
+/* SETTINGS */
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:8px;background:var(--card);}
+.setting-label{font-size:13px;font-weight:500;}
+.setting-label span{display:block;font-size:11px;color:var(--text3);margin-top:2px;}
+.setting-value{font-size:13px;font-weight:600;color:var(--primary-light);}
+.toggle-sm{width:38px;height:22px;border-radius:11px;background:var(--border);position:relative;cursor:pointer;transition:background .2s;}
+.toggle-sm.on{background:var(--green);}
+.toggle-sm::after{content:'';width:16px;height:16px;border-radius:50%;background:#fff;position:absolute;top:3px;left:3px;transition:left .2s;}
+.toggle-sm.on::after{left:19px;}
+.settings-group{margin-bottom:22px;}
+.settings-group h4{font-size:13.5px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+
+/* TOP ITEM */
+.top-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.03);}
+.top-item:last-child{border:none;}
+.top-item-info{display:flex;align-items:center;gap:12px;}
+.top-item-rank{width:24px;height:24px;border-radius:8px;background:var(--primary-bg);color:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;}
+.top-item-name{font-size:13px;font-weight:600;}
+.top-item-sub{font-size:11px;color:var(--text3);}
+.top-item-val{font-size:13px;font-weight:700;}
+
+/* LIGHT MODE */
+body.light{--bg:#f3f4f8;--bg2:#ffffff;--bg3:#eef0f5;--card:#ffffff;--border:#e2e5ef;--text:#1a1d2e;--text2:#555870;--text3:#8b8fa3;--primary:#6366f1;--primary-light:#4f46e5;--primary-bg:rgba(99,102,241,0.08);--green:#16a34a;--green-bg:rgba(22,163,74,0.08);--red:#dc2626;--red-bg:rgba(220,38,38,0.08);--orange:#ea580c;--orange-bg:rgba(234,88,12,0.08);--blue:#2563eb;--blue-bg:rgba(37,99,235,0.08);--yellow:#ca8a04;--yellow-bg:rgba(202,138,4,0.08);--pink:#db2777;--pink-bg:rgba(219,39,119,0.08);--teal:#0d9488;--teal-bg:rgba(13,148,136,0.08);}
+body.light .sidebar,.body.light .topbar{background:#fff;}
+body.light .pos-search{background:#fff;}
+body.light tr:hover td{background:rgba(0,0,0,0.02);}
+body.light .chart-area{background:linear-gradient(180deg,rgba(99,102,241,0.05) 0%,transparent 100%);}
+body.light .safe-spend{background:linear-gradient(135deg,rgba(22,163,74,0.07),rgba(13,148,136,0.05));}
+*{transition:background-color .25s,color .25s,border-color .25s;}
+.whitelabel{position:fixed;bottom:8px;right:12px;font-size:10px;color:rgba(255,255,255,0.12);letter-spacing:1px;z-index:999;}
+body.light .whitelabel{color:rgba(0,0,0,0.12);}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.65);z-index:100;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.modal-overlay.show{display:flex;}
+.modal-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);width:440px;max-height:90vh;overflow-y:auto;}
+.modal-header{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.modal-header h3{font-size:15px;font-weight:700;}
+.modal-close{background:transparent;border:none;color:var(--text2);font-size:20px;cursor:pointer;padding:4px;}
+.modal-body{padding:20px;}
+.form-group{margin-bottom:16px;}
+.form-label{font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;display:block;}
+.form-input{width:100%;padding:10px 13px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:13px;font-family:inherit;outline:none;}
+.form-input:focus{border-color:var(--primary);}
+.form-select{width:100%;padding:10px 13px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:13px;font-family:inherit;outline:none;}
+.modal-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-icon">A&#x1D53D;</div>
+    <div>
+      <div class="brand-name">Alfaa<span>Books</span></div>
+      <div class="brand-sub">SMART ACCOUNTING</div>
+    </div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-section">Overview</div>
+    <div class="nav-item active" onclick="showPage('dashboard',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Dashboard
+    </div>
+    <div class="nav-item" onclick="showPage('ai',this)" style="background:linear-gradient(135deg,rgba(99,102,241,0.1),rgba(99,102,241,0.03));border:1px solid rgba(99,102,241,0.2);margin:6px 0;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 0 1 4 4c0 1.5-.8 2.8-2 3.5V12l4 2-4 2v2.5A4 4 0 1 1 8 15V16l-4-2 4-2V9.5A4 4 0 0 1 8 6a4 4 0 0 1 4-4z"/></svg>
+      <span style="font-weight:700;color:var(--primary-light);">AI Assistant</span>
+      <span class="nav-badge" style="background:var(--primary-bg);color:var(--primary-light);">NEW</span>
+    </div>
+    <div class="nav-section">Financials</div>
+    <div class="nav-item" onclick="showPage('ledger',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="M4 9h16M4 14h16M9 4v16"/></svg>
+      General Ledger
+    </div>
+    <div class="nav-item" onclick="showPage('invoices',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8M16 17H8M10 9H8"/></svg>
+      Invoices
+      <span class="nav-badge" style="background:var(--orange-bg);color:var(--orange);">5 due</span>
+    </div>
+    <div class="nav-item" onclick="showPage('cashflow',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+      Cash Flow
+    </div>
+    <div class="nav-item" onclick="showPage('expenses',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      Expenses
+    </div>
+    <div class="nav-section">Business</div>
+    <div class="nav-item" onclick="showPage('customers',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Customers & Suppliers
+    </div>
+    <div class="nav-item" onclick="showPage('inventory',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+      Inventory
+    </div>
+    <div class="nav-section">Reports & Tax</div>
+    <div class="nav-item" onclick="showPage('reports',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      Reports
+    </div>
+    <div class="nav-item" onclick="showPage('tax',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      Tax & Compliance
+    </div>
+    <div class="nav-section">System</div>
+    <div class="nav-item" onclick="showPage('insights',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      Business Insights
+    </div>
+    <div class="nav-item" onclick="showPage('settings',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      Settings
+    </div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-pill">
+      <div class="user-avatar">O</div>
+      <div class="user-info"><div>Owner</div><div>Lakeside Grand Hotel</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+<!-- ===== DASHBOARD ===== -->
+<div class="page active" id="page-dashboard">
+<div class="topbar">
+  <h2>&#128200; Dashboard</h2>
+  <div class="topbar-right">
+    <div class="ai-pill" onclick="showPage('ai',document.querySelector('.nav-item:nth-child(3)'))">
+      <div class="ai-dot"></div> Ask AI
+    </div>
+    <div class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"></div></div>
+    <div class="topbar-btn">&#128197; Jun 2026</div>
+  </div>
+</div>
+<div class="content">
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-top">
+        <div class="stat-icon" style="background:var(--green-bg);color:var(--green);">&#128176;</div>
+        <div class="stat-trend stat-up">&#9650; 14.2%</div>
+      </div>
+      <div class="stat-value">Rs. 847,200</div>
+      <div class="stat-label">Monthly Revenue</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-top">
+        <div class="stat-icon" style="background:var(--red-bg);color:var(--red);">&#128181;</div>
+        <div class="stat-trend stat-down">&#9660; 3.1%</div>
+      </div>
+      <div class="stat-value">Rs. 312,500</div>
+      <div class="stat-label">Monthly Expenses</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-top">
+        <div class="stat-icon" style="background:var(--primary-bg);color:var(--primary-light);">&#128171;</div>
+        <div class="stat-trend stat-up">&#9650; 22.7%</div>
+      </div>
+      <div class="stat-value">Rs. 534,700</div>
+      <div class="stat-label">Net Profit</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-top">
+        <div class="stat-icon" style="background:var(--orange-bg);color:var(--orange);">&#128196;</div>
+        <div class="stat-trend stat-down">&#9660; 2 overdue</div>
+      </div>
+      <div class="stat-value">Rs. 128,000</div>
+      <div class="stat-label">Outstanding AR</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><h3>Revenue vs Expenses — This Year</h3><div class="topbar-btn" style="font-size:11px;">2026</div></div>
+      <div class="card-body">
+        <div class="chart-area" style="gap:6px;">
+          <div style="display:flex;flex-direction:column;justify-content:flex-end;gap:3px;flex:1;align-items:center;"><div class="chart-bar green" style="width:100%;height:72%;"></div><div class="chart-bar red" style="width:100%;height:55%;"></div></div>
+          <div style="display:flex;flex-direction:column;justify-content:flex-end;gap:3px;flex:1;align-items:center;"><div class="chart-bar green" style="width:100%;height:65%;"></div><div class="chart-bar red" style="width:100%;height:48%;"></div></div>
+          <div style="display:flex;flex-direction:column;justify-content:flex-end;gap:3px;flex:1;align-items:center;"><div class="chart-bar green" style="width:100%;height:78%;"></div><div class="chart-bar red" style="width:100%;height:52%;"></div></div>
+          <div style="display:flex;flex-direction:column;justify-content:flex-end;gap:3px;flex:1;align-items:center;"><div class="chart-bar green" style="width:100%;height:82%;"></div><div class="chart-bar red" style="width:100%;height:60%;"></div></div>
+          <div style="display:flex;flex-direction:column;justify-content:flex-end;gap:3px;flex:1;align-items:center;"><div class="chart-bar green" style="width:100%;height:88%;"></div><div class="chart-bar red" style="width:100%;height:64%;"></div></div>
+          <div style="display:flex;flex-direction:column;justify-content:flex-end;gap:3px;flex:1;align-items:center;"><div class="chart-bar green" style="width:100%;height:95%;"></div><div class="chart-bar red" style="width:100%;height:70%;"></div></div>
+        </div>
+        <div class="chart-labels"><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span></div>
+        <div style="display:flex;gap:16px;margin-top:10px;">
+          <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2);"><div style="width:10px;height:10px;border-radius:2px;background:var(--green);"></div>Revenue</div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2);"><div style="width:10px;height:10px;border-radius:2px;background:var(--red);"></div>Expenses</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><h3>Business Health Score</h3><div class="badge badge-green">Healthy</div></div>
+      <div class="card-body">
+        <div class="health-score" style="padding:10px 0 4px;">
+          <div class="score-ring">
+            <div class="score-inner">
+              <div class="score-num">78</div>
+              <div class="score-label">/ 100</div>
+            </div>
+          </div>
+          <div class="score-grade" style="margin-bottom:14px;">Good Standing &#9989;</div>
+        </div>
+        <div class="score-factors">
+          <div class="score-factor"><span style="font-size:11.5px;color:var(--text2);">Liquidity</span><div class="score-factor-bar"><div class="score-factor-fill" style="width:85%;background:var(--green);"></div></div><span style="font-size:11px;font-weight:700;color:var(--green);">85</span></div>
+          <div class="score-factor"><span style="font-size:11.5px;color:var(--text2);">Profitability</span><div class="score-factor-bar"><div class="score-factor-fill" style="width:79%;background:var(--primary-light);"></div></div><span style="font-size:11px;font-weight:700;color:var(--primary-light);">79</span></div>
+          <div class="score-factor"><span style="font-size:11.5px;color:var(--text2);">AR Collection</span><div class="score-factor-bar"><div class="score-factor-fill" style="width:62%;background:var(--orange);"></div></div><span style="font-size:11px;font-weight:700;color:var(--orange);">62</span></div>
+          <div class="score-factor"><span style="font-size:11.5px;color:var(--text2);">Expense Control</span><div class="score-factor-bar"><div class="score-factor-fill" style="width:72%;background:var(--blue);"></div></div><span style="font-size:11px;font-weight:700;color:var(--blue);">72</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><h3>&#9888; Anomaly Alerts</h3><span class="badge badge-orange">3 flagged</span></div>
+      <div class="card-body">
+        <div class="anomaly-item">
+          <div class="anomaly-dot" style="background:var(--red);"></div>
+          <div class="anomaly-text"><strong>Electricity bill 340% above average</strong><br><span style="color:var(--text3);">Jun 18 — Rs. 28,500 vs avg Rs. 8,500</span></div>
+          <div class="anomaly-action">Review</div>
+        </div>
+        <div class="anomaly-item">
+          <div class="anomaly-dot" style="background:var(--orange);"></div>
+          <div class="anomaly-text"><strong>Unusual supplier payment</strong><br><span style="color:var(--text3);">New vendor, Rs. 45,000 — no matching PO</span></div>
+          <div class="anomaly-action">Verify</div>
+        </div>
+        <div class="anomaly-item">
+          <div class="anomaly-dot" style="background:var(--yellow);"></div>
+          <div class="anomaly-text"><strong>Kitchen supply cost +18% this week</strong><br><span style="color:var(--text3);">Possible price increase from supplier</span></div>
+          <div class="anomaly-action">View</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><h3>Top Customers by Revenue</h3><div class="topbar-btn" style="font-size:11px;">This Month</div></div>
+      <div class="card-body">
+        <div class="top-item"><div class="top-item-info"><div class="top-item-rank">1</div><div><div class="top-item-name">Colombo Events Co.</div><div class="top-item-sub">12 invoices</div></div></div><div class="top-item-val" style="color:var(--green);">Rs. 84,500</div></div>
+        <div class="top-item"><div class="top-item-info"><div class="top-item-rank">2</div><div><div class="top-item-name">Sri Lanka Tourism Board</div><div class="top-item-sub">8 invoices</div></div></div><div class="top-item-val" style="color:var(--green);">Rs. 62,000</div></div>
+        <div class="top-item"><div class="top-item-info"><div class="top-item-rank">3</div><div><div class="top-item-name">Galle Face Hotel Group</div><div class="top-item-sub">5 invoices</div></div></div><div class="top-item-val" style="color:var(--green);">Rs. 45,800</div></div>
+        <div class="top-item"><div class="top-item-info"><div class="top-item-rank">4</div><div><div class="top-item-name">MAS Holdings</div><div class="top-item-sub">3 invoices</div></div></div><div class="top-item-val" style="color:var(--green);">Rs. 38,200</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ===== AI ASSISTANT ===== -->
+<div class="page" id="page-ai">
+<div class="topbar"><h2>&#129302; AI Accounting Assistant</h2><div class="topbar-right"><div class="badge badge-purple" style="padding:6px 12px;">Powered by Alfaa AI</div></div></div>
+<div style="flex:1;display:flex;flex-direction:column;height:calc(100vh - 57px);">
+  <div class="ai-chat-messages" id="aiMessages">
+    <div class="ai-msg bot">
+      <div class="sender">&#9889; Alfaa AI</div>
+      Hello! I'm your AI accounting assistant. I can answer questions about your finances, flag issues, and help you understand your business performance. What would you like to know?
+      <div class="ai-insight">&#128200; Tip: Your profit margin this month is <strong>63.1%</strong> — up 4.2% from last month. Excellent performance!</div>
+    </div>
+    <div class="ai-msg user">What is my profit today?</div>
+    <div class="ai-msg bot">
+      <div class="sender">&#9889; Alfaa AI</div>
+      Based on today's POS data and recorded expenses, your <strong>profit for Jun 22, 2026</strong> is:<br><br>
+      &#128176; Revenue: <strong>Rs. 47,850</strong><br>
+      &#128181; Expenses: <strong>Rs. 12,500</strong><br>
+      &#128171; Net Profit: <strong style="color:var(--green);">Rs. 35,350</strong>
+      <div class="ai-insight">&#128270; Your best day this week was Thursday (Rs. 41,200). Today is tracking 16% below that — mostly due to lower lunch covers.</div>
+    </div>
+    <div class="ai-msg user">Which customer owes the most?</div>
+    <div class="ai-msg bot">
+      <div class="sender">&#9889; Alfaa AI</div>
+      Your highest outstanding AR is from <strong>Colombo Events Co.</strong> with <strong>Rs. 42,000</strong> overdue by 18 days. They have a credit score of <strong>B+</strong> based on past payment history — usually pays within 25 days. A payment reminder has been queued via WhatsApp.
+      <div class="ai-insight">&#9888; Second highest: Sri Lanka Tourism Board — Rs. 28,500, overdue 7 days. Recommend sending a reminder today.</div>
+    </div>
+  </div>
+  <div class="quick-asks">
+    <button class="quick-ask-btn" onclick="askAI(this)">Why did profit drop last week?</button>
+    <button class="quick-ask-btn" onclick="askAI(this)">Show tax estimate for this quarter</button>
+    <button class="quick-ask-btn" onclick="askAI(this)">Any unusual expenses this month?</button>
+    <button class="quick-ask-btn" onclick="askAI(this)">Forecast next month revenue</button>
+    <button class="quick-ask-btn" onclick="askAI(this)">Which items have highest margins?</button>
+  </div>
+  <div class="ai-chat-input">
+    <input class="ai-input" id="aiInput" placeholder="Ask anything about your finances..." onkeydown="if(event.key==='Enter')sendAI()">
+    <button class="ai-send" onclick="sendAI()">&#9654; Send</button>
+  </div>
+</div>
+</div>
+
+<!-- ===== GENERAL LEDGER ===== -->
+<div class="page" id="page-ledger">
+<div class="topbar"><h2>General Ledger</h2><div class="topbar-right"><div class="topbar-btn" onclick="showModal('journalModal')">+ Journal Entry</div><div class="topbar-btn primary">&#128269; Reconcile</div></div></div>
+<div class="content">
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--green-bg);color:var(--green);">&#128200;</div></div><div class="stat-value">Rs. 2.4M</div><div class="stat-label">Total Assets</div></div>
+    <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--red-bg);color:var(--red);">&#128181;</div></div><div class="stat-value">Rs. 890K</div><div class="stat-label">Total Liabilities</div></div>
+    <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--primary-bg);color:var(--primary-light);">&#9878;</div></div><div class="stat-value">Rs. 1.51M</div><div class="stat-label">Equity</div></div>
+    <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--teal-bg);color:var(--teal);">&#9989;</div></div><div class="stat-value">99.8%</div><div class="stat-label">Reconciled</div></div>
+  </div>
+  <div class="card">
+    <div class="card-header"><h3>Recent Journal Entries</h3><span class="badge badge-green">Double-entry validated</span></div>
+    <div class="card-body">
+      <div class="ledger-entry">
+        <div class="ledger-date">Jun 22</div>
+        <div class="ledger-account"><div style="font-weight:600;font-size:13px;">Cash / POS Revenue</div><div style="font-size:11px;color:var(--text3);">Daily POS closing — auto posted</div></div>
+        <div class="ledger-dr">Dr Rs. 47,850</div>
+        <div class="ledger-cr">Cr Rs. 47,850</div>
+        <span class="badge badge-teal" style="margin-left:8px;">Auto</span>
+      </div>
+      <div class="ledger-entry">
+        <div class="ledger-date">Jun 22</div>
+        <div class="ledger-account"><div style="font-weight:600;font-size:13px;">Expense — Electricity</div><div style="font-size:11px;color:var(--text3);">CEB bill payment — &#9888; anomaly flagged</div></div>
+        <div class="ledger-dr">Dr Rs. 28,500</div>
+        <div class="ledger-cr">Cr Rs. 28,500</div>
+        <span class="badge badge-orange" style="margin-left:8px;">Review</span>
+      </div>
+      <div class="ledger-entry">
+        <div class="ledger-date">Jun 21</div>
+        <div class="ledger-account"><div style="font-weight:600;font-size:13px;">Accounts Receivable — Colombo Events</div><div style="font-size:11px;color:var(--text3);">Invoice #INV-0128 issued</div></div>
+        <div class="ledger-dr">Dr Rs. 42,000</div>
+        <div class="ledger-cr">Cr Rs. 42,000</div>
+        <span class="badge badge-blue" style="margin-left:8px;">AR</span>
+      </div>
+      <div class="ledger-entry">
+        <div class="ledger-date">Jun 20</div>
+        <div class="ledger-account"><div style="font-weight:600;font-size:13px;">Salaries Payable</div><div style="font-size:11px;color:var(--text3);">Monthly payroll — 14 staff</div></div>
+        <div class="ledger-dr">Dr Rs. 180,000</div>
+        <div class="ledger-cr">Cr Rs. 180,000</div>
+        <span class="badge badge-purple" style="margin-left:8px;">Payroll</span>
+      </div>
+      <div class="ledger-entry">
+        <div class="ledger-date">Jun 18</div>
+        <div class="ledger-account"><div style="font-weight:600;font-size:13px;">Inventory — Kitchen Supplies</div><div style="font-size:11px;color:var(--text3);">GRN #GRN-0045 — auto COGS calculated</div></div>
+        <div class="ledger-dr">Dr Rs. 35,200</div>
+        <div class="ledger-cr">Cr Rs. 35,200</div>
+        <span class="badge badge-teal" style="margin-left:8px;">Auto</span>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ===== INVOICES ===== -->
+<div class="page" id="page-invoices">
+<div class="topbar"><h2>Invoices & Billing</h2><div class="topbar-right"><div class="topbar-btn">&#128386; Send Reminder</div><div class="topbar-btn primary" onclick="showModal('invoiceModal')">+ New Invoice</div></div></div>
+<div class="content">
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--green-bg);color:var(--green);">&#9989;</div></div><div class="stat-value">Rs. 482,000</div><div class="stat-label">Paid This Month</div></div>
+    <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--orange-bg);color:var(--orange);">&#9203;</div></div><div class="stat-value">Rs. 128,000</div><div class="stat-label">Outstanding</div></div>
+    <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--red-bg);color:var(--red);">&#9888;</div></div><div class="stat-value">Rs. 28,500</div><div class="stat-label">Overdue &gt;30 Days</div></div>
+    <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--blue-bg);color:var(--blue);">&#128196;</div></div><div class="stat-value">42</div><div class="stat-label">Total Invoices</div></div>
+  </div>
+  <div class="card">
+    <div class="card-header"><h3>All Invoices</h3><div class="topbar-btn" style="font-size:11px;">&#128230; Export</div></div>
+    <div class="card-body">
+      <div class="invoice-list">
+        <div class="inv-row">
+          <div class="inv-icon" style="background:var(--green-bg);color:var(--green);">&#9989;</div>
+          <div class="inv-info"><div class="inv-name">Colombo Events Co.</div><div class="inv-meta">INV-0130 · Jun 20 · Due Jun 30</div></div>
+          <div class="inv-amount" style="color:var(--green);">Rs. 84,500</div>
+          <div class="inv-status"><span class="badge badge-green">Paid</span></div>
+        </div>
+        <div class="inv-row">
+          <div class="inv-icon" style="background:var(--orange-bg);color:var(--orange);">&#9201;</div>
+          <div class="inv-info"><div class="inv-name">Sri Lanka Tourism Board</div><div class="inv-meta">INV-0129 · Jun 15 · Due Jun 22 &#9888;</div></div>
+          <div class="inv-amount" style="color:var(--orange);">Rs. 28,500</div>
+          <div class="inv-status"><span class="badge badge-orange">Overdue</span></div>
+        </div>
+        <div class="inv-row">
+          <div class="inv-icon" style="background:var(--orange-bg);color:var(--orange);">&#9203;</div>
+          <div class="inv-info"><div class="inv-name">Colombo Events Co.</div><div class="inv-meta">INV-0128 · Jun 14 · Due Jun 28</div></div>
+          <div class="inv-amount" style="color:var(--text);">Rs. 42,000</div>
+          <div class="inv-status"><span class="badge badge-orange">Pending</span></div>
+        </div>
+        <div class="inv-row">
+          <div class="inv-icon" style="background:var(--green-bg);color:var(--green);">&#9989;</div>
+          <div class="inv-info"><div class="inv-name">Galle Face Hotel Group</div><div class="inv-meta">INV-0127 · Jun 10 · Paid Jun 18</div></div>
+          <div class="inv-amount" style="color:var(--green);">Rs. 45,800</div>
+          <div class="inv-status"><span class="badge badge-green">Paid</span></div>
+        </div>
+        <div class="inv-row">
+          <div class="inv-icon" style="background:var(--red-bg);color:var(--red);">&#128683;</div>
+          <div class="inv-info"><div class="inv-name">MAS Holdings</div><div class="inv-meta">INV-0125 · May 20 · Due May 31 &#9888;&#9888;</div></div>
+          <div class="inv-amount" style="color:var(--red);">Rs. 38,200</div>
+          <div class="inv-status"><span class="badge badge-red">Overdue 22d</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ===== CASH FLOW ===== -->
+<div class="page" id="page-cashflow">
+<div class="topbar"><h2>Cash Flow Intelligence</h2><div class="topbar-right"><div class="topbar-btn">&#128202; Forecast</div><div class="topbar-btn primary">&#128279; Sync Bank</div></div></div>
+<div class="content">
+  <div class="grid-3" style="margin-bottom:16px;">
+    <div class="safe-spend">
+      <div class="safe-spend-label">&#127381; Safe to Spend Today</div>
+      <div class="safe-spend-value">Rs. 142,800</div>
+      <div class="safe-spend-sub">Based on AR + current balance − pending payables</div>
+    </div>
+    <div class="stat-card" style="margin-bottom:0;">
+      <div class="stat-top"><div class="stat-icon" style="background:var(--green-bg);color:var(--green);">&#128176;</div></div>
+      <div class="stat-value">Rs. 284,200</div>
+      <div class="stat-label">Current Bank Balance</div>
+    </div>
+    <div class="stat-card" style="margin-bottom:0;">
+      <div class="stat-top"><div class="stat-icon" style="background:var(--blue-bg);color:var(--blue);">&#128200;</div></div>
+      <div class="stat-value">Rs. 620,000</div>
+      <div class="stat-label">Predicted Jul Revenue</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header"><h3>Cash Inflows vs Outflows</h3><div class="badge badge-teal">AI Forecasted</div></div>
+    <div class="card-body">
+      <div class="cf-indicator">
+        <div class="cf-label" style="font-size:12px;color:var(--text2);">POS Sales</div>
+        <div class="cf-bar-wrap"><div class="cf-bar" style="width:89%;background:var(--green);"></div></div>
+        <div class="cf-amount" style="color:var(--green);">+Rs. 756,200</div>
+      </div>
+      <div class="cf-indicator">
+        <div class="cf-label" style="font-size:12px;color:var(--text2);">AR Collections</div>
+        <div class="cf-bar-wrap"><div class="cf-bar" style="width:56%;background:var(--teal);"></div></div>
+        <div class="cf-amount" style="color:var(--teal);">+Rs. 482,000</div>
+      </div>
+      <div class="cf-indicator">
+        <div class="cf-label" style="font-size:12px;color:var(--text2);">Salaries</div>
+        <div class="cf-bar-wrap"><div class="cf-bar" style="width:72%;background:var(--red);"></div></div>
+        <div class="cf-amount" style="color:var(--red);">-Rs. 612,000</div>
+      </div>
+      <div class="cf-indicator">
+        <div class="cf-label" style="font-size:12px;color:var(--text2);">Suppliers</div>
+        <div class="cf-bar-wrap"><div class="cf-bar" style="width:48%;background:var(--orange);"></div></div>
+        <div class="cf-amount" style="color:var(--orange);">-Rs. 408,000</div>
+      </div>
+      <div class="cf-indicator">
+        <div class="cf-label" style="font-size:12px;color:var(--text2);">Utilities</div>
+        <div class="cf-bar-wrap"><div class="cf-bar" style="width:18%;background:var(--yellow);"></div></div>
+        <div class="cf-amount" style="color:var(--yellow);">-Rs. 152,000</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header"><h3>&#128302; 30-Day AI Cash Flow Forecast</h3><div class="badge badge-purple">Predictive</div></div>
+    <div class="card-body">
+      <div class="chart-area" style="height:160px;gap:8px;">
+        <div class="chart-bar" style="height:68%;"></div>
+        <div class="chart-bar" style="height:74%;"></div>
+        <div class="chart-bar" style="height:58%;"></div>
+        <div class="chart-bar" style="height:82%;"></div>
+        <div class="chart-bar" style="height:71%;"></div>
+        <div class="chart-bar" style="height:88%;opacity:0.5;border:1px dashed rgba(99,102,241,0.4);"></div>
+        <div class="chart-bar" style="height:76%;opacity:0.5;border:1px dashed rgba(99,102,241,0.4);"></div>
+        <div class="chart-bar" style="height:91%;opacity:0.5;border:1px dashed rgba(99,102,241,0.4);"></div>
+      </div>
+      <div class="chart-labels"><span>Jun 22</span><span>Jun 23</span><span>Jun 24</span><span>Jun 25</span><span>Jun 26</span><span style="color:var(--primary-light);">Jun 27*</span><span style="color:var(--primary-light);">Jun 28*</span><span style="color:var(--primary-light);">Jun 29*</span></div>
+      <div style="font-size:11px;color:var(--text3);margin-top:8px;">* AI predicted based on historical patterns</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ===== EXPENSES ===== -->
+<div class="page" id="page-expenses">
+<div class="topbar"><h2>Expenses</h2><div class="topbar-right"><div class="topbar-btn">&#128247; Scan Receipt</div><div class="topbar-btn primary" onclick="showModal('expenseModal')">+ Add Expense</div></div></div>
+<div class="content">
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--red-bg);color:var(--red);">&#128181;</div><div class="stat-trend stat-down">&#9660; 3.1%</div></div><div class="stat-value">Rs. 312,500</div><div class="stat-label">This Month</div></div>
+    <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--orange-bg);color:var(--orange);">&#127869;</div></div><div class="stat-value">Rs. 84,200</div><div class="stat-label">Kitchen &amp; Food</div></div>
+    <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--blue-bg);color:var(--blue);">&#128267;</div></div><div class="stat-value">Rs. 36,700</div><div class="stat-label">Utilities</div></div>
+    <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--green-bg);color:var(--green);">&#128176;</div></div><div class="stat-value">Rs. 534,700</div><div class="stat-label">Net Profit</div></div>
+  </div>
+  <div class="card">
+    <div class="card-header"><h3>Recent Expenses</h3><div class="topbar-btn" style="font-size:11px;">&#128230; Export</div></div>
+    <div class="card-body"><div class="table-wrap">
+      <table>
+        <thead><tr><th>Description</th><th>Category</th><th>Amount</th><th>Date</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600;">Electricity Bill &#9888;</td><td><span class="badge badge-blue">Utilities</span></td><td style="font-weight:700;color:var(--red);">Rs. 28,500</td><td>Jun 22</td><td><span class="badge badge-orange">Anomaly</span></td></tr>
+          <tr><td style="font-weight:600;">Gas Cylinders ×4</td><td><span class="badge badge-orange">Kitchen</span></td><td style="font-weight:700;color:var(--red);">Rs. 6,000</td><td>Jun 21</td><td><span class="badge badge-green">Normal</span></td></tr>
+          <tr><td style="font-weight:600;">Staff Salaries — Jun</td><td><span class="badge badge-purple">Payroll</span></td><td style="font-weight:700;color:var(--red);">Rs. 180,000</td><td>Jun 20</td><td><span class="badge badge-green">Normal</span></td></tr>
+          <tr><td style="font-weight:600;">New Supplier Payment &#9888;</td><td><span class="badge badge-yellow">Suppliers</span></td><td style="font-weight:700;color:var(--red);">Rs. 45,000</td><td>Jun 19</td><td><span class="badge badge-orange">Verify</span></td></tr>
+          <tr><td style="font-weight:600;">Kitchen Maintenance</td><td><span class="badge badge-teal">Maintenance</span></td><td style="font-weight:700;color:var(--red);">Rs. 12,000</td><td>Jun 18</td><td><span class="badge badge-green">Normal</span></td></tr>
+          <tr><td style="font-weight:600;">Water Bill</td><td><span class="badge badge-blue">Utilities</span></td><td style="font-weight:700;color:var(--red);">Rs. 3,200</td><td>Jun 15</td><td><span class="badge badge-green">Normal</span></td></tr>
+        </tbody>
+      </table>
+    </div></div>
+  </div>
+</div>
+</div>
+
+<!-- ===== CUSTOMERS & SUPPLIERS ===== -->
+<div class="page" id="page-customers">
+<div class="topbar"><h2>Customers &amp; Suppliers</h2><div class="topbar-right"><div class="topbar-btn primary">+ Add Contact</div></div></div>
+<div class="content">
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><h3>Top Customers</h3><span class="badge badge-green">AR Aging</span></div>
+      <div class="card-body"><div class="table-wrap">
+        <table>
+          <thead><tr><th>Customer</th><th>Credit Score</th><th>Outstanding</th><th>Avg Pay Days</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:600;">Colombo Events Co.</td><td><span class="badge badge-green">A+</span></td><td style="color:var(--orange);font-weight:700;">Rs. 42,000</td><td>22 days</td></tr>
+            <tr><td style="font-weight:600;">SL Tourism Board</td><td><span class="badge badge-orange">B+</span></td><td style="color:var(--red);font-weight:700;">Rs. 28,500</td><td>31 days</td></tr>
+            <tr><td style="font-weight:600;">Galle Face Group</td><td><span class="badge badge-green">A</span></td><td style="color:var(--green);font-weight:700;">Rs. 0</td><td>18 days</td></tr>
+            <tr><td style="font-weight:600;">MAS Holdings</td><td><span class="badge badge-red">C</span></td><td style="color:var(--red);font-weight:700;">Rs. 38,200</td><td>48 days</td></tr>
+          </tbody>
+        </table>
+      </div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h3>Suppliers</h3><span class="badge badge-blue">AP Tracking</span></div>
+      <div class="card-body"><div class="table-wrap">
+        <table>
+          <thead><tr><th>Supplier</th><th>Reliability</th><th>Payable</th><th>Next Due</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:600;">Lanka Veggie Mart</td><td><span class="badge badge-green">98%</span></td><td style="font-weight:700;">Rs. 18,400</td><td>Jun 28</td></tr>
+            <tr><td style="font-weight:600;">Ceylon Gas Co.</td><td><span class="badge badge-green">95%</span></td><td style="font-weight:700;">Rs. 6,000</td><td>Jun 30</td></tr>
+            <tr><td style="font-weight:600;">CEB (Electricity)</td><td><span class="badge badge-teal">Utility</span></td><td style="font-weight:700;">Rs. 28,500</td><td>Jul 1</td></tr>
+            <tr><td style="font-weight:600;">New Supplier &#9888;</td><td><span class="badge badge-orange">Unknown</span></td><td style="color:var(--orange);font-weight:700;">Rs. 45,000</td><td>Jul 5</td></tr>
+          </tbody>
+        </table>
+      </div></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ===== INVENTORY ===== -->
+<div class="page" id="page-inventory">
+<div class="topbar"><h2>Inventory + Accounting</h2><div class="topbar-right"><div class="topbar-btn">+ GRN</div><div class="topbar-btn primary">Stock Valuation</div></div></div>
+<div class="content">
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--blue-bg);color:var(--blue);">&#128230;</div></div><div class="stat-value">Rs. 284,500</div><div class="stat-label">Stock Value (FIFO)</div></div>
+    <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--orange-bg);color:var(--orange);">&#128293;</div></div><div class="stat-value">Rs. 42,800</div><div class="stat-label">COGS This Month</div></div>
+    <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--red-bg);color:var(--red);">&#9888;</div></div><div class="stat-value">4 items</div><div class="stat-label">Low Stock Alerts</div></div>
+    <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--green-bg);color:var(--green);">&#128200;</div></div><div class="stat-value">63.1%</div><div class="stat-label">Gross Margin</div></div>
+  </div>
+  <div class="card">
+    <div class="card-header"><h3>Stock Items — Live Valuation</h3><div class="topbar-btn" style="font-size:11px;">FIFO Mode</div></div>
+    <div class="card-body"><div class="table-wrap">
+      <table>
+        <thead><tr><th>Item</th><th>Category</th><th>In Stock</th><th>Unit Cost</th><th>Total Value</th><th>COGS/Month</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600;">Chicken (kg)</td><td><span class="badge badge-orange">Protein</span></td><td>48 kg</td><td>Rs. 850</td><td style="font-weight:700;">Rs. 40,800</td><td style="color:var(--text2);">Rs. 12,400</td><td><span class="badge badge-green">OK</span></td></tr>
+          <tr><td style="font-weight:600;">Rice (kg)</td><td><span class="badge badge-yellow">Staple</span></td><td>120 kg</td><td>Rs. 180</td><td style="font-weight:700;">Rs. 21,600</td><td style="color:var(--text2);">Rs. 8,200</td><td><span class="badge badge-green">OK</span></td></tr>
+          <tr><td style="font-weight:600;">Tea (kg)</td><td><span class="badge badge-teal">Beverages</span></td><td>3 kg</td><td>Rs. 2,200</td><td style="font-weight:700;">Rs. 6,600</td><td style="color:var(--text2);">Rs. 3,800</td><td><span class="badge badge-orange">Low &#9888;</span></td></tr>
+          <tr><td style="font-weight:600;">Cooking Oil (L)</td><td><span class="badge badge-blue">Kitchen</span></td><td>28 L</td><td>Rs. 420</td><td style="font-weight:700;">Rs. 11,760</td><td style="color:var(--text2);">Rs. 5,600</td><td><span class="badge badge-green">OK</span></td></tr>
+          <tr><td style="font-weight:600;">Gas Cylinders</td><td><span class="badge badge-red">Fuel</span></td><td>1 unit</td><td>Rs. 1,500</td><td style="font-weight:700;">Rs. 1,500</td><td style="color:var(--text2);">Rs. 4,500</td><td><span class="badge badge-red">Critical &#9888;</span></td></tr>
+        </tbody>
+      </table>
+    </div></div>
+  </div>
+</div>
+</div>
+
+<!-- ===== REPORTS ===== -->
+<div class="page" id="page-reports">
+<div class="topbar"><h2>Reports</h2><div class="topbar-right"><div class="topbar-btn">&#128197; Jun 2026</div><div class="topbar-btn primary">&#128424; Export PDF</div></div></div>
+<div class="content">
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--green-bg);color:var(--green);">&#128176;</div><div class="stat-trend stat-up">&#9650; 14%</div></div><div class="stat-value">Rs. 847,200</div><div class="stat-label">Monthly Revenue</div></div>
+    <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--primary-bg);color:var(--primary-light);">&#128200;</div><div class="stat-trend stat-up">&#9650; 23%</div></div><div class="stat-value">63.1%</div><div class="stat-label">Profit Margin</div></div>
+    <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--blue-bg);color:var(--blue);">&#128196;</div></div><div class="stat-value">1,132</div><div class="stat-label">Total Bills</div></div>
+    <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--teal-bg);color:var(--teal);">&#127775;</div></div><div class="stat-value">Rs. 748</div><div class="stat-label">Avg Transaction</div></div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><h3>Profit &amp; Loss Summary</h3><div class="badge badge-green">Jun 2026</div></div>
+      <div class="card-body">
+        <div class="top-item"><div class="top-item-info"><div style="font-size:13px;">Total Revenue</div></div><div style="font-weight:700;color:var(--green);">Rs. 847,200</div></div>
+        <div class="top-item"><div class="top-item-info"><div style="font-size:13px;">Cost of Goods Sold</div></div><div style="font-weight:700;color:var(--red);">Rs. 142,800</div></div>
+        <div class="top-item"><div class="top-item-info"><div style="font-size:13px;font-weight:700;">Gross Profit</div></div><div style="font-weight:800;color:var(--green);">Rs. 704,400</div></div>
+        <div class="top-item"><div class="top-item-info"><div style="font-size:13px;">Operating Expenses</div></div><div style="font-weight:700;color:var(--red);">Rs. 169,700</div></div>
+        <div class="top-item" style="padding-top:12px;border-top:1px solid var(--border);"><div class="top-item-info"><div style="font-size:14px;font-weight:800;">Net Profit</div></div><div style="font-size:18px;font-weight:800;color:var(--green);">Rs. 534,700</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h3>Branch Performance</h3><div class="badge badge-blue">Multi-Branch</div></div>
+      <div class="card-body">
+        <div class="top-item"><div class="top-item-info"><div class="top-item-rank">1</div><div><div class="top-item-name">Colombo Main</div><div class="top-item-sub">Primary branch</div></div></div><div style="text-align:right;"><div style="font-weight:700;color:var(--green);">Rs. 612,400</div><div style="font-size:11px;color:var(--text3);">72% of total</div></div></div>
+        <div class="top-item"><div class="top-item-info"><div class="top-item-rank">2</div><div><div class="top-item-name">Galle Rd Outlet</div><div class="top-item-sub">Secondary branch</div></div></div><div style="text-align:right;"><div style="font-weight:700;color:var(--green);">Rs. 234,800</div><div style="font-size:11px;color:var(--text3);">28% of total</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ===== TAX ===== -->
+<div class="page" id="page-tax">
+<div class="topbar"><h2>Tax &amp; Compliance</h2><div class="topbar-right"><div class="topbar-btn primary">&#128424; Generate Filing Report</div></div></div>
+<div class="content">
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--green-bg);color:var(--green);">&#128200;</div></div><div class="stat-value">0%</div><div class="stat-label">VAT Rate</div></div>
+    <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--orange-bg);color:var(--orange);">&#128197;</div></div><div class="stat-value">Jul 31</div><div class="stat-label">Next Filing Deadline</div></div>
+    <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--blue-bg);color:var(--blue);">&#128221;</div></div><div class="stat-value">100%</div><div class="stat-label">Audit Readiness</div></div>
+    <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--primary-bg);color:var(--primary-light);">&#128202;</div></div><div class="stat-value">Rs. 28,400</div><div class="stat-label">Est. Tax Liability Q2</div></div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><h3>Compliance Checklist</h3><div class="badge badge-green">Jun 2026</div></div>
+      <div class="card-body">
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div style="display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--green-bg);border-radius:var(--radius-sm);border:1px solid rgba(34,197,94,0.15);">
+            <span style="color:var(--green);font-size:18px;">&#9989;</span><div style="font-size:13px;font-weight:600;">Monthly VAT return filed</div><div style="margin-left:auto;font-size:11px;color:var(--green);">Jun 15</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--green-bg);border-radius:var(--radius-sm);border:1px solid rgba(34,197,94,0.15);">
+            <span style="color:var(--green);font-size:18px;">&#9989;</span><div style="font-size:13px;font-weight:600;">Payroll taxes remitted</div><div style="margin-left:auto;font-size:11px;color:var(--green);">Jun 20</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--orange-bg);border-radius:var(--radius-sm);border:1px solid rgba(249,115,22,0.15);">
+            <span style="color:var(--orange);font-size:18px;">&#9203;</span><div style="font-size:13px;font-weight:600;">Q2 income tax estimate due</div><div style="margin-left:auto;font-size:11px;color:var(--orange);">Jul 31</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--blue-bg);border-radius:var(--radius-sm);border:1px solid rgba(59,130,246,0.15);">
+            <span style="color:var(--blue);font-size:18px;">&#128220;</span><div style="font-size:13px;font-weight:600;">Annual audit preparation</div><div style="margin-left:auto;font-size:11px;color:var(--blue);">Dec 2026</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h3>Immutable Audit Log</h3><div class="badge badge-teal">&#128274; Secured</div></div>
+      <div class="card-body"><div class="table-wrap">
+        <table>
+          <thead><tr><th>Action</th><th>User</th><th>Time</th></tr></thead>
+          <tbody>
+            <tr><td>Invoice #INV-0130 created</td><td style="color:var(--text2);">Owner</td><td style="color:var(--text3);font-size:11px;">Jun 20, 09:14</td></tr>
+            <tr><td>Expense Rs. 28,500 posted</td><td style="color:var(--text2);">Cashier A</td><td style="color:var(--text3);font-size:11px;">Jun 22, 14:22</td></tr>
+            <tr><td>Journal entry approved</td><td style="color:var(--text2);">Owner</td><td style="color:var(--text3);font-size:11px;">Jun 22, 14:30</td></tr>
+            <tr><td>Discount override (5%)</td><td style="color:var(--orange);">Cashier B</td><td style="color:var(--text3);font-size:11px;">Jun 22, 11:05</td></tr>
+          </tbody>
+        </table>
+      </div></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ===== INSIGHTS ===== -->
+<div class="page" id="page-insights">
+<div class="topbar"><h2>&#127775; Business Insights</h2><div class="topbar-right"><div class="topbar-btn primary">&#128196; Investor Report</div></div></div>
+<div class="content">
+  <div class="card" style="margin-bottom:16px;">
+    <div class="card-header"><h3>&#127942; Achievement Badges</h3><span style="font-size:12px;color:var(--text3);">Gamified Performance Tracking</span></div>
+    <div class="card-body">
+      <div class="badges-grid">
+        <div class="badge-earned"><div class="badge-icon">&#128176;</div><div><div class="badge-title">Revenue Milestone</div><div class="badge-desc">Crossed Rs. 800K monthly revenue</div></div><div class="badge-date">Jun '26</div></div>
+        <div class="badge-earned"><div class="badge-icon">&#127881;</div><div><div class="badge-title">Zero Overdue Supplier</div><div class="badge-desc">All suppliers paid on time for 3 months</div></div><div class="badge-date">May '26</div></div>
+        <div class="badge-earned"><div class="badge-icon">&#128200;</div><div><div class="badge-title">Profit Streak</div><div class="badge-desc">6 consecutive profitable months</div></div><div class="badge-date">Active</div></div>
+        <div class="badge-earned"><div class="badge-icon">&#9989;</div><div><div class="badge-title">Audit Ready</div><div class="badge-desc">100% reconciled ledger maintained</div></div><div class="badge-date">Active</div></div>
+        <div class="badge-earned" style="opacity:0.4;"><div class="badge-icon">&#127891;</div><div><div class="badge-title">Tax Champion</div><div class="badge-desc">File taxes 30 days before deadline</div></div><div class="badge-date" style="color:var(--text3);">Locked</div></div>
+        <div class="badge-earned" style="opacity:0.4;"><div class="badge-icon">&#127775;</div><div><div class="badge-title">Top 10% Hospitality</div><div class="badge-desc">Industry benchmark performance</div></div><div class="badge-date" style="color:var(--text3);">Locked</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><h3>&#128302; AI Business Forecast</h3><div class="badge badge-purple">Predictive</div></div>
+      <div class="card-body">
+        <div class="top-item"><div class="top-item-info"><div style="font-size:13px;">Predicted Jul Revenue</div></div><div style="font-weight:700;color:var(--green);">Rs. 920,000</div></div>
+        <div class="top-item"><div class="top-item-info"><div style="font-size:13px;">Predicted Jul Expenses</div></div><div style="font-weight:700;color:var(--red);">Rs. 340,000</div></div>
+        <div class="top-item"><div class="top-item-info"><div style="font-size:13px;font-weight:700;">Predicted Net Profit</div></div><div style="font-weight:800;color:var(--green);">Rs. 580,000</div></div>
+        <div style="margin-top:14px;padding:12px;border-radius:var(--radius-sm);background:var(--primary-bg);border:1px solid rgba(99,102,241,0.15);">
+          <div style="font-size:11.5px;color:var(--primary-light);line-height:1.6;">&#129302; <strong>AI Insight:</strong> July is projected to be your strongest month — school holidays drive 18% higher covers historically. Consider pre-ordering 25% more inventory by June 28.</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h3>&#128202; Expense Optimization</h3><div class="badge badge-teal">AI Recommended</div></div>
+      <div class="card-body">
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div class="anomaly-item" style="padding:10px 0;">
+            <div class="anomaly-dot" style="background:var(--green);"></div>
+            <div class="anomaly-text"><strong>Switch gas supplier</strong> — Lanka Gas saves Rs. 800/cylinder vs current vendor. Monthly saving: Rs. 3,200.</div>
+          </div>
+          <div class="anomaly-item" style="padding:10px 0;">
+            <div class="anomaly-dot" style="background:var(--blue);"></div>
+            <div class="anomaly-text"><strong>Batch purchasing opportunity</strong> — Rice &amp; flour prices lower by 12% if ordered monthly vs weekly.</div>
+          </div>
+          <div class="anomaly-item" style="padding:10px 0;">
+            <div class="anomaly-dot" style="background:var(--primary-light);"></div>
+            <div class="anomaly-text"><strong>Electricity peak hours</strong> — Shifting kitchen prep 1hr earlier saves est. Rs. 4,200/month in CEB peak charges.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ===== SETTINGS ===== -->
+<div class="page" id="page-settings">
+<div class="topbar"><h2>Settings</h2><div class="topbar-right"><div class="topbar-btn primary">Save Changes</div></div></div>
+<div class="content">
+  <div class="settings-group">
+    <h4>&#127978; Business Information</h4>
+    <div class="setting-row"><div class="setting-label">Business Name<span>Displayed on invoices and reports</span></div><div class="setting-value">Lakeside Grand Hotel</div></div>
+    <div class="setting-row"><div class="setting-label">Tax Registration No.<span>For compliance filings</span></div><div class="setting-value">VAT-134-8821-LK</div></div>
+    <div class="setting-row"><div class="setting-label">Financial Year Start<span>Accounting period</span></div><div class="setting-value">January 1</div></div>
+    <div class="setting-row"><div class="setting-label">Base Currency<span>All transactions</span></div><div class="setting-value">LKR (Rs.)</div></div>
+  </div>
+  <div class="settings-group">
+    <h4>&#128202; Tax Configuration</h4>
+    <div class="setting-row"><div class="setting-label">VAT Rate<span>Applied to taxable invoices</span></div><div class="setting-value">0%</div></div>
+    <div class="setting-row"><div class="setting-label">Service Charge<span>Auto-applied to dining bills</span></div><div class="setting-value">0%</div></div>
+    <div class="setting-row"><div class="setting-label">Auto Tax Filing Reminder<span>30 days before deadline</span></div><div class="toggle-sm on" onclick="this.classList.toggle('on')"></div></div>
+  </div>
+  <div class="settings-group">
+    <h4>&#129302; AI Features</h4>
+    <div class="setting-row"><div class="setting-label">AI Assistant<span>Natural language financial queries</span></div><div class="toggle-sm on" onclick="this.classList.toggle('on')"></div></div>
+    <div class="setting-row"><div class="setting-label">Anomaly Detection<span>Flag unusual expenses automatically</span></div><div class="toggle-sm on" onclick="this.classList.toggle('on')"></div></div>
+    <div class="setting-row"><div class="setting-label">Cash Flow Forecast<span>AI-predicted weekly forecasts</span></div><div class="toggle-sm on" onclick="this.classList.toggle('on')"></div></div>
+    <div class="setting-row"><div class="setting-label">Auto Journal Suggestions<span>Learn from transaction patterns</span></div><div class="toggle-sm" onclick="this.classList.toggle('on')"></div></div>
+  </div>
+  <div class="settings-group">
+    <h4>&#128279; Integrations</h4>
+    <div class="setting-row"><div class="setting-label">POS Integration<span>HotelPOS — sync sales automatically</span></div><div class="badge badge-green">Connected</div></div>
+    <div class="setting-row"><div class="setting-label">Bank Sync<span>Auto-reconcile transactions</span></div><div class="badge badge-orange">Pending Setup</div></div>
+    <div class="setting-row"><div class="setting-label">WhatsApp Reminders<span>Send invoice reminders via WhatsApp</span></div><div class="toggle-sm on" onclick="this.classList.toggle('on')"></div></div>
+  </div>
+</div>
+</div>
+
+</div><!-- end .main -->
+
+<!-- MODALS -->
+<div class="modal-overlay" id="invoiceModal">
+  <div class="modal-box">
+    <div class="modal-header"><h3>&#128196; New Invoice</h3><button class="modal-close" onclick="closeModal('invoiceModal')">&#10005;</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Customer</label><select class="form-select"><option>Colombo Events Co.</option><option>Sri Lanka Tourism Board</option><option>Galle Face Hotel Group</option><option>MAS Holdings</option></select></div>
+      <div class="form-group"><label class="form-label">Invoice Date</label><input type="date" class="form-input" value="2026-06-22"></div>
+      <div class="form-group"><label class="form-label">Due Date</label><input type="date" class="form-input" value="2026-07-05"></div>
+      <div class="form-group"><label class="form-label">Description</label><input type="text" class="form-input" placeholder="e.g. Catering services — Jun 2026"></div>
+      <div class="form-group"><label class="form-label">Amount (Rs.)</label><input type="number" class="form-input" placeholder="0.00"></div>
+    </div>
+    <div class="modal-footer"><button class="topbar-btn" onclick="closeModal('invoiceModal')">Cancel</button><button class="topbar-btn primary">&#128196; Create Invoice</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="expenseModal">
+  <div class="modal-box">
+    <div class="modal-header"><h3>&#128181; Add Expense</h3><button class="modal-close" onclick="closeModal('expenseModal')">&#10005;</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Description</label><input type="text" class="form-input" placeholder="e.g. Electricity bill June"></div>
+      <div class="form-group"><label class="form-label">Category</label><select class="form-select"><option>Kitchen</option><option>Utilities</option><option>Payroll</option><option>Maintenance</option><option>Suppliers</option><option>Other</option></select></div>
+      <div class="form-group"><label class="form-label">Amount (Rs.)</label><input type="number" class="form-input" placeholder="0.00"></div>
+      <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" value="2026-06-22"></div>
+      <div class="form-group"><label class="form-label">Receipt (optional)</label><input type="text" class="form-input" placeholder="Drag receipt image or upload..."></div>
+    </div>
+    <div class="modal-footer"><button class="topbar-btn" onclick="closeModal('expenseModal')">Cancel</button><button class="topbar-btn primary">&#128190; Save Expense</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="journalModal">
+  <div class="modal-box">
+    <div class="modal-header"><h3>&#128221; New Journal Entry</h3><button class="modal-close" onclick="closeModal('journalModal')">&#10005;</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" value="2026-06-22"></div>
+      <div class="form-group"><label class="form-label">Description / Narration</label><input type="text" class="form-input" placeholder="e.g. Depreciation adjustment — Jun 2026"></div>
+      <div class="form-group"><label class="form-label">Debit Account</label><select class="form-select"><option>Cash</option><option>Accounts Receivable</option><option>Inventory</option><option>Expenses</option><option>Assets</option></select></div>
+      <div class="form-group"><label class="form-label">Credit Account</label><select class="form-select"><option>Revenue</option><option>Accounts Payable</option><option>Equity</option><option>Liabilities</option></select></div>
+      <div class="form-group"><label class="form-label">Amount (Rs.)</label><input type="number" class="form-input" placeholder="0.00"></div>
+    </div>
+    <div class="modal-footer"><button class="topbar-btn" onclick="closeModal('journalModal')">Cancel</button><button class="topbar-btn primary">&#128190; Post Entry</button></div>
+  </div>
+</div>
+
+<div class="whitelabel">alfaasolutions.lk</div>
+
+<script>
+function showPage(page, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  if (el) el.classList.add('active');
+}
+
+function toggleTheme() {
+  document.body.classList.toggle('light');
+  localStorage.setItem('alfaabooks-theme', document.body.classList.contains('light') ? 'light' : 'dark');
+}
+if (localStorage.getItem('alfaabooks-theme') === 'light') document.body.classList.add('light');
+
+function showModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('show'); });
+});
+
+const aiResponses = {
+  'Why did profit drop last week?': 'Last week\'s profit was <strong>Rs. 28,400</strong> vs the prior week\'s Rs. 41,200 — a 31% drop. Main factors: (1) Monday was a public holiday — 40% fewer covers. (2) The electricity anomaly (Rs. 28,500 — 3× normal) hit this week. Without the electricity spike, the drop would have been only 9%.',
+  'Show tax estimate for this quarter': 'Q2 2026 tax estimate: Based on net profit of <strong>Rs. 1.42M</strong> for Apr–Jun, your estimated income tax liability is approximately <strong>Rs. 28,400</strong> (2% effective rate under current hotel sector concessions). Filing deadline: July 31, 2026.',
+  'Any unusual expenses this month?': 'I found <strong>3 anomalies</strong> this month: (1) Electricity Rs. 28,500 — 340% above average. (2) New supplier payment Rs. 45,000 with no matching purchase order. (3) Kitchen supplies +18% week-on-week. Total anomalous spend: Rs. 73,500.',
+  'Forecast next month revenue': 'July 2026 forecast: <strong>Rs. 920,000</strong> (±8% confidence interval). This is 8.6% above June. School holidays historically boost your restaurant covers by 18–22%. Recommend increasing kitchen staff hours and stocking up on chicken and beverage inventory by June 28.',
+  'Which items have highest margins?': 'Top margin items: (1) <strong>Plain Tea</strong> — 94% margin (cost Rs. 3, sell Rs. 50). (2) <strong>Iced Coffee</strong> — 82% margin. (3) <strong>Watalappan</strong> — 78% margin. Lowest: Rice & Curry at 48% due to high ingredient cost. Push drinks and desserts to improve overall margin.'
+};
+
+function askAI(btn) {
+  const question = btn.textContent;
+  addMessage(question, 'user');
+  setTimeout(() => {
+    const answer = aiResponses[question] || 'Let me analyze that for you... Based on your current data, I can see some interesting patterns. Please check the relevant section for more details.';
+    addMessage(answer, 'bot');
+  }, 600);
+}
+
+function sendAI() {
+  const input = document.getElementById('aiInput');
+  const val = input.value.trim();
+  if (!val) return;
+  addMessage(val, 'user');
+  input.value = '';
+  setTimeout(() => {
+    addMessage('I\'ve analyzed your financial records. Based on your current data, revenue is trending positively at +14.2% month-over-month. Your biggest opportunity is improving AR collection from MAS Holdings (overdue 22 days — Rs. 38,200). Would you like me to draft a payment reminder?', 'bot');
+  }, 700);
+}
+
+function addMessage(text, type) {
+  const container = document.getElementById('aiMessages');
+  const div = document.createElement('div');
+  div.className = `ai-msg ${type}`;
+  if (type === 'bot') div.innerHTML = `<div class="sender">&#9889; Alfaa AI</div>${text}`;
+  else div.innerHTML = text;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+}
+</script>
+</body>
+</html>
