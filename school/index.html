@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>Eduvance - School Management System</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+:root{
+  --bg:#0d0e14;--bg2:#13141d;--bg3:#191b27;--card:#15161f;--border:#262838;
+  --text:#e9e9f2;--text2:#8d8fa3;--text3:#4d4f63;
+  --primary:#8b5cf6;--primary-light:#a78bfa;--primary-bg:rgba(139,92,246,0.12);
+  --amber:#f59e0b;--amber-bg:rgba(245,158,11,0.12);
+  --green:#22c55e;--green-bg:rgba(34,197,94,0.12);
+  --red:#f43f5e;--red-bg:rgba(244,63,94,0.12);
+  --blue:#3b82f6;--blue-bg:rgba(59,130,246,0.12);
+  --teal:#14b8a6;--teal-bg:rgba(20,184,166,0.12);
+  --pink:#ec4899;--pink-bg:rgba(236,72,153,0.12);
+  --sidebar-w:264px;--radius:14px;--radius-sm:10px;
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);}
+.mono{font-family:'JetBrains Mono',monospace;}
+.layout{display:flex;align-items:flex-start;min-height:100vh;}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar-w);flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;background:var(--bg2);border-right:1px solid var(--border);}
+.sidebar::-webkit-scrollbar{width:6px;}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.sidebar-brand{padding:22px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg2);z-index:5;}
+.brand-icon{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--primary),var(--pink));display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.brand-name{font-size:17px;font-weight:800;letter-spacing:-0.3px;}
+.brand-name span{color:var(--primary-light);}
+.brand-sub{font-size:10px;color:var(--text3);letter-spacing:0.5px;margin-top:1px;}
+.sidebar-nav{padding:10px 10px 30px;}
+.nav-section{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:1.3px;padding:14px 10px 6px;text-transform:uppercase;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:8px 11px;border-radius:var(--radius-sm);cursor:pointer;font-size:12.5px;font-weight:500;color:var(--text2);transition:all .15s;text-decoration:none;margin-bottom:1px;}
+.nav-item:hover{background:rgba(255,255,255,0.04);color:var(--text);}
+.nav-item.active{background:var(--primary-bg);color:var(--primary-light);font-weight:600;}
+.nav-item .dot{width:5px;height:5px;border-radius:50%;background:var(--text3);flex-shrink:0;}
+.nav-item.active .dot{background:var(--primary-light);}
+
+/* MAIN */
+.main{flex:1;min-width:0;}
+.topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;padding:14px 32px;border-bottom:1px solid var(--border);background:rgba(13,14,20,0.85);backdrop-filter:blur(10px);}
+.topbar h2{font-size:16px;font-weight:700;color:var(--text2);}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.btn{padding:8px 15px;border-radius:var(--radius-sm);border:1px solid var(--border);background:transparent;color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;font-family:inherit;}
+.btn:hover{border-color:var(--primary);color:var(--primary-light);}
+.btn.primary{background:var(--primary);border-color:var(--primary);color:#fff;}
+.btn.primary:hover{background:var(--primary-light);}
+
+.hero{padding:56px 32px 40px;background:radial-gradient(ellipse at top left,rgba(139,92,246,0.15),transparent 60%),radial-gradient(ellipse at top right,rgba(236,72,153,0.1),transparent 55%);border-bottom:1px solid var(--border);}
+.hero-eyebrow{font-size:11px;font-weight:700;color:var(--primary-light);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;}
+.hero h1{font-size:36px;font-weight:800;letter-spacing:-1px;margin-bottom:12px;}
+.hero p{font-size:14.5px;color:var(--text2);max-width:640px;line-height:1.6;margin-bottom:22px;}
+.hero-stats{display:flex;gap:28px;flex-wrap:wrap;}
+.hero-stat{}
+.hero-stat b{display:block;font-size:24px;font-weight:800;color:var(--text);}
+.hero-stat span{font-size:11.5px;color:var(--text3);}
+
+.section{padding:40px 32px;border-bottom:1px solid var(--border);scroll-margin-top:64px;}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:10px;}
+.section-head .num{font-size:11px;color:var(--text3);font-weight:700;letter-spacing:1px;margin-bottom:4px;}
+.section-head h2{font-size:22px;font-weight:800;letter-spacing:-0.4px;display:flex;align-items:center;gap:10px;}
+.section-head p{font-size:13px;color:var(--text2);margin-top:4px;max-width:620px;}
+
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:20px;}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;}
+.stat-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.stat-icon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;}
+.stat-value{font-size:22px;font-weight:800;letter-spacing:-0.5px;margin-bottom:2px;}
+.stat-label{font-size:11px;color:var(--text2);}
+.stat-trend{font-size:10.5px;font-weight:700;padding:3px 7px;border-radius:20px;}
+.stat-up{color:var(--green);background:var(--green-bg);}
+.stat-down{color:var(--red);background:var(--red-bg);}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+@media (max-width:900px){.grid-2,.grid-3{grid-template-columns:1fr;}}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.card-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);}
+.card-header h3{font-size:13.5px;font-weight:700;}
+.card-body{padding:16px;}
+
+.badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:10.5px;font-weight:600;}
+.badge-green{color:var(--green);background:var(--green-bg);}
+.badge-red{color:var(--red);background:var(--red-bg);}
+.badge-orange{color:var(--amber);background:var(--amber-bg);}
+.badge-blue{color:var(--blue);background:var(--blue-bg);}
+.badge-purple{color:var(--primary-light);background:var(--primary-bg);}
+.badge-teal{color:var(--teal);background:var(--teal-bg);}
+.badge-pink{color:var(--pink);background:var(--pink-bg);}
+
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;}
+th{text-align:left;padding:9px 12px;font-size:10.5px;font-weight:700;color:var(--text3);letter-spacing:0.5px;text-transform:uppercase;border-bottom:1px solid var(--border);white-space:nowrap;}
+td{padding:9px 12px;font-size:12.5px;border-bottom:1px solid rgba(255,255,255,0.03);white-space:nowrap;}
+tr:hover td{background:rgba(255,255,255,0.02);}
+
+.feature-list{list-style:none;display:flex;flex-direction:column;gap:8px;}
+.feature-list li{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--text2);}
+.feature-list li::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--primary-light);flex-shrink:0;}
+
+.tag-row{display:flex;flex-wrap:wrap;gap:7px;}
+.tag{padding:5px 11px;border-radius:20px;background:var(--bg3);border:1px solid var(--border);font-size:11px;color:var(--text2);font-weight:500;}
+
+.role-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;}
+.role-card h4{font-size:13px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+.roles-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;}
+
+.receipt-preview{background:var(--bg3);border:1px dashed var(--border);border-radius:var(--radius-sm);padding:16px;font-size:11.5px;font-family:'JetBrains Mono',monospace;line-height:1.7;color:var(--text2);}
+.receipt-preview .r-title{color:var(--text);font-weight:700;font-size:13px;margin-bottom:6px;}
+.receipt-preview hr{border:none;border-top:1px dashed var(--border);margin:8px 0;}
+
+.progress-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:6px;}
+.progress-fill{height:100%;border-radius:3px;}
+
+.timeline{display:flex;flex-direction:column;}
+.timeline-item{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.03);}
+.timeline-dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0;}
+.timeline-text{font-size:12.5px;color:var(--text2);}
+.timeline-text b{color:var(--text);}
+.timeline-time{margin-left:auto;font-size:10.5px;color:var(--text3);white-space:nowrap;}
+
+/* AI WIDGET */
+.ai-fab{position:fixed;bottom:26px;right:26px;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--pink));display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;box-shadow:0 8px 24px rgba(139,92,246,0.4);z-index:200;border:none;}
+.ai-panel{position:fixed;bottom:96px;right:26px;width:360px;height:480px;background:var(--bg2);border:1px solid var(--border);border-radius:16px;display:none;flex-direction:column;overflow:hidden;z-index:200;box-shadow:0 20px 60px rgba(0,0,0,0.5);}
+.ai-panel.show{display:flex;}
+.ai-panel-head{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg3);}
+.ai-panel-head h4{font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px;}
+.ai-panel-close{background:none;border:none;color:var(--text2);font-size:18px;cursor:pointer;}
+.ai-messages{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px;}
+.ai-msg{max-width:85%;padding:10px 13px;border-radius:12px;font-size:12.5px;line-height:1.55;}
+.ai-msg.bot{background:var(--card);border:1px solid var(--border);border-bottom-left-radius:3px;}
+.ai-msg.user{background:var(--primary-bg);border:1px solid rgba(139,92,246,0.25);border-bottom-right-radius:3px;align-self:flex-end;}
+.ai-quick{display:flex;flex-wrap:wrap;gap:6px;padding:0 14px 10px;}
+.ai-qbtn{padding:5px 10px;border-radius:16px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:10.5px;cursor:pointer;font-family:inherit;}
+.ai-qbtn:hover{border-color:var(--primary);color:var(--primary-light);}
+.ai-input-row{display:flex;gap:8px;padding:12px;border-top:1px solid var(--border);}
+.ai-input{flex:1;padding:9px 12px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:12px;font-family:inherit;outline:none;}
+.ai-input:focus{border-color:var(--primary);}
+.ai-send{padding:9px 14px;border-radius:10px;border:none;background:var(--primary);color:#fff;font-size:12px;font-weight:700;cursor:pointer;}
+
+.footer{padding:30px 32px;text-align:center;color:var(--text3);font-size:11.5px;}
+
+.icon-title{display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:10px;font-size:15px;flex-shrink:0;}
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-icon">&#127891;</div>
+    <div>
+      <div class="brand-name">Edu<span>vance</span></div>
+      <div class="brand-sub">SCHOOL MANAGEMENT SYSTEM</div>
+    </div>
+  </div>
+  <div class="sidebar-nav" id="navList">
+    <div class="nav-section">Overview</div>
+    <div class="nav-item" data-target="dashboard" onclick="goTo('dashboard')"><span class="dot"></span>Dashboard</div>
+    <div class="nav-item" data-target="roles" onclick="goTo('roles')"><span class="dot"></span>User Roles</div>
+    <div class="nav-item" data-target="ai" onclick="goTo('ai')"><span class="dot"></span>AI Assistant</div>
+
+    <div class="nav-section">People</div>
+    <div class="nav-item" data-target="students" onclick="goTo('students')"><span class="dot"></span>Student Management</div>
+    <div class="nav-item" data-target="teachers" onclick="goTo('teachers')"><span class="dot"></span>Teacher Management</div>
+    <div class="nav-item" data-target="staff" onclick="goTo('staff')"><span class="dot"></span>Staff Management</div>
+    <div class="nav-item" data-target="attendance" onclick="goTo('attendance')"><span class="dot"></span>Attendance</div>
+
+    <div class="nav-section">Academics</div>
+    <div class="nav-item" data-target="classes" onclick="goTo('classes')"><span class="dot"></span>Class & Subjects</div>
+    <div class="nav-item" data-target="timetable" onclick="goTo('timetable')"><span class="dot"></span>Timetable</div>
+    <div class="nav-item" data-target="exams" onclick="goTo('exams')"><span class="dot"></span>Examinations & Marks</div>
+    <div class="nav-item" data-target="reportcards" onclick="goTo('reportcards')"><span class="dot"></span>Report Cards</div>
+
+    <div class="nav-section">Finance</div>
+    <div class="nav-item" data-target="fees" onclick="goTo('fees')"><span class="dot"></span>Fee Management</div>
+    <div class="nav-item" data-target="receipts" onclick="goTo('receipts')"><span class="dot"></span>Receipt Printing</div>
+    <div class="nav-item" data-target="payroll" onclick="goTo('payroll')"><span class="dot"></span>Salary & Payroll</div>
+    <div class="nav-item" data-target="accounting" onclick="goTo('accounting')"><span class="dot"></span>Accounting</div>
+    <div class="nav-item" data-target="expenses" onclick="goTo('expenses')"><span class="dot"></span>Expense Management</div>
+
+    <div class="nav-section">Facilities</div>
+    <div class="nav-item" data-target="library" onclick="goTo('library')"><span class="dot"></span>Library</div>
+    <div class="nav-item" data-target="hostel" onclick="goTo('hostel')"><span class="dot"></span>Hostel</div>
+    <div class="nav-item" data-target="transport" onclick="goTo('transport')"><span class="dot"></span>Transport</div>
+    <div class="nav-item" data-target="inventory" onclick="goTo('inventory')"><span class="dot"></span>Inventory</div>
+
+    <div class="nav-section">Engagement</div>
+    <div class="nav-item" data-target="leave" onclick="goTo('leave')"><span class="dot"></span>Leave Management</div>
+    <div class="nav-item" data-target="communication" onclick="goTo('communication')"><span class="dot"></span>Communication</div>
+    <div class="nav-item" data-target="parent-portal" onclick="goTo('parent-portal')"><span class="dot"></span>Parent Portal</div>
+    <div class="nav-item" data-target="student-portal" onclick="goTo('student-portal')"><span class="dot"></span>Student Portal</div>
+
+    <div class="nav-section">System</div>
+    <div class="nav-item" data-target="reports" onclick="goTo('reports')"><span class="dot"></span>Reports</div>
+    <div class="nav-item" data-target="documents" onclick="goTo('documents')"><span class="dot"></span>Document Generation</div>
+    <div class="nav-item" data-target="notifications" onclick="goTo('notifications')"><span class="dot"></span>Notification System</div>
+    <div class="nav-item" data-target="audit" onclick="goTo('audit')"><span class="dot"></span>Audit Logs</div>
+    <div class="nav-item" data-target="security" onclick="goTo('security')"><span class="dot"></span>Backup & Security</div>
+    <div class="nav-item" data-target="branches" onclick="goTo('branches')"><span class="dot"></span>Multi-Branch</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <h2 id="topbarLabel">Overview</h2>
+    <div class="topbar-right">
+      <div class="btn">&#128197; Term 2, 2026</div>
+      <div class="btn primary" onclick="document.getElementById('ai').scrollIntoView()">&#9889; Ask AI</div>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero" id="dashboard">
+    <div class="hero-eyebrow">Complete School Digital Solution</div>
+    <h1>One system for admissions, academics, fees & operations.</h1>
+    <p>Eduvance automates admissions, attendance, examinations, payroll, fee collection, library, hostel, transport, inventory, accounting, and communication &mdash; with role-based access for every person in the school community.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><b>2,480</b><span>Total Students</span></div>
+      <div class="hero-stat"><b>2,312</b><span>Active Students</span></div>
+      <div class="hero-stat"><b>142</b><span>Teachers</span></div>
+      <div class="hero-stat"><b>68</b><span>Staff</span></div>
+      <div class="hero-stat"><b>Rs. 1.84M</b><span>Today's Collection</span></div>
+      <div class="hero-stat"><b>Rs. 312,000</b><span>Pending Fees</span></div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="section">
+    <div class="section-head"><div><div class="num">01</div><h2>&#128200; Dashboard Overview</h2><p>Live snapshot of enrollment, finance, academics and operations.</p></div></div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--primary-bg);color:var(--primary-light);">&#127891;</div><span class="stat-trend stat-up">&#9650; 4.2%</span></div><div class="stat-value">2,480</div><div class="stat-label">Total Students</div></div>
+      <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--green-bg);color:var(--green);">&#9989;</div></div><div class="stat-value">2,312</div><div class="stat-label">Active Students</div></div>
+      <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--blue-bg);color:var(--blue);">&#128104;&#8205;&#127979;</div></div><div class="stat-value">142</div><div class="stat-label">Teachers</div></div>
+      <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--teal-bg);color:var(--teal);">&#128188;</div></div><div class="stat-value">68</div><div class="stat-label">Staff</div></div>
+      <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--orange-bg,var(--amber-bg));color:var(--amber);">&#9888;</div></div><div class="stat-value">Rs. 312,000</div><div class="stat-label">Pending Fees</div></div>
+      <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--green-bg);color:var(--green);">&#128176;</div></div><div class="stat-value">Rs. 1.84M</div><div class="stat-label">Today's Collection</div></div>
+      <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--red-bg);color:var(--red);">&#128181;</div></div><div class="stat-value">Rs. 4.2M</div><div class="stat-label">Salary Expenses (Monthly)</div></div>
+      <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--green-bg);color:var(--green);">&#128200;</div></div><div class="stat-value">Rs. 12.6M</div><div class="stat-label">Monthly Income</div></div>
+      <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--red-bg);color:var(--red);">&#128201;</div></div><div class="stat-value">Rs. 8.1M</div><div class="stat-label">Monthly Expenses</div></div>
+      <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--pink-bg);color:var(--pink);">&#128197;</div></div><div class="stat-value">5</div><div class="stat-label">Upcoming Exams</div></div>
+      <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--amber-bg);color:var(--amber);">&#127874;</div></div><div class="stat-value">7</div><div class="stat-label">Birthdays This Week</div></div>
+      <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--blue-bg);color:var(--blue);">&#128101;</div></div><div class="stat-value">94.6%</div><div class="stat-label">Attendance Today</div></div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header"><h3>Recent Payments</h3><span class="badge badge-green">Live</span></div>
+        <div class="card-body">
+          <div class="timeline">
+            <div class="timeline-item"><div class="timeline-dot" style="background:var(--green);"></div><div class="timeline-text"><b>Kavindu Perera</b> paid Term Fee — Rs. 12,000</div><div class="timeline-time">2 min ago</div></div>
+            <div class="timeline-item"><div class="timeline-dot" style="background:var(--green);"></div><div class="timeline-text"><b>Nisha Fernando</b> paid Transport Fee — Rs. 3,500</div><div class="timeline-time">15 min ago</div></div>
+            <div class="timeline-item"><div class="timeline-dot" style="background:var(--amber);"></div><div class="timeline-text"><b>Ashan Silva</b> partial payment — Rs. 5,000 of Rs. 15,000</div><div class="timeline-time">40 min ago</div></div>
+            <div class="timeline-item"><div class="timeline-dot" style="background:var(--green);"></div><div class="timeline-text"><b>Ravindi Jayasuriya</b> paid Hostel Fee — Rs. 22,000</div><div class="timeline-time">1 hr ago</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3>Notifications</h3><span class="badge badge-purple">6 new</span></div>
+        <div class="card-body">
+          <div class="timeline">
+            <div class="timeline-item"><div class="timeline-dot" style="background:var(--red);"></div><div class="timeline-text">42 students have <b>overdue fees</b> exceeding 30 days</div></div>
+            <div class="timeline-item"><div class="timeline-dot" style="background:var(--blue);"></div><div class="timeline-text">Mid-term exam timetable published for Grade 10</div></div>
+            <div class="timeline-item"><div class="timeline-dot" style="background:var(--amber);"></div><div class="timeline-text">Library: 18 books overdue for return</div></div>
+            <div class="timeline-item"><div class="timeline-dot" style="background:var(--teal);"></div><div class="timeline-text">Transport: Route 4 bus reported 12 min delay</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROLES -->
+  <div class="section" id="roles">
+    <div class="section-head"><div><div class="num">02</div><h2>&#128100; User Roles & Permissions</h2><p>Role-based access control across every module.</p></div></div>
+    <div class="roles-grid">
+      <div class="role-card"><h4><span class="icon-title" style="background:var(--primary-bg);color:var(--primary-light);">&#128081;</span>Super Admin</h4><ul class="feature-list"><li>Manage branches & users</li><li>Teachers & staff</li><li>Accounts & fees</li><li>Payroll & reports</li><li>System settings</li></ul></div>
+      <div class="role-card"><h4><span class="icon-title" style="background:var(--blue-bg);color:var(--blue);">&#127970;</span>Principal</h4><ul class="feature-list"><li>Manage school operations</li><li>View all academic data</li><li>Cannot change settings</li></ul></div>
+      <div class="role-card"><h4><span class="icon-title" style="background:var(--green-bg);color:var(--green);">&#128176;</span>Accountant</h4><ul class="feature-list"><li>Fees & receipts</li><li>Expenses & salary</li><li>Accounts</li></ul></div>
+      <div class="role-card"><h4><span class="icon-title" style="background:var(--teal-bg);color:var(--teal);">&#128218;</span>Teacher</h4><ul class="feature-list"><li>Mark attendance</li><li>Enter marks</li><li>Upload assignments</li><li>View students</li></ul></div>
+      <div class="role-card"><h4><span class="icon-title" style="background:var(--pink-bg);color:var(--pink);">&#127891;</span>Class Teacher</h4><ul class="feature-list"><li>Student progress</li><li>Parent communication</li><li>Report generation</li></ul></div>
+      <div class="role-card"><h4><span class="icon-title" style="background:var(--amber-bg);color:var(--amber);">&#128203;</span>Reception</h4><ul class="feature-list"><li>Admissions</li><li>Student registration</li><li>Visitor management</li></ul></div>
+      <div class="role-card"><h4><span class="icon-title" style="background:var(--blue-bg);color:var(--blue);">&#128214;</span>Librarian</h4><ul class="feature-list"><li>Books & categories</li><li>Borrowing & returns</li><li>Fines</li></ul></div>
+      <div class="role-card"><h4><span class="icon-title" style="background:var(--purple-bg,var(--primary-bg));color:var(--primary-light);">&#128104;&#8205;&#128105;&#8205;&#128103;</span>Parent</h4><ul class="feature-list"><li>Attendance & results</li><li>Fees & notices</li><li>Homework</li></ul></div>
+      <div class="role-card"><h4><span class="icon-title" style="background:var(--green-bg);color:var(--green);">&#127891;</span>Student</h4><ul class="feature-list"><li>Attendance & timetable</li><li>Assignments & results</li><li>Fee status</li></ul></div>
+    </div>
+  </div>
+
+  <!-- AI ASSISTANT -->
+  <div class="section" id="ai">
+    <div class="section-head"><div><div class="num">03</div><h2>&#129302; AI Assistant</h2><p>Ask natural-language questions across attendance, fees, exams and operations.</p></div></div>
+    <div class="card">
+      <div class="card-header"><h3>&#9889; Eduvance AI</h3><span class="badge badge-purple">Try it — floating button, bottom right</span></div>
+      <div class="card-body">
+        <div class="ai-msg bot" style="max-width:100%;">Hi! I can answer questions like <i>"which grade has the lowest attendance this week"</i>, <i>"list students with overdue fees over Rs. 10,000"</i>, or <i>"summarize Term 2 exam performance for Grade 9"</i>. Try the chat bubble in the corner.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STUDENT MANAGEMENT -->
+  <div class="section" id="students">
+    <div class="section-head"><div><div class="num">05</div><h2>&#127891; Student Management</h2><p>Admissions, parent/guardian info, academic details, documents, and full student profile.</p></div></div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header"><h3>Admission Capture Fields</h3></div>
+        <div class="card-body">
+          <div class="tag-row">
+            <span class="tag">Admission Number</span><span class="tag">Student ID</span><span class="tag">First/Last Name</span><span class="tag">Photo</span><span class="tag">Gender</span><span class="tag">Date of Birth</span><span class="tag">Blood Group</span><span class="tag">Nationality</span><span class="tag">Religion</span><span class="tag">Address</span><span class="tag">Medical Conditions</span><span class="tag">Previous School</span><span class="tag">Admission Date</span>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3>Parent / Guardian Info</h3></div>
+        <div class="card-body">
+          <div class="tag-row">
+            <span class="tag">Father</span><span class="tag">Mother</span><span class="tag">Guardian</span><span class="tag">NIC</span><span class="tag">Phone</span><span class="tag">Email</span><span class="tag">Occupation</span><span class="tag">Address</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header"><h3>Academic Details</h3></div>
+        <div class="card-body"><div class="tag-row"><span class="tag">Grade</span><span class="tag">Class</span><span class="tag">Stream</span><span class="tag">Section</span><span class="tag">Roll Number</span><span class="tag">House</span></div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3>Student Documents</h3></div>
+        <div class="card-body"><div class="tag-row"><span class="tag">Birth Certificate</span><span class="tag">Student Photo</span><span class="tag">Parent NIC</span><span class="tag">Medical Records</span><span class="tag">Transfer Certificate</span></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h3>Student Profile — Sample Record</h3><span class="badge badge-blue">STU-2026-0348</span></div>
+      <div class="card-body"><div class="table-wrap"><table>
+        <thead><tr><th>Name</th><th>Grade/Class</th><th>Attendance</th><th>Avg. Marks</th><th>Fee Status</th><th>Library</th><th>Transport</th><th>Hostel</th><th>Discipline</th></tr></thead>
+        <tbody><tr><td style="font-weight:600;">Kavindu Perera</td><td>Grade 10 - A</td><td style="color:var(--green);">96%</td><td style="color:var(--green);">78.4%</td><td><span class="badge badge-green">Paid</span></td><td>2 books out</td><td>Route 4</td><td>Not enrolled</td><td><span class="badge badge-green">Clean</span></td></tr></tbody>
+      </table></div></div>
+    </div>
+  </div>
+
+  <!-- TEACHER MANAGEMENT -->
+  <div class="section" id="teachers">
+    <div class="section-head"><div><div class="num">06</div><h2>&#128104;&#8205;&#127979; Teacher Management</h2><p>Employment records, qualifications, salary, and the teacher self-service portal.</p></div></div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header"><h3>Stored Teacher Details</h3></div>
+        <div class="card-body"><div class="tag-row"><span class="tag">Employee Number</span><span class="tag">Photo</span><span class="tag">Name</span><span class="tag">NIC</span><span class="tag">Address</span><span class="tag">Qualification</span><span class="tag">Experience</span><span class="tag">Subjects</span><span class="tag">Salary</span><span class="tag">Joining Date</span><span class="tag">Bank Account</span><span class="tag">EPF/ETF Number</span><span class="tag">Emergency Contact</span></div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3>Teacher Portal Access</h3></div>
+        <div class="card-body"><ul class="feature-list"><li>Take attendance</li><li>Enter marks</li><li>View timetable</li><li>Post homework</li><li>Generate student reports</li></ul></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h3>Teacher Directory</h3><span class="badge badge-blue">142 active</span></div>
+      <div class="card-body"><div class="table-wrap"><table>
+        <thead><tr><th>Emp No.</th><th>Name</th><th>Subject</th><th>Qualification</th><th>Experience</th><th>Salary</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">EMP-0142</td><td style="font-weight:600;">Ms. D. Wickramasinghe</td><td>Mathematics</td><td>BSc (Hons), PGDE</td><td>9 yrs</td><td class="mono">Rs. 95,000</td><td><span class="badge badge-green">Active</span></td></tr>
+          <tr><td class="mono">EMP-0098</td><td style="font-weight:600;">Mr. S. Rajapaksha</td><td>Science</td><td>BSc, PGDE</td><td>6 yrs</td><td class="mono">Rs. 88,000</td><td><span class="badge badge-green">Active</span></td></tr>
+          <tr><td class="mono">EMP-0056</td><td style="font-weight:600;">Mrs. N. Gunawardena</td><td>English</td><td>BA (Hons)</td><td>12 yrs</td><td class="mono">Rs. 102,000</td><td><span class="badge badge-orange">On Leave</span></td></tr>
+        </tbody>
+      </table></div></div>
+    </div>
+  </div>
+
+  <!-- STAFF MANAGEMENT -->
+  <div class="section" id="staff">
+    <div class="section-head"><div><div class="num">07</div><h2>&#128188; Staff Management</h2><p>Office staff, accountants, security, drivers, cleaners, and laboratory staff.</p></div></div>
+    <div class="grid-2">
+      <div class="card"><div class="card-header"><h3>Staff Categories</h3></div><div class="card-body"><div class="tag-row"><span class="tag">Office Staff</span><span class="tag">Accountants</span><span class="tag">Security</span><span class="tag">Drivers</span><span class="tag">Cleaners</span><span class="tag">Laboratory Staff</span></div></div></div>
+      <div class="card"><div class="card-header"><h3>Tracked Data</h3></div><div class="card-body"><ul class="feature-list"><li>Salary</li><li>Position</li><li>Attendance</li><li>Leave</li><li>Payroll</li></ul></div></div>
+    </div>
+  </div>
+
+  <!-- ATTENDANCE -->
+  <div class="section" id="attendance">
+    <div class="section-head"><div><div class="num">08</div><h2>&#9989; Attendance Management</h2><p>Daily attendance for students, teachers, and staff with full reporting.</p></div></div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-value" style="color:var(--green);">94.6%</div><div class="stat-label">Student Attendance Today</div></div>
+      <div class="stat-card"><div class="stat-value" style="color:var(--green);">98.1%</div><div class="stat-label">Teacher Attendance Today</div></div>
+      <div class="stat-card"><div class="stat-value" style="color:var(--amber);">91.4%</div><div class="stat-label">Staff Attendance Today</div></div>
+      <div class="stat-card"><div class="stat-value">Daily / Monthly / Yearly</div><div class="stat-label">Report Frequencies</div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h3>Grade 10 - A — Today's Register</h3><span class="badge badge-purple">Status: Present / Absent / Late / Half Day / Leave</span></div>
+      <div class="card-body"><div class="table-wrap"><table>
+        <thead><tr><th>Roll No.</th><th>Student</th><th>Status</th><th>Time In</th></tr></thead>
+        <tbody>
+          <tr><td>01</td><td>Kavindu Perera</td><td><span class="badge badge-green">Present</span></td><td class="mono">7:42 AM</td></tr>
+          <tr><td>02</td><td>Nisha Fernando</td><td><span class="badge badge-orange">Late</span></td><td class="mono">8:10 AM</td></tr>
+          <tr><td>03</td><td>Ashan Silva</td><td><span class="badge badge-red">Absent</span></td><td class="mono">—</td></tr>
+          <tr><td>04</td><td>Ravindi Jayasuriya</td><td><span class="badge badge-blue">Half Day</span></td><td class="mono">7:39 AM</td></tr>
+        </tbody>
+      </table></div></div>
+    </div>
+  </div>
+
+  <!-- CLASS & SUBJECT -->
+  <div class="section" id="classes">
+    <div class="section-head"><div><div class="num">09-10</div><h2>&#127891; Class & Subject Management</h2><p>Create grades, classes and sections; assign teachers, subjects and students.</p></div></div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header"><h3>Classes & Sections</h3></div>
+        <div class="card-body"><div class="table-wrap"><table>
+          <thead><tr><th>Grade</th><th>Section</th><th>Class Teacher</th><th>Students</th></tr></thead>
+          <tbody><tr><td>Grade 10</td><td>A</td><td>Ms. D. Wickramasinghe</td><td>38</td></tr><tr><td>Grade 10</td><td>B</td><td>Mr. S. Rajapaksha</td><td>36</td></tr><tr><td>Grade 9</td><td>A</td><td>Mrs. N. Gunawardena</td><td>40</td></tr></tbody>
+        </table></div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3>Subjects</h3></div>
+        <div class="card-body"><div class="table-wrap"><table>
+          <thead><tr><th>Code</th><th>Subject</th><th>Teacher</th><th>Credit Hrs</th></tr></thead>
+          <tbody><tr><td class="mono">MTH101</td><td>Mathematics</td><td>D. Wickramasinghe</td><td>6</td></tr><tr><td class="mono">SCI102</td><td>Science</td><td>S. Rajapaksha</td><td>5</td></tr><tr><td class="mono">ENG103</td><td>English</td><td>N. Gunawardena</td><td>4</td></tr></tbody>
+        </table></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIMETABLE -->
+  <div class="section" id="timetable">
+    <div class="section-head"><div><div class="num">11</div><h2>&#128197; Timetable Management</h2><p>School, teacher and student timetables — printable daily or weekly.</p></div></div>
+    <div class="card">
+      <div class="card-header"><h3>Grade 10 - A — Weekly Timetable</h3><div class="btn" style="font-size:11px;">&#128424; Print Weekly</div></div>
+      <div class="card-body"><div class="table-wrap"><table>
+        <thead><tr><th>Period</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">08:00</td><td>Maths</td><td>Science</td><td>English</td><td>Maths</td><td>ICT</td></tr>
+          <tr><td class="mono">09:00</td><td>Science</td><td>Maths</td><td>History</td><td>English</td><td>Science</td></tr>
+          <tr><td class="mono">10:00</td><td>English</td><td>ICT</td><td>Maths</td><td>Science</td><td>Maths</td></tr>
+        </tbody>
+      </table></div></div>
+    </div>
+  </div>
+
+  <!-- EXAMS & MARKS -->
+  <div class="section" id="exams">
+    <div class="section-head"><div><div class="num">12-13</div><h2>&#128221; Examinations & Marks</h2><p>Term tests, mid & final exams, marks entry, automatic GPA and ranking.</p></div></div>
+    <div class="grid-2">
+      <div class="card"><div class="card-header"><h3>Exam Types Configured</h3></div><div class="card-body"><div class="tag-row"><span class="tag">Term Tests</span><span class="tag">Mid Exams</span><span class="tag">Final Exams</span><span class="tag">Monthly Tests</span></div><div style="margin-top:12px;font-size:12px;color:var(--text2);">Configuration: marks, weightage, passing marks per subject.</div></div></div>
+      <div class="card"><div class="card-header"><h3>Automatic Calculations</h3></div><div class="card-body"><ul class="feature-list"><li>GPA computation</li><li>Class ranking</li><li>Subject & overall average</li></ul></div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h3>Grade 10 - A — Term 2 Results (Top 5)</h3><span class="badge badge-purple">Auto-ranked</span></div>
+      <div class="card-body"><div class="table-wrap"><table>
+        <thead><tr><th>Rank</th><th>Student</th><th>Maths</th><th>Science</th><th>English</th><th>Average</th><th>GPA</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td style="font-weight:600;">Ravindi Jayasuriya</td><td>92</td><td>89</td><td>85</td><td style="color:var(--green);font-weight:700;">88.7</td><td class="mono">3.9</td></tr>
+          <tr><td>2</td><td style="font-weight:600;">Kavindu Perera</td><td>88</td><td>85</td><td>82</td><td style="color:var(--green);font-weight:700;">85.0</td><td class="mono">3.7</td></tr>
+          <tr><td>3</td><td style="font-weight:600;">Nisha Fernando</td><td>80</td><td>84</td><td>88</td><td style="color:var(--green);font-weight:700;">84.0</td><td class="mono">3.6</td></tr>
+        </tbody>
+      </table></div></div>
+    </div>
+  </div>
+
+  <!-- REPORT CARDS -->
+  <div class="section" id="reportcards">
+    <div class="section-head"><div><div class="num">14</div><h2>&#128203; Report Cards</h2><p>Generate student, term and annual report cards, printable as PDF or A4.</p></div></div>
+    <div class="grid-2">
+      <div class="card"><div class="card-header"><h3>Report Types</h3></div><div class="card-body"><div class="tag-row"><span class="tag">Student Report Card</span><span class="tag">Term Report</span><span class="tag">Annual Report</span></div></div></div>
+      <div class="card"><div class="card-header"><h3>Print Formats</h3></div><div class="card-body"><div class="tag-row"><span class="tag">PDF</span><span class="tag">A4</span></div></div></div>
+    </div>
+  </div>
+
+  <!-- FEE MANAGEMENT -->
+  <div class="section" id="fees">
+    <div class="section-head"><div><div class="num">15-16</div><h2>&#128176; Fee Management & Collection</h2><p>Configurable fee structures by grade/class/category, and multi-channel collection.</p></div></div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header"><h3>Fee Types</h3></div>
+        <div class="card-body"><div class="tag-row"><span class="tag">Admission Fee</span><span class="tag">Monthly Fee</span><span class="tag">Term Fee</span><span class="tag">Laboratory Fee</span><span class="tag">Library Fee</span><span class="tag">Sports Fee</span><span class="tag">Transport Fee</span><span class="tag">Hostel Fee</span><span class="tag">Exam Fee</span><span class="tag">Custom Fees</span></div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3>Payment Methods & Options</h3></div>
+        <div class="card-body"><div class="tag-row"><span class="tag">Cash</span><span class="tag">Card</span><span class="tag">Bank Transfer</span><span class="tag">Cheque</span><span class="tag">Online Payment</span><span class="tag">Partial Payments</span><span class="tag">Advance Payments</span><span class="tag">Discounts</span><span class="tag">Scholarships</span><span class="tag">Late Fees</span></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h3>Fee Collection — Today</h3><span class="badge badge-green">Rs. 1,840,000 collected</span></div>
+      <div class="card-body"><div class="table-wrap"><table>
+        <thead><tr><th>Student</th><th>Fee Category</th><th>Amount</th><th>Method</th><th>Balance</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Kavindu Perera</td><td>Term Fee</td><td class="mono">Rs. 12,000</td><td><span class="badge badge-blue">Card</span></td><td class="mono">Rs. 0</td><td><span class="badge badge-green">Paid</span></td></tr>
+          <tr><td>Ashan Silva</td><td>Term Fee</td><td class="mono">Rs. 5,000</td><td><span class="badge badge-teal">Cash</span></td><td class="mono">Rs. 10,000</td><td><span class="badge badge-orange">Partial</span></td></tr>
+          <tr><td>Nisha Fernando</td><td>Transport Fee</td><td class="mono">Rs. 3,500</td><td><span class="badge badge-purple">Online</span></td><td class="mono">Rs. 0</td><td><span class="badge badge-green">Paid</span></td></tr>
+        </tbody>
+      </table></div></div>
+    </div>
+  </div>
+
+  <!-- RECEIPT PRINTING -->
+  <div class="section" id="receipts">
+    <div class="section-head"><div><div class="num">17</div><h2>&#129517; Receipt Printing</h2><p>Every payment generates a receipt with reprint history for audit purposes.</p></div></div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header"><h3>Sample Receipt</h3></div>
+        <div class="card-body">
+          <div class="receipt-preview">
+            <div class="r-title">&#127891; EDUVANCE INTERNATIONAL SCHOOL</div>
+            Receipt No: RCP-008421<br>
+            Date: 22 Jun 2026<br>
+            <hr>
+            Student: Kavindu Perera<br>
+            Admission No: STU-2026-0348<br>
+            Class: Grade 10 - A<br>
+            Fee Category: Term Fee<br>
+            Payment Method: Card<br>
+            <hr>
+            Amount Paid: Rs. 12,000.00<br>
+            Outstanding Balance: Rs. 0.00<br>
+            <hr>
+            Cashier: A. Perera<br>
+            Contact: (011) 234 5678<br>
+            [QR Code] &nbsp; [Barcode]
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3>Print Formats & Audit</h3></div>
+        <div class="card-body">
+          <div class="tag-row" style="margin-bottom:14px;"><span class="tag">58mm Thermal</span><span class="tag">80mm Thermal</span><span class="tag">A4</span><span class="tag">PDF</span><span class="tag">Email Receipt</span></div>
+          <ul class="feature-list"><li>Duplicate receipt printing supported</li><li>Full reprint history logged for audit</li></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAYROLL -->
+  <div class="section" id="payroll">
+    <div class="section-head"><div><div class="num">18</div><h2>&#128181; Salary & Payroll Management</h2><p>Teacher and staff payroll with allowances, deductions, EPF/ETF and PAYE.</p></div></div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header"><h3>Payroll Components</h3></div>
+        <div class="card-body"><div class="tag-row"><span class="tag">Basic Salary</span><span class="tag">Allowances</span><span class="tag">Overtime</span><span class="tag">Bonuses</span><span class="tag">Deductions</span><span class="tag">EPF</span><span class="tag">ETF</span><span class="tag">PAYE</span><span class="tag">Loans</span><span class="tag">Salary Advances</span><span class="tag">Net Salary</span></div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3>Generated Documents</h3></div>
+        <div class="card-body"><ul class="feature-list"><li>Salary Slip</li><li>Bank Transfer Report</li><li>Payroll Summary</li></ul></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h3>June 2026 Payroll — Preview</h3><span class="badge badge-red">Rs. 4.2M total</span></div>
+      <div class="card-body"><div class="table-wrap"><table>
+        <thead><tr><th>Employee</th><th>Basic</th><th>Allowances</th><th>EPF (8%)</th><th>Net Salary</th></tr></thead>
+        <tbody>
+          <tr><td>D. Wickramasinghe</td><td class="mono">Rs. 85,000</td><td class="mono">Rs. 10,000</td><td class="mono" style="color:var(--red);">-Rs. 6,800</td><td class="mono" style="font-weight:700;">Rs. 88,200</td></tr>
+          <tr><td>S. Rajapaksha</td><td class="mono">Rs. 78,000</td><td class="mono">Rs. 10,000</td><td class="mono" style="color:var(--red);">-Rs. 6,240</td><td class="mono" style="font-weight:700;">Rs. 81,760</td></tr>
+        </tbody>
+      </table></div></div>
+    </div>
+  </div>
+
+  <!-- ACCOUNTING -->
+  <div class="section" id="accounting">
+    <div class="section-head"><div><div class="num">24</div><h2>&#128202; Accounting Module</h2><p>Full double-entry accounting: ledger, trial balance, P&amp;L, balance sheet, budgeting.</p></div></div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-value">Rs. 12.6M</div><div class="stat-label">Monthly Income</div></div>
+      <div class="stat-card"><div class="stat-value">Rs. 8.1M</div><div class="stat-label">Monthly Expenses</div></div>
+      <div class="stat-card"><div class="stat-value" style="color:var(--green);">Rs. 4.5M</div><div class="stat-label">Net Surplus</div></div>
+      <div class="stat-card"><div class="stat-value">99.4%</div><div class="stat-label">Bank Reconciled</div></div>
+    </div>
+    <div class="grid-2">
+      <div class="card"><div class="card-header"><h3>Modules Covered</h3></div><div class="card-body"><div class="tag-row"><span class="tag">Income</span><span class="tag">Expenses</span><span class="tag">Bank Accounts</span><span class="tag">Cash Accounts</span><span class="tag">Journal Entries</span><span class="tag">General Ledger</span><span class="tag">Trial Balance</span><span class="tag">Profit & Loss</span><span class="tag">Balance Sheet</span><span class="tag">Budgeting</span><span class="tag">Expense Categories</span><span class="tag">Bank Reconciliation</span></div></div></div>
+      <div class="card">
+        <div class="card-header"><h3>Profit & Loss — June 2026</h3></div>
+        <div class="card-body">
+          <div class="timeline">
+            <div class="timeline-item"><div class="timeline-text">Total Income</div><div class="timeline-time mono" style="color:var(--green);">Rs. 12,600,000</div></div>
+            <div class="timeline-item"><div class="timeline-text">Total Expenses</div><div class="timeline-time mono" style="color:var(--red);">Rs. 8,100,000</div></div>
+            <div class="timeline-item" style="border-top:1px solid var(--border);padding-top:10px;"><div class="timeline-text" style="font-weight:700;color:var(--text);">Net Surplus</div><div class="timeline-time mono" style="color:var(--green);font-weight:700;font-size:14px;">Rs. 4,500,000</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXPENSES -->
+  <div class="section" id="expenses">
+    <div class="section-head"><div><div class="num">25</div><h2>&#128181; Expense Management</h2><p>Approval workflows and receipt attachments for every expense category.</p></div></div>
+    <div class="grid-2">
+      <div class="card"><div class="card-header"><h3>Expense Categories</h3></div><div class="card-body"><div class="tag-row"><span class="tag">Utilities</span><span class="tag">Repairs</span><span class="tag">Fuel</span><span class="tag">Maintenance</span><span class="tag">Office Expenses</span><span class="tag">Purchases</span><span class="tag">Petty Cash</span></div></div></div>
+      <div class="card"><div class="card-header"><h3>Workflow</h3></div><div class="card-body"><ul class="feature-list"><li>Approval workflow</li><li>Receipt attachment required</li><li>Category-wise budget tracking</li></ul></div></div>
+    </div>
+  </div>
+
+  <!-- LIBRARY -->
+  <div class="section" id="library">
+    <div class="section-head"><div><div class="num">20</div><h2>&#128218; Library Management</h2><p>Catalog, borrowing, returns, fines and barcode-based circulation.</p></div></div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-value">8,420</div><div class="stat-label">Total Books</div></div>
+      <div class="stat-card"><div class="stat-value">312</div><div class="stat-label">Currently Borrowed</div></div>
+      <div class="stat-card"><div class="stat-value" style="color:var(--orange,var(--amber));">18</div><div class="stat-label">Overdue Returns</div></div>
+      <div class="stat-card"><div class="stat-value">Rs. 2,400</div><div class="stat-label">Fines Collected (Month)</div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h3>Circulation Desk</h3><span class="badge badge-blue">Barcode enabled</span></div>
+      <div class="card-body"><div class="table-wrap"><table>
+        <thead><tr><th>Book</th><th>Category</th><th>Borrower</th><th>Due Date</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Physics for Grade 10</td><td>Science</td><td>Kavindu Perera</td><td>Jun 25</td><td><span class="badge badge-green">On Time</span></td></tr>
+          <tr><td>Advanced Algebra</td><td>Mathematics</td><td>Nisha Fernando</td><td>Jun 18</td><td><span class="badge badge-red">Overdue</span></td></tr>
+        </tbody>
+      </table></div></div>
+    </div>
+  </div>
+
+  <!-- HOSTEL -->
+  <div class="section" id="hostel">
+    <div class="section-head"><div><div class="num">21</div><h2>&#127976; Hostel Management</h2><p>Rooms, beds, hostel fees, visitors and attendance.</p></div></div>
+    <div class="grid-2">
+      <div class="card"><div class="card-header"><h3>Occupancy</h3></div><div class="card-body"><div class="tag-row"><span class="tag">42 Rooms</span><span class="tag">168 Beds</span><span class="tag">154 Boarders</span><span class="tag">14 Vacant Beds</span></div></div></div>
+      <div class="card"><div class="card-header"><h3>Tracked Data</h3></div><div class="card-body"><ul class="feature-list"><li>Hostel fees</li><li>Visitor log</li><li>Nightly attendance</li></ul></div></div>
+    </div>
+  </div>
+
+  <!-- TRANSPORT -->
+  <div class="section" id="transport">
+    <div class="section-head"><div><div class="num">22</div><h2>&#128652; Transport Management</h2><p>Vehicles, drivers, routes, stops and student route assignment.</p></div></div>
+    <div class="card">
+      <div class="card-header"><h3>Fleet Overview</h3><span class="badge badge-green">11 active routes</span></div>
+      <div class="card-body"><div class="table-wrap"><table>
+        <thead><tr><th>Route</th><th>Vehicle</th><th>Driver</th><th>Students</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Route 4 — Kandy Rd</td><td class="mono">WP-CAB-4521</td><td>M. Bandara</td><td>34</td><td><span class="badge badge-orange">12 min delay</span></td></tr>
+          <tr><td>Route 7 — Galle Rd</td><td class="mono">WP-CAC-1102</td><td>R. Silva</td><td>28</td><td><span class="badge badge-green">On Time</span></td></tr>
+        </tbody>
+      </table></div></div>
+    </div>
+  </div>
+
+  <!-- INVENTORY -->
+  <div class="section" id="inventory">
+    <div class="section-head"><div><div class="num">23</div><h2>&#128230; Inventory Management</h2><p>Stationery, furniture, lab and sports equipment, computer assets, and suppliers.</p></div></div>
+    <div class="grid-2">
+      <div class="card"><div class="card-header"><h3>Asset Categories</h3></div><div class="card-body"><div class="tag-row"><span class="tag">Stationery</span><span class="tag">Furniture</span><span class="tag">Lab Equipment</span><span class="tag">Sports Equipment</span><span class="tag">Computer Assets</span></div></div></div>
+      <div class="card"><div class="card-header"><h3>Stock Alerts</h3></div><div class="card-body"><ul class="feature-list"><li>Stock in / stock out tracking</li><li>Supplier & purchase history</li><li>Low stock alerts — 6 items flagged</li></ul></div></div>
+    </div>
+  </div>
+
+  <!-- LEAVE -->
+  <div class="section" id="leave">
+    <div class="section-head"><div><div class="num">19</div><h2>&#128197; Leave Management</h2><p>Apply, approve and reject leave for teachers and staff.</p></div></div>
+    <div class="grid-2">
+      <div class="card"><div class="card-header"><h3>Leave Types</h3></div><div class="card-body"><div class="tag-row"><span class="tag">Casual</span><span class="tag">Annual</span><span class="tag">Medical</span><span class="tag">No Pay</span></div></div></div>
+      <div class="card">
+        <div class="card-header"><h3>Pending Approvals</h3><span class="badge badge-orange">3 pending</span></div>
+        <div class="card-body"><div class="table-wrap"><table>
+          <thead><tr><th>Staff</th><th>Type</th><th>Dates</th><th>Status</th></tr></thead>
+          <tbody><tr><td>N. Gunawardena</td><td>Medical</td><td>Jun 23–24</td><td><span class="badge badge-orange">Pending</span></td></tr></tbody>
+        </table></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMMUNICATION -->
+  <div class="section" id="communication">
+    <div class="section-head"><div><div class="num">26</div><h2>&#128172; Communication</h2><p>SMS, email and WhatsApp alerts across attendance, fees and emergencies.</p></div></div>
+    <div class="grid-2">
+      <div class="card"><div class="card-header"><h3>Channels</h3></div><div class="card-body"><div class="tag-row"><span class="tag">SMS</span><span class="tag">Email</span><span class="tag">WhatsApp (Optional)</span></div></div></div>
+      <div class="card"><div class="card-header"><h3>Message Types</h3></div><div class="card-body"><ul class="feature-list"><li>Attendance alerts</li><li>Fee reminders</li><li>Exam notices</li><li>Emergency messages</li><li>General announcements</li></ul></div></div>
+    </div>
+  </div>
+
+  <!-- PARENT PORTAL -->
+  <div class="section" id="parent-portal">
+    <div class="section-head"><div><div class="num">27</div><h2>&#128104;&#8205;&#128105;&#8205;&#128103; Parent Portal</h2><p>Everything a parent needs, in one login.</p></div></div>
+    <div class="card"><div class="card-body"><div class="tag-row"><span class="tag">Attendance</span><span class="tag">Fees</span><span class="tag">Receipts</span><span class="tag">Report Cards</span><span class="tag">Homework</span><span class="tag">Exam Schedule</span><span class="tag">School Notices</span><span class="tag">Communication</span></div></div></div>
+  </div>
+
+  <!-- STUDENT PORTAL -->
+  <div class="section" id="student-portal">
+    <div class="section-head"><div><div class="num">28</div><h2>&#127891; Student Portal</h2><p>Self-service access for every enrolled student.</p></div></div>
+    <div class="card"><div class="card-body"><div class="tag-row"><span class="tag">Timetable</span><span class="tag">Assignments</span><span class="tag">Attendance</span><span class="tag">Marks</span><span class="tag">Report Cards</span><span class="tag">Fees</span><span class="tag">Library Status</span><span class="tag">Announcements</span></div></div></div>
+  </div>
+
+  <!-- REPORTS -->
+  <div class="section" id="reports">
+    <div class="section-head"><div><div class="num">29</div><h2>&#128200; Reports</h2><p>Student, teacher, financial and inventory reports, exportable anytime.</p></div></div>
+    <div class="grid-2">
+      <div class="card"><div class="card-header"><h3>Student & Teacher Reports</h3></div><div class="card-body"><div class="tag-row"><span class="tag">Admissions</span><span class="tag">Attendance</span><span class="tag">Performance</span><span class="tag">Fees</span><span class="tag">Inactive Students</span><span class="tag">Transfer Students</span><span class="tag">Salary</span><span class="tag">Leave</span></div></div></div>
+      <div class="card"><div class="card-header"><h3>Financial & Inventory Reports</h3></div><div class="card-body"><div class="tag-row"><span class="tag">Daily Collection</span><span class="tag">Monthly Collection</span><span class="tag">Outstanding Fees</span><span class="tag">Income Report</span><span class="tag">Expense Report</span><span class="tag">Payroll Report</span><span class="tag">Cash Flow</span><span class="tag">Bank Transactions</span><span class="tag">Profit & Loss</span><span class="tag">Balance Sheet</span><span class="tag">Stock</span><span class="tag">Damaged Items</span><span class="tag">Purchase Report</span><span class="tag">Low Stock</span><span class="tag">Supplier Report</span></div></div></div>
+    </div>
+  </div>
+
+  <!-- DOCUMENT GENERATION -->
+  <div class="section" id="documents">
+    <div class="section-head"><div><div class="num">30</div><h2>&#128196; Document Generation</h2><p>Every printable document the school needs, generated on demand.</p></div></div>
+    <div class="card"><div class="card-body"><div class="tag-row"><span class="tag">Admission Forms</span><span class="tag">Student ID Cards</span><span class="tag">Teacher ID Cards</span><span class="tag">Bonafide Certificates</span><span class="tag">Transfer Certificates</span><span class="tag">Character Certificates</span><span class="tag">Salary Slips</span><span class="tag">Fee Receipts</span><span class="tag">Exam Reports</span><span class="tag">Attendance Reports</span></div></div></div>
+  </div>
+
+  <!-- NOTIFICATIONS -->
+  <div class="section" id="notifications">
+    <div class="section-head"><div><div class="num">31</div><h2>&#128276; Notification System</h2><p>Automatic alerts triggered by system events.</p></div></div>
+    <div class="card"><div class="card-body"><div class="tag-row"><span class="tag">Birthday Reminder</span><span class="tag">Fee Due Reminder</span><span class="tag">Exam Reminder</span><span class="tag">Salary Processing</span><span class="tag">Leave Approval</span><span class="tag">Admission Confirmation</span></div></div></div>
+  </div>
+
+  <!-- AUDIT LOGS -->
+  <div class="section" id="audit">
+    <div class="section-head"><div><div class="num">32</div><h2>&#128274; Audit Logs</h2><p>Every sensitive action is tracked for full accountability.</p></div></div>
+    <div class="card">
+      <div class="card-header"><h3>Recent Activity</h3><span class="badge badge-teal">Immutable log</span></div>
+      <div class="card-body"><div class="table-wrap"><table>
+        <thead><tr><th>Action</th><th>User</th><th>Time</th></tr></thead>
+        <tbody>
+          <tr><td>Fee receipt RCP-008421 printed</td><td>A. Perera (Accountant)</td><td class="mono" style="font-size:11px;">Jun 22, 09:14</td></tr>
+          <tr><td>Receipt RCP-008390 reprinted</td><td>A. Perera (Accountant)</td><td class="mono" style="font-size:11px;">Jun 22, 09:20</td></tr>
+          <tr><td>Payroll for June processed</td><td>Super Admin</td><td class="mono" style="font-size:11px;">Jun 20, 16:00</td></tr>
+          <tr><td>Student record updated — STU-2026-0348</td><td>Reception</td><td class="mono" style="font-size:11px;">Jun 19, 11:32</td></tr>
+        </tbody>
+      </table></div></div>
+    </div>
+    <div style="margin-top:14px;"><div class="tag-row"><span class="tag">User Login</span><span class="tag">Record Creation</span><span class="tag">Updates</span><span class="tag">Deletion</span><span class="tag">Fee Collection</span><span class="tag">Receipt Reprints</span><span class="tag">Payroll Processing</span><span class="tag">Exports</span><span class="tag">Print History</span></div></div>
+  </div>
+
+  <!-- BACKUP & SECURITY -->
+  <div class="section" id="security">
+    <div class="section-head"><div><div class="num">33</div><h2>&#128272; Backup & Security</h2><p>Automated backups, role-based access, and encrypted credentials.</p></div></div>
+    <div class="card"><div class="card-body"><div class="tag-row"><span class="tag">Automatic Database Backup</span><span class="tag">Manual Backup</span><span class="tag">Restore Backup</span><span class="tag">Two-Factor Auth (Optional)</span><span class="tag">Password Policies</span><span class="tag">Role-Based Access</span><span class="tag">Session Timeout</span><span class="tag">Encrypted Passwords</span><span class="tag">Activity Logs</span></div></div></div>
+  </div>
+
+  <!-- MULTI-BRANCH -->
+  <div class="section" id="branches" style="border-bottom:none;">
+    <div class="section-head"><div><div class="num">34</div><h2>&#127970; Multi-School / Multi-Branch Support</h2><p>Manage multiple schools or branches from a single installation.</p></div></div>
+    <div class="grid-2">
+      <div class="card"><div class="card-header"><h3>Branch Isolation</h3></div><div class="card-body"><ul class="feature-list"><li>Separate students, staff, fees & accounts per branch</li><li>Independent academic years & fee structures</li></ul></div></div>
+      <div class="card"><div class="card-header"><h3>Central Oversight</h3></div><div class="card-body"><ul class="feature-list"><li>Branch-wise reports</li><li>Centralized Super Admin dashboard</li></ul></div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h3>Branch Performance</h3></div>
+      <div class="card-body"><div class="table-wrap"><table>
+        <thead><tr><th>Branch</th><th>Students</th><th>Teachers</th><th>Monthly Collection</th></tr></thead>
+        <tbody><tr><td>Colombo Main Campus</td><td>1,680</td><td>96</td><td class="mono">Rs. 8.4M</td></tr><tr><td>Kandy Branch</td><td>800</td><td>46</td><td class="mono">Rs. 4.2M</td></tr></tbody>
+      </table></div></div>
+    </div>
+  </div>
+
+  <div class="footer">Eduvance School Management System — Demo Preview · All data shown is sample data</div>
+</div>
+</div>
+
+<!-- AI FLOATING WIDGET -->
+<button class="ai-fab" onclick="toggleAI()">&#129302;</button>
+<div class="ai-panel" id="aiPanel">
+  <div class="ai-panel-head"><h4>&#9889; Eduvance AI</h4><button class="ai-panel-close" onclick="toggleAI()">&#10005;</button></div>
+  <div class="ai-messages" id="aiMessages">
+    <div class="ai-msg bot">Hi! Ask me about attendance, fees, exams, payroll or any module. Try a quick question below.</div>
+  </div>
+  <div class="ai-quick">
+    <button class="ai-qbtn" onclick="askAI(this)">Students with overdue fees</button>
+    <button class="ai-qbtn" onclick="askAI(this)">Lowest attendance grade this week</button>
+    <button class="ai-qbtn" onclick="askAI(this)">Term 2 exam summary — Grade 10</button>
+    <button class="ai-qbtn" onclick="askAI(this)">Books overdue in library</button>
+  </div>
+  <div class="ai-input-row">
+    <input class="ai-input" id="aiInput" placeholder="Ask anything..." onkeydown="if(event.key==='Enter')sendAI()">
+    <button class="ai-send" onclick="sendAI()">Send</button>
+  </div>
+</div>
+
+<script>
+function toggleAI(){ document.getElementById('aiPanel').classList.toggle('show'); }
+
+function goTo(id){
+  const el = document.getElementById(id);
+  if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+const aiResponses = {
+  'Students with overdue fees': 'There are <strong>42 students</strong> with fees overdue by more than 30 days, totaling <strong>Rs. 312,000</strong>. The highest is Ashan Silva (Grade 10-A) with Rs. 10,000 outstanding. Fee reminders can be sent via SMS/WhatsApp to all 42 in one action.',
+  'Lowest attendance grade this week': '<strong>Grade 8 - B</strong> has the lowest attendance this week at 87.2%, mainly due to a flu outbreak reported by the class teacher. All other grades are above 93%.',
+  'Term 2 exam summary — Grade 10': 'Grade 10 average across sections is <strong>81.4%</strong>, up 3.1% from Term 1. Mathematics is the strongest subject (86.2% avg); History is the weakest (74.8% avg). Ravindi Jayasuriya (10-A) tops the grade with a 3.9 GPA.',
+  'Books overdue in library': '<strong>18 books</strong> are currently overdue. The longest overdue is "Advanced Algebra", borrowed by Nisha Fernando, 4 days late. Automatic fine of Rs. 20/day is being applied.'
+};
+
+function askAI(btn){
+  const q = btn.textContent;
+  addMsg(q,'user');
+  setTimeout(()=>{ addMsg(aiResponses[q] || 'Let me check that across the relevant module and get back to you with the details.','bot'); },600);
+}
+function sendAI(){
+  const input = document.getElementById('aiInput');
+  const val = input.value.trim();
+  if(!val) return;
+  addMsg(val,'user');
+  input.value='';
+  setTimeout(()=>{ addMsg('Based on current records, everything is tracking normally across attendance, fees and exams. Let me know which module you would like a deeper breakdown on.','bot'); },700);
+}
+function addMsg(text,type){
+  const c = document.getElementById('aiMessages');
+  const d = document.createElement('div');
+  d.className = 'ai-msg '+type;
+  d.innerHTML = text;
+  c.appendChild(d);
+  c.scrollTop = c.scrollHeight;
+}
+
+/* Scrollspy */
+const navItems = document.querySelectorAll('.nav-item');
+const sections = document.querySelectorAll('.section[id], .hero[id]');
+const topbarLabel = document.getElementById('topbarLabel');
+const observer = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      const id = entry.target.id;
+      navItems.forEach(n=>n.classList.toggle('active', n.dataset.target === id));
+      const activeNav = document.querySelector('.nav-item[data-target="'+id+'"]');
+      if(activeNav) topbarLabel.textContent = activeNav.textContent.trim();
+    }
+  });
+},{rootMargin:'-40% 0px -55% 0px', threshold:0});
+sections.forEach(s=>observer.observe(s));
+</script>
+</body>
+</html>
